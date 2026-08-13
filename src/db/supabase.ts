@@ -1,9 +1,42 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import type { OfferMatch, OfferSnapshot } from "../types.js";
+import type { OfferMatch, OfferSnapshot, StoreId, TrackedProduct } from "../types.js";
+import { ALL_STORES } from "../types.js";
 
 export function createDb(url: string, key: string): SupabaseClient {
   return createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
+  });
+}
+
+function isStoreId(value: string): value is StoreId {
+  return (ALL_STORES as readonly string[]).includes(value);
+}
+
+/** Productos activos desde el panel admin (tabla tracked_products). */
+export async function loadTrackedProducts(
+  db: SupabaseClient,
+): Promise<TrackedProduct[]> {
+  const { data, error } = await db
+    .from("tracked_products")
+    .select("name, ean, target_price, stores, active")
+    .eq("active", true)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    throw new Error(`Supabase tracked_products: ${error.message}`);
+  }
+
+  return (data ?? []).map((row) => {
+    const stores = Array.isArray(row.stores)
+      ? row.stores.map(String).filter(isStoreId)
+      : [];
+
+    return {
+      name: String(row.name),
+      ean: String(row.ean),
+      target_price: Number(row.target_price),
+      stores: stores.length > 0 ? stores : undefined,
+    };
   });
 }
 

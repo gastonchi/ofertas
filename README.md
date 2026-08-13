@@ -23,7 +23,8 @@ cp .env.example .env
 
 1. Creá un proyecto en https://supabase.com
 2. SQL Editor → pegá y ejecutá `supabase/schema.sql`
-3. Project Settings → API → copiá `Project URL` y la key `service_role`
+3. (Opcional) ejecutá `supabase/seed-products.sql` para cargar el MVP
+4. Project Settings → API → copiá `Project URL` y la key `service_role`
 
 ### 3. Gmail App Password
 
@@ -42,7 +43,9 @@ cp .env.example .env
 
 ### 5. Productos
 
-Editá `products.json`:
+Fuente preferida: tabla `tracked_products` (panel admin).
+
+Fallback: `products.json`:
 
 ```json
 [
@@ -76,16 +79,35 @@ Repo privado → Settings → Secrets and variables → Actions:
 
 Cron: 08:00 y 20:00 (Argentina). También: **Actions → Check offers → Run workflow**.
 
+### 8. Panel admin (Vercel)
+
+App en `admin/` (Next.js + TypeScript + Tailwind).
+
+1. Nuevo proyecto en Vercel → este repo
+2. **Root Directory:** `admin`
+3. Env vars: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_PASSWORD`
+4. Detalle en [`admin/README.md`](admin/README.md)
+
+Local:
+
+```bash
+cd admin
+cp .env.example .env.local
+npm install
+npm run dev
+```
+
 ## Estructura
 
-- `src/stores/carrefour.ts` — cliente VTEX
+- `src/stores/*` — clientes VTEX por tienda
 - `src/offers/evaluate.ts` — reglas de oferta
-- `src/db/supabase.ts` — historial + dedupe
+- `src/db/supabase.ts` — historial, dedupe y productos
 - `src/notify/gmail.ts` — email por SMTP
 - `src/index.ts` — orquestación
+- `admin/` — panel para editar EANs
 
 ## Próximos pasos
 
-- Sumar Día / Jumbo (mismo patrón VTEX)
-- Pasar productos a tabla Supabase
-- Panel mínimo para editar EANs
+- Auth más robusta (p. ej. magic link)
+- Gráficos de historial de precios
+- Disparador manual del chequeo desde el panel

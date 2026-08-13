@@ -2,6 +2,7 @@ import "dotenv/config";
 import { getConfig, isDryRun, isForceAlert, loadProducts } from "./config.js";
 import {
   createDb,
+  loadTrackedProducts,
   recordAlertSent,
   savePriceHistory,
   wasAlertSentToday,
@@ -15,6 +16,18 @@ import { fetchJumboByEan } from "./stores/jumbo.js";
 import { fetchVeaByEan } from "./stores/vea.js";
 import type { OfferMatch, OfferSnapshot, StoreId, TrackedProduct } from "./types.js";
 import { ALL_STORES } from "./types.js";
+
+async function resolveProducts(
+  db: ReturnType<typeof createDb> | null,
+): Promise<{ products: TrackedProduct[]; source: "supabase" | "products.json" }> {
+  if (db) {
+    const fromDb = await loadTrackedProducts(db);
+    if (fromDb.length > 0) {
+      return { products: fromDb, source: "supabase" };
+    }
+  }
+  return { products: loadProducts(), source: "products.json" };
+}
 
 const STORE_FETCHERS: Record<StoreId, (ean: string) => Promise<OfferSnapshot | null>> = {
   carrefour: fetchCarrefourByEan,
@@ -50,17 +63,18 @@ async function main() {
   const dryRun = isDryRun();
   const forceAlert = isForceAlert();
   const config = getConfig(dryRun);
-  const products = loadProducts();
-
-  console.log(
-    `Ofertas MVP · productos=${products.length} · dryRun=${dryRun} · force=${forceAlert}`,
-  );
 
   const canUseDb = Boolean(config.supabaseUrl && config.supabaseKey);
   const db = canUseDb ? createDb(config.supabaseUrl!, config.supabaseKey!) : null;
   if (!dryRun && !db) {
     throw new Error("SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY son obligatorios fuera de dry-run");
   }
+
+  const { products, source } = await resolveProducts(db);
+
+  console.log(
+    `Ofertas MVP · productos=${products.length} · source=${source} · dryRun=${dryRun} · force=${forceAlert}`,
+  );
 
   const freshMatches: OfferMatch[] = [];
   let errors = 0;
