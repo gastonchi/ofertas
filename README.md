@@ -1,91 +1,66 @@
-# Ofertas (MVP personal)
+# Ofertas
 
-Rastrea precios en supermercados VTEX (Carrefour, Día, Jumbo, Disco, Vea) por EAN, evalúa ofertas y te avisa a tu Gmail. Corre 2 veces al día con GitHub Actions.
+App Next.js para seguir productos de supermercado, detectar ofertas y avisar por email.
 
-## Qué detecta
+Una sola app: panel de usuario + job de scraping. Un `package.json`, un `node_modules`.
 
-1. Precio actual ≤ `target_price`
-2. Descuento de lista (`ListPrice` > `Price`)
-3. Promos en teasers VTEX (2do al %, 2x1, 3x2, etc.) — excluye descuentos solo de tarjeta
+## Qué hace
 
-No reenvía el mismo aviso el mismo día (fingerprint en Supabase).
-
-## Setup rápido
-
-### 1. Repo
-
-```bash
-npm install
-cp .env.example .env
-```
-
-### 2. Supabase (free)
-
-1. Creá un proyecto en https://supabase.com
-2. SQL Editor → pegá y ejecutá `supabase/schema.sql`
-3. Project Settings → API → copiá `Project URL` y la key `service_role`
-
-### 3. Gmail App Password
-
-1. Activá verificación en 2 pasos en tu cuenta Google
-2. Andá a https://myaccount.google.com/apppasswords
-3. Creá una contraseña de app (nombre: `ofertas`)
-4. Usala en `GMAIL_APP_PASSWORD` (16 caracteres, sin tu password normal)
-
-### 4. Variables (`.env`)
-
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `GMAIL_USER` — tu Gmail
-- `GMAIL_APP_PASSWORD` — App Password
-- `ALERT_TO_EMAIL` — normalmente el mismo Gmail
-
-### 5. Productos
-
-Editá `products.json`:
-
-```json
-[
-  {
-    "name": "Coca Cola 2,25 L",
-    "ean": "7790895000997",
-    "target_price": 5500,
-    "stores": ["carrefour"]
-  }
-]
-```
-
-### 6. Probar
-
-```bash
-npm run check:dry   # sin email ni escritura requerida
-npm run check       # consulta + guarda + manda mail si hay oferta
-```
-
-### 7. GitHub Actions
-
-Repo privado → Settings → Secrets and variables → Actions:
-
-| Secret | Valor |
-|---|---|
-| `SUPABASE_URL` | URL del proyecto |
-| `SUPABASE_SERVICE_ROLE_KEY` | service_role |
-| `GMAIL_USER` | tu@gmail.com |
-| `GMAIL_APP_PASSWORD` | App Password |
-| `ALERT_TO_EMAIL` | tu@gmail.com |
-
-Cron: 08:00 y 20:00 (Argentina). También: **Actions → Check offers → Run workflow**.
+1. Cargás productos (nombre, EAN, precio objetivo, tiendas)
+2. Un job consulta Carrefour, Día, Jumbo, Disco y Vea
+3. Si hay oferta (precio ≤ objetivo, descuento de lista o promo), te llega un mail
+4. En el panel ves productos, alertas y configuración
 
 ## Estructura
 
-- `src/stores/carrefour.ts` — cliente VTEX
-- `src/offers/evaluate.ts` — reglas de oferta
-- `src/db/supabase.ts` — historial + dedupe
-- `src/notify/gmail.ts` — email por SMTP
-- `src/index.ts` — orquestación
+```
+src/
+  app/                 rutas (Inicio, Productos, Alertas, Configuración)
+  components/          UI
+  lib/                 auth, db, tipos compartidos
+  modules/             acciones de productos / alertas / settings
+  scraping/            clientes VTEX, reglas de oferta, email
+  jobs/                CLI: npm run check
+supabase/              schema SQL
+```
 
-## Próximos pasos
+## Setup
 
-- Sumar Día / Jumbo (mismo patrón VTEX)
-- Pasar productos a tabla Supabase
-- Panel mínimo para editar EANs
+```bash
+npm install
+cp .env.example .env.local
+```
+
+Variables:
+
+| Variable | Uso |
+|---|---|
+| `SUPABASE_URL` | URL del proyecto |
+| `SUPABASE_SERVICE_ROLE_KEY` | service_role |
+| `ADMIN_PASSWORD` | contraseña del panel |
+| `GMAIL_USER` | Gmail SMTP |
+| `GMAIL_APP_PASSWORD` | App Password |
+| `ALERT_TO_EMAIL` | destino de alertas (fallback) |
+
+En Supabase SQL Editor:
+
+1. `supabase/schema.sql`
+2. (opcional) `supabase/seed-products.sql`
+
+```bash
+npm run dev          # panel en http://localhost:3000
+npm run check:dry    # scraping sin email
+npm run check        # scraping + historial + mail
+```
+
+## Vercel
+
+**Root Directory:** vacío (la raíz del repo, no `admin/`).
+
+Si ya habías importado con Root Directory `admin`, cambialo a `.` o dejalo vacío y redesplegá.
+
+Mismas env vars que arriba.
+
+## GitHub Actions
+
+Cron 08:00 y 20:00 (Argentina). Secrets iguales a las env de Vercel (salvo `ADMIN_PASSWORD`).
