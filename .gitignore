@@ -1,7 +1,13 @@
 node_modules/
 dist/
+.next/
+out/
+.vercel
+coverage/
 .env
-.env.local
+.env*.local
 *.log
+*.tsbuildinfo
+next-env.d.ts
 carrefour-sample.json
 .DS_Store
