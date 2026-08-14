@@ -31,6 +31,7 @@
 html,
 body {
   min-height: 100%;
+  overflow-x: clip;
 }
 
 body {
@@ -164,6 +165,7 @@ code,
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
 }
 
 .panel-head h2 {
@@ -333,7 +335,106 @@ code,
 
 .product-name {
   font-weight: 600;
-  margin-bottom: 0.35rem;
+  margin: 0 0 0.35rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.desktop-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 0.85rem;
+}
+
+.info-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  padding: 1rem 1.05rem 1.05rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.info-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+
+.info-card-head .product-name {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+.info-card-copy {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.info-card-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem 0.85rem;
+  margin: 0;
+}
+
+.info-card-meta dt {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.info-card-meta dd {
+  margin: 0.15rem 0 0;
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+
+.info-card-span {
+  grid-column: 1 / -1;
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.card-actions .btn-ghost,
+.card-actions .btn-danger,
+.card-actions .status-btn,
+.btn-primary,
+.btn-ghost,
+.btn-danger,
+.status-btn {
+  min-height: 44px;
 }
 
 .store-chips {
@@ -393,27 +494,6 @@ code,
   color: var(--muted);
 }
 
-.alert-list,
-.price-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.alert-item,
-.price-item {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.9rem 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.alert-item:last-child,
-.price-item:last-child {
-  border-bottom: 0;
-}
-
 .muted {
   color: var(--muted);
 }
@@ -426,23 +506,64 @@ code,
   background: rgba(255, 255, 255, 0.55);
 }
 
+.card-actions .inline-edit {
+  flex: 1 1 100%;
+  margin-top: 0;
+}
+
 @media (max-width: 900px) {
   .app-shell {
     grid-template-columns: 1fr;
   }
 
   .app-sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    padding: 0.85rem 1rem;
     border-right: 0;
     border-bottom: 1px solid var(--line);
   }
 
+  .brand-block {
+    padding: 0;
+  }
+
+  .brand-mark {
+    font-size: 1.45rem;
+  }
+
+  .brand-sub {
+    display: none;
+  }
+
   .app-nav {
+    flex: 1 1 100%;
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.25rem;
+    scrollbar-width: none;
+  }
+
+  .app-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-link {
+    flex: 0 0 auto;
+    padding: 0.55rem 0.8rem;
+    white-space: nowrap;
   }
 
   .logout-form {
     margin-top: 0;
+    margin-left: auto;
   }
 
   .stats-grid,
@@ -451,9 +572,51 @@ code,
     grid-template-columns: 1fr;
   }
 
-  .app-header,
+  .app-header {
+    padding: 1.15rem 1rem 0.25rem;
+  }
+
+  .app-header h1 {
+    font-size: 1.7rem;
+  }
+
   .app-content {
-    padding-left: 1.15rem;
-    padding-right: 1.15rem;
+    padding: 0.75rem 1rem 2rem;
+  }
+
+  .panel-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .panel-head .btn-primary,
+  .panel-head .btn-ghost {
+    width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: grid;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .login-card {
+    padding: 1.35rem;
+  }
+
+  .login-card h1 {
+    font-size: 2rem;
+  }
+
+  .stat-card strong {
+    font-size: 1.6rem;
   }
 }

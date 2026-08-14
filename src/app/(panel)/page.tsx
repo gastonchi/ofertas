@@ -1,9 +1,8 @@
 import Link from "next/link";
+import { AlertCard } from "@/components/alerts/alert-card";
+import { PriceCard } from "@/components/alerts/price-card";
 import { AppShell } from "@/components/layout/app-shell";
 import { hasSupabaseConfig } from "@/lib/env";
-import { formatArs, formatDateTime } from "@/lib/format";
-import { STORE_LABELS } from "@/lib/stores";
-import type { StoreId } from "@/lib/types";
 import { listRecentAlerts, listRecentPrices } from "@/modules/alerts/queries";
 import { listProducts } from "@/modules/products/actions";
 
@@ -50,25 +49,9 @@ export default async function HomePage() {
         {alerts.length === 0 ? (
           <p className="empty-state">Sin alertas todavía.</p>
         ) : (
-          <div className="alert-list">
+          <div className="card-grid">
             {alerts.map((alert) => (
-              <article key={alert.id} className="alert-item">
-                <div>
-                  <strong>
-                    {alert.payload?.trackedName ??
-                      alert.payload?.snapshot?.productName ??
-                      alert.ean}
-                  </strong>
-                  <p className="muted" style={{ margin: "0.25rem 0 0" }}>
-                    {(STORE_LABELS[alert.store as StoreId] ?? alert.store) +
-                      " · " +
-                      (alert.payload?.triggers
-                        ?.map((t) => t.message)
-                        .join(" · ") ?? "Oferta")}
-                  </p>
-                </div>
-                <div className="muted">{formatDateTime(alert.sent_at)}</div>
-              </article>
+              <AlertCard key={alert.id} alert={alert} />
             ))}
           </div>
         )}
@@ -84,23 +67,9 @@ export default async function HomePage() {
         {prices.length === 0 ? (
           <p className="empty-state">Todavía no hay historial de precios.</p>
         ) : (
-          <div className="price-list">
+          <div className="card-grid">
             {prices.map((row) => (
-              <article key={row.id} className="price-item">
-                <div>
-                  <strong>{row.product_name ?? row.ean}</strong>
-                  <p className="muted" style={{ margin: "0.25rem 0 0" }}>
-                    {STORE_LABELS[row.store as StoreId] ?? row.store} ·{" "}
-                    <code className="mono">{row.ean}</code>
-                  </p>
-                </div>
-                <div style={{ textAlign: "right" }}>
-                  <div>{formatArs(Number(row.price))}</div>
-                  <div className="muted" style={{ fontSize: "0.85rem" }}>
-                    {formatDateTime(row.checked_at)}
-                  </div>
-                </div>
-              </article>
+              <PriceCard key={row.id} row={row} />
             ))}
           </div>
         )}

@@ -1,11 +1,49 @@
-import {
-  deleteProductAction,
-  toggleProductActiveAction,
-} from "@/modules/products/actions";
-import { EditProductPanel } from "@/components/products/product-form";
+import { ProductActions } from "@/components/products/product-actions";
 import { formatArs } from "@/lib/format";
 import { STORE_LABELS } from "@/lib/stores";
 import type { StoreId, TrackedProductRow } from "@/lib/types";
+
+function StoreChips({ stores }: { stores: TrackedProductRow["stores"] }) {
+  return (
+    <span className="store-chips">
+      {stores.map((store) => (
+        <span key={store} className="chip">
+          {STORE_LABELS[store as StoreId] ?? store}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function ProductCard({ product }: { product: TrackedProductRow }) {
+  return (
+    <article className={`info-card ${product.active ? "" : "dimmed"}`.trim()}>
+      <header className="info-card-head">
+        <h3 className="product-name">{product.name}</h3>
+        <span className="chip">{product.active ? "Activo" : "Pausado"}</span>
+      </header>
+      <dl className="info-card-meta">
+        <div>
+          <dt>EAN</dt>
+          <dd>
+            <code className="mono">{product.ean}</code>
+          </dd>
+        </div>
+        <div>
+          <dt>Objetivo</dt>
+          <dd>{formatArs(Number(product.target_price))}</dd>
+        </div>
+        <div className="info-card-span">
+          <dt>Tiendas</dt>
+          <dd>
+            <StoreChips stores={product.stores} />
+          </dd>
+        </div>
+      </dl>
+      <ProductActions product={product} />
+    </article>
+  );
+}
 
 export function ProductTable({ products }: { products: TrackedProductRow[] }) {
   if (products.length === 0) {
@@ -18,67 +56,50 @@ export function ProductTable({ products }: { products: TrackedProductRow[] }) {
   }
 
   return (
-    <div className="table-wrap">
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th>Producto</th>
-            <th>EAN</th>
-            <th>Objetivo</th>
-            <th>Tiendas</th>
-            <th>Estado</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product) => (
-            <tr key={product.id} className={product.active ? undefined : "dimmed"}>
-              <td>
-                <div className="product-name">{product.name}</div>
-                <EditProductPanel product={product} />
-              </td>
-              <td>
-                <code className="mono">{product.ean}</code>
-              </td>
-              <td>{formatArs(Number(product.target_price))}</td>
-              <td>
-                <span className="store-chips">
-                  {product.stores.map((store) => (
-                    <span key={store} className="chip">
-                      {STORE_LABELS[store as StoreId] ?? store}
-                    </span>
-                  ))}
-                </span>
-              </td>
-              <td>
-                <form action={toggleProductActiveAction}>
-                  <input type="hidden" name="id" value={product.id} />
-                  <input
-                    type="hidden"
-                    name="active"
-                    value={product.active ? "true" : "false"}
-                  />
-                  <button type="submit" className="status-btn">
-                    {product.active ? "Activo" : "Pausado"}
-                  </button>
-                </form>
-              </td>
-              <td>
-                <form action={deleteProductAction}>
-                  <input type="hidden" name="id" value={product.id} />
-                  <button
-                    type="submit"
-                    className="btn-danger"
-                    aria-label={`Eliminar ${product.name}`}
-                  >
-                    Eliminar
-                  </button>
-                </form>
-              </td>
+    <>
+      <div className="table-wrap desktop-only">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>EAN</th>
+              <th>Objetivo</th>
+              <th>Tiendas</th>
+              <th>Estado</th>
+              <th>
+                <span className="sr-only">Acciones</span>
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr
+                key={product.id}
+                className={product.active ? undefined : "dimmed"}
+              >
+                <td>
+                  <div className="product-name">{product.name}</div>
+                </td>
+                <td>
+                  <code className="mono">{product.ean}</code>
+                </td>
+                <td>{formatArs(Number(product.target_price))}</td>
+                <td>
+                  <StoreChips stores={product.stores} />
+                </td>
+                <td colSpan={2}>
+                  <ProductActions product={product} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="card-grid mobile-only">
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+    </>
   );
 }
