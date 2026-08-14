@@ -16,13 +16,16 @@ Una sola app: panel de usuario + job de scraping. Un `package.json`, un `node_mo
 ```
 src/
   app/                 rutas (Inicio, Productos, Alertas, Configuración)
-  components/          UI
+  components/          UI por dominio
   lib/                 auth, db, tipos compartidos
   modules/             acciones de productos / alertas / settings
   scraping/            clientes VTEX, reglas de oferta, email
   jobs/                CLI: npm run check
 supabase/              schema SQL
+.cursor/rules/         arquitectura y UI responsive (agentes / Cursor)
 ```
+
+En desktop las listas anchas van en tabla; en celular (< 768px) la misma info se muestra en cards. Detalle en `.cursor/rules/`.
 
 ## Setup
 

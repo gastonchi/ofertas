@@ -1,0 +1,41 @@
+---
+description: Arquitectura de carpetas y buenas prácticas de Ofertas
+alwaysApply: true
+---
+
+# Arquitectura y buenas prácticas
+
+Esta es **una sola app Next.js**. No crear un segundo `package.json`, `node_modules` ni carpeta tipo `admin/` con otra app.
+
+## Estructura (escalable)
+
+```
+src/
+  app/                 Rutas (App Router). Sin lógica de negocio.
+  components/          UI por dominio: layout, products, alerts, auth, settings, ui
+  lib/                 Infra compartida: auth, db, env, format, types
+  modules/             Casos de uso del panel: actions y queries por dominio
+  scraping/            Dominio del job: tiendas, reglas, email, persistencia
+  jobs/                Entrypoints CLI (`npm run check`)
+supabase/              Schema SQL
+```
+
+Al agregar una feature (usuarios, gráficos, disparar chequeo):
+
+1. Tipos en `src/lib/types.ts` (o `src/lib/<dominio>/types.ts` si crece).
+2. Acciones/queries en `src/modules/<dominio>/`.
+3. UI en `src/components/<dominio>/`.
+4. Página delgada en `src/app/`.
+
+El scraping no se mezcla con componentes. Si el panel dispara un chequeo, llama a `src/scraping/` o a un module que lo orquesta.
+
+## Prácticas
+
+- TypeScript estricto. Sin `any` salvo frontera externa tipada.
+- Server Components por defecto. `"use client"` solo para formularios e interacción.
+- Mutaciones en Server Actions (`src/modules/*`). Auth adentro de cada action.
+- Un solo cliente de datos (`src/lib/db`). No duplicar Supabase clients.
+- Nombres en español en UI; código en inglés (`tracked_products`, `AlertCard`).
+- No meter secrets en el cliente. Nada de `NEXT_PUBLIC_` para service role ni passwords.
+- No copiar archivos entre “apps”. Reutilizar módulos.
+- Cambios chicos y cohesivos. No refactors colaterales.

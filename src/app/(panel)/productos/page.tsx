@@ -17,7 +17,7 @@ export default async function ProductsPage() {
           Faltan <code>SUPABASE_URL</code> y <code>SUPABASE_SERVICE_ROLE_KEY</code>.
         </p>
       ) : null}
-      <div className="panel-head" style={{ marginBottom: 0 }}>
+      <div className="panel-head">
         <p className="muted" style={{ margin: 0 }}>
           Estos productos se chequean dos veces al día. Si hay oferta, te llega un
           mail.

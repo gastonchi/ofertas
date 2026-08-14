@@ -1,0 +1,30 @@
+---
+description: UI responsive — tablas a cards en celular
+alwaysApply: true
+---
+
+# UI responsive
+
+Toda la app tiene que usarse bien en celular (viewport `device-width`, tap targets ≥ 44px, sin scroll horizontal).
+
+## Tablas → cards
+
+Si una tabla tiene más de 3–4 columnas o no entra en ~768px:
+
+- **Desktop (≥ 768px):** tabla.
+- **Celular (< 768px):** lista de **cards** con la misma información y acciones. No usar `overflow-x: auto` como solución principal.
+
+Patrón:
+
+- Wrapper `.desktop-only` para `<table>`.
+- Wrapper `.mobile-only` + `.card-grid` para cards.
+- Extraer acciones compartidas para no duplicar lógica.
+
+Listas densas (alertas, precios) también se apilan en cards en mobile: título, meta, valor; sin filas de dos columnas que recorten texto.
+
+## Layout
+
+- Shell: sidebar en desktop; barra compacta + nav horizontal en mobile.
+- Grids (`stats-grid`, formularios, tiendas) a una columna en mobile.
+- `panel-head` se apila (título / CTA) en mobile.
+- Probar a 375px de ancho antes de dar una pantalla por cerrada.
