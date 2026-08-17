@@ -1,6 +1,80 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { isStoreId } from "../lib/stores";
-import type { OfferMatch, OfferSnapshot, TrackedProduct } from "../lib/types";
+import {
+  DEFAULT_ALERT_DAYS,
+  DEFAULT_ALERT_HOURS,
+  isWeekday,
+  normalizeHourLabel,
+  type Weekday,
+} from "../lib/schedule";
+import { ALL_STORES, type OfferMatch, type OfferSnapshot, type StoreId, type TrackedProduct } from "../lib/types";
+
+export type JobSettings = {
+  alertEmail?: string;
+  stores: StoreId[];
+  alertDays: Weekday[];
+  alertHours: string[];
+};
+
+export const FALLBACK_JOB_SETTINGS: JobSettings = {
+  stores: [...ALL_STORES],
+  alertDays: [...DEFAULT_ALERT_DAYS],
+  alertHours: [...DEFAULT_ALERT_HOURS],
+};
+
+function parseStoreList(value: unknown): StoreId[] {
+  if (!Array.isArray(value)) return [...ALL_STORES];
+  const stores = value.map(String).filter(isStoreId);
+  return stores.length > 0 ? stores : [...ALL_STORES];
+}
+
+function parseDayList(value: unknown): Weekday[] {
+  if (!Array.isArray(value)) return [...DEFAULT_ALERT_DAYS];
+  const days = value.map(String).filter(isWeekday);
+  return days.length > 0 ? days : [...DEFAULT_ALERT_DAYS];
+}
+
+function parseHourList(value: unknown): string[] {
+  if (!Array.isArray(value)) return [...DEFAULT_ALERT_HOURS];
+  const hours = [
+    ...new Set(
+      value
+        .map(String)
+        .map(normalizeHourLabel)
+        .filter((hour): hour is string => Boolean(hour)),
+    ),
+  ].sort();
+  return hours.length > 0 ? hours : [...DEFAULT_ALERT_HOURS];
+}
+
+function settingsFromRow(
+  row: {
+    alert_email?: string | null;
+    default_stores?: unknown;
+    alert_days?: unknown;
+    alert_hours?: unknown;
+  } | null,
+  fallbackEmail?: string,
+): JobSettings {
+  return {
+    alertEmail: row?.alert_email || fallbackEmail,
+    stores: parseStoreList(row?.default_stores),
+    alertDays: parseDayList(row?.alert_days),
+    alertHours: parseHourList(row?.alert_hours),
+  };
+}
+
+function isMissingRelation(error: { code?: string; message: string }): boolean {
+  return error.code === "PGRST205" || error.message.includes("app_settings");
+}
+
+function isMissingColumn(error: { code?: string; message: string }): boolean {
+  return (
+    error.code === "PGRST204" ||
+    error.message.includes("alert_days") ||
+    error.message.includes("alert_hours")
+  );
+}
 
 export async function loadTrackedProducts(
   db: SupabaseClient,
@@ -29,25 +103,52 @@ export async function loadTrackedProducts(
   });
 }
 
-export async function loadAlertEmail(
+export async function loadJobSettings(
   db: SupabaseClient,
-  fallback?: string,
-): Promise<string | undefined> {
-  const { data, error } = await db
+  fallbackEmail?: string,
+): Promise<JobSettings> {
+  const full = await db
     .from("app_settings")
-    .select("alert_email")
+    .select("alert_email, default_stores, alert_days, alert_hours")
     .order("updated_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
-  if (error) {
-    if (error.code === "PGRST205" || error.message.includes("app_settings")) {
-      return fallback;
-    }
-    throw new Error(`Supabase app_settings: ${error.message}`);
+  if (!full.error) {
+    return settingsFromRow(full.data, fallbackEmail);
   }
 
-  return data?.alert_email || fallback;
+  if (isMissingRelation(full.error)) {
+    return { ...FALLBACK_JOB_SETTINGS, alertEmail: fallbackEmail };
+  }
+
+  if (!isMissingColumn(full.error)) {
+    throw new Error(`Supabase app_settings: ${full.error.message}`);
+  }
+
+  const legacy = await db
+    .from("app_settings")
+    .select("alert_email, default_stores")
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (legacy.error) {
+    if (isMissingRelation(legacy.error)) {
+      return { ...FALLBACK_JOB_SETTINGS, alertEmail: fallbackEmail };
+    }
+    throw new Error(`Supabase app_settings: ${legacy.error.message}`);
+  }
+
+  return settingsFromRow(legacy.data, fallbackEmail);
+}
+
+export async function loadAlertEmail(
+  db: SupabaseClient,
+  fallback?: string,
+): Promise<string | undefined> {
+  const settings = await loadJobSettings(db, fallback);
+  return settings.alertEmail;
 }
 
 export function argentinaDay(date = new Date()): string {

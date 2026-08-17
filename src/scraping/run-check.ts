@@ -1,8 +1,15 @@
 import { createDbFromConfig } from "../lib/db/client";
-import { ALL_STORES, type OfferMatch, type OfferSnapshot, type StoreId, type TrackedProduct } from "../lib/types";
-import { getCheckConfig, isDryRun, isForceAlert, loadProductsFile } from "./config";
+import { resolveProductStores } from "../lib/stores";
 import {
-  loadAlertEmail,
+  argentinaHourLabel,
+  argentinaWeekday,
+  isInAlertWindow,
+} from "../lib/schedule";
+import { type OfferMatch, type OfferSnapshot, type StoreId, type TrackedProduct } from "../lib/types";
+import { getCheckConfig, isDryRun, isForceAlert, isIgnoreSchedule, loadProductsFile } from "./config";
+import {
+  FALLBACK_JOB_SETTINGS,
+  loadJobSettings,
   loadTrackedProducts,
   recordAlertSent,
   savePriceHistory,
@@ -49,6 +56,7 @@ async function fetchProductStore(
 export async function runOfferCheck(argv = process.argv): Promise<void> {
   const dryRun = isDryRun(argv);
   const forceAlert = isForceAlert(argv);
+  const ignoreSchedule = isIgnoreSchedule(argv) || dryRun || forceAlert;
   const config = getCheckConfig(dryRun);
 
   const canUseDb = Boolean(config.supabaseUrl && config.supabaseKey);
@@ -59,6 +67,20 @@ export async function runOfferCheck(argv = process.argv): Promise<void> {
     throw new Error(
       "SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY son obligatorios fuera de dry-run",
     );
+  }
+
+  const jobSettings = db
+    ? await loadJobSettings(db, config.alertTo)
+    : { ...FALLBACK_JOB_SETTINGS, alertEmail: config.alertTo };
+
+  if (!ignoreSchedule && !isInAlertWindow(jobSettings.alertDays, jobSettings.alertHours)) {
+    const nowDay = argentinaWeekday();
+    const nowHour = argentinaHourLabel();
+    console.log(
+      `Fuera de ventana (AR ${nowDay} ${nowHour}). ` +
+        `Config: ${jobSettings.alertDays.join(",")} @ ${jobSettings.alertHours.join(",")}. Salteo.`,
+    );
+    return;
   }
 
   let products: TrackedProduct[];
@@ -79,15 +101,24 @@ export async function runOfferCheck(argv = process.argv): Promise<void> {
   }
 
   console.log(
-    `Ofertas · productos=${products.length} · source=${source} · dryRun=${dryRun} · force=${forceAlert}`,
+    `Ofertas · productos=${products.length} · source=${source}` +
+      ` · tiendas=${jobSettings.stores.join(",")}` +
+      ` · días=${jobSettings.alertDays.join(",")}` +
+      ` · horas=${jobSettings.alertHours.join(",")}` +
+      ` · dryRun=${dryRun} · force=${forceAlert}`,
   );
 
   const freshMatches: OfferMatch[] = [];
   let errors = 0;
 
   for (const product of products) {
-    const stores = product.stores?.length ? product.stores : ALL_STORES;
+    const stores = resolveProductStores(product.stores, jobSettings.stores);
     console.log(`\n→ ${product.name} (${product.ean}) objetivo $${product.target_price}`);
+
+    if (stores.length === 0) {
+      console.warn("  (sin tiendas: el producto no coincide con Configuración)");
+      continue;
+    }
 
     for (const store of stores) {
       const { snapshot, error } = await fetchProductStore(product, store);
@@ -145,9 +176,7 @@ export async function runOfferCheck(argv = process.argv): Promise<void> {
     return;
   }
 
-  const alertTo = db
-    ? (await loadAlertEmail(db, config.alertTo)) ?? config.alertTo
-    : config.alertTo;
+  const alertTo = jobSettings.alertEmail ?? config.alertTo;
 
   await sendAlertEmail({
     user: config.gmailUser!,

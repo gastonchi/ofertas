@@ -2,8 +2,8 @@ name: Check offers
 
 on:
   schedule:
-    # 08:00 y 20:00 hora Argentina (UTC-3)
-    - cron: "0 11,23 * * *"
+    # Cada hora; el job decide si corresponde según Configuración (hora Argentina).
+    - cron: "0 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -28,4 +28,5 @@ jobs:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           ALERT_TO_EMAIL: ${{ secrets.ALERT_TO_EMAIL }}
+          IGNORE_SCHEDULE: ${{ github.event_name == 'workflow_dispatch' && 'true' || '' }}
         run: npm run check

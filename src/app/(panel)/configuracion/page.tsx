@@ -23,8 +23,9 @@ export default async function SettingsPage() {
           <h2>Alertas</h2>
         </div>
         <p className="muted" style={{ marginTop: 0 }}>
-          El chequeo corre dos veces al día (08:00 y 20:00, Argentina) y te avisa
-          por Gmail si hay oferta.
+          El job lee esta configuración primero: qué tiendas consultar, qué días
+          y a qué hora (Argentina). Cada producto puede limitar todavía más las
+          tiendas.
         </p>
         <p className={gmailReady ? "empty-state" : "setup-banner"}>
           Envío de mail: {gmailReady ? "configurado" : "faltan GMAIL_USER / GMAIL_APP_PASSWORD"}

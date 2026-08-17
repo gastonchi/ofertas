@@ -1,10 +1,12 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useCallback, useEffect, useRef, useState } from "react";
+import { BarcodeField } from "@/components/products/barcode-field";
 import { ALL_STORES, type TrackedProductRow } from "@/lib/types";
 import { STORE_LABELS } from "@/lib/stores";
 import {
   createProductAction,
+  lookupProductNameAction,
   updateProductAction,
   type ProductActionState,
 } from "@/modules/products/actions";
@@ -13,59 +15,117 @@ const initial: ProductActionState = {};
 
 export function ProductForm({
   product,
+  defaultStores,
   onDone,
 }: {
   product?: TrackedProductRow;
+  defaultStores?: TrackedProductRow["stores"];
   onDone?: () => void;
 }) {
   const action = product ? updateProductAction : createProductAction;
   const [state, formAction, pending] = useActionState(action, initial);
+  const [name, setName] = useState(product?.name ?? "");
+  const [ean, setEan] = useState(product?.ean ?? "");
+  const [lookingUp, setLookingUp] = useState(false);
+  const [lookupMessage, setLookupMessage] = useState<string | null>(null);
+  const lookupSeq = useRef(0);
+  const selectedStores = product
+    ? product.stores
+    : defaultStores?.length
+      ? defaultStores
+      : [...ALL_STORES];
 
   useEffect(() => {
     if (state.success) onDone?.();
   }, [state.success, onDone]);
 
+  const lookupName = useCallback(async (scannedEan: string) => {
+    const seq = ++lookupSeq.current;
+    setEan(scannedEan);
+    setLookingUp(true);
+    setLookupMessage("Buscando nombre…");
+
+    try {
+      const result = await lookupProductNameAction(scannedEan);
+      if (seq !== lookupSeq.current) return;
+
+      if (result.error) {
+        setName(scannedEan);
+        setLookupMessage(result.error);
+        return;
+      }
+
+      if (result.name) {
+        setName(result.name);
+        setLookupMessage(
+          result.source === "carrefour"
+            ? "Nombre tomado de Carrefour."
+            : "Nombre tomado de Día.",
+        );
+        return;
+      }
+
+      setName(scannedEan);
+      setLookupMessage(
+        "No se encontró en Carrefour ni Día. Quedó el código de barras.",
+      );
+    } catch {
+      if (seq !== lookupSeq.current) return;
+      setName(scannedEan);
+      setLookupMessage(
+        "No se pudo consultar las tiendas. Quedó el código de barras.",
+      );
+    } finally {
+      if (seq === lookupSeq.current) setLookingUp(false);
+    }
+  }, []);
+
   return (
     <form action={formAction} className="product-form">
       {product ? <input type="hidden" name="id" value={product.id} /> : null}
+      <BarcodeField
+        id="ean"
+        name="ean"
+        value={ean}
+        onValueChange={setEan}
+        onScan={lookupName}
+        lookingUp={lookingUp}
+        autoFocus={!product}
+      />
       <div className="field">
         <label htmlFor="name">Nombre</label>
         <input
           id="name"
           name="name"
           required
-          defaultValue={product?.name ?? ""}
+          value={name}
+          onChange={(event) => setName(event.target.value)}
           placeholder="Ej. Yerba Playadito 1 kg"
         />
+        {lookupMessage ? (
+          <p className="muted" style={{ margin: 0, fontSize: "0.85rem" }}>
+            {lookupMessage}
+          </p>
+        ) : null}
       </div>
-      <div className="field-row">
-        <div className="field">
-          <label htmlFor="ean">EAN</label>
-          <input
-            id="ean"
-            name="ean"
-            required
-            inputMode="numeric"
-            pattern="\d{8,14}"
-            defaultValue={product?.ean ?? ""}
-            placeholder="7790…"
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="target_price">Precio objetivo</label>
-          <input
-            id="target_price"
-            name="target_price"
-            type="number"
-            min={1}
-            step={1}
-            required
-            defaultValue={product?.target_price ?? ""}
-          />
-        </div>
+      <div className="field">
+        <label htmlFor="target_price">Precio objetivo</label>
+        <input
+          id="target_price"
+          name="target_price"
+          type="number"
+          min={1}
+          step={1}
+          required
+          defaultValue={product?.target_price ?? ""}
+        />
       </div>
       <fieldset className="stores-fieldset">
         <legend>Tiendas</legend>
+        <p className="muted" style={{ margin: "0 0 0.65rem", fontSize: "0.85rem" }}>
+          Se cruza con las tiendas de Configuración. Si allá desmarcás una, el
+          job no la consulta aunque esté tildada acá.
+        </p>
         <div className="stores-grid">
           {ALL_STORES.map((store) => (
             <label key={store} className="check-label">
@@ -73,7 +133,7 @@ export function ProductForm({
                 type="checkbox"
                 name="stores"
                 value={store}
-                defaultChecked={product ? product.stores.includes(store) : true}
+                defaultChecked={selectedStores.includes(store)}
               />
               {STORE_LABELS[store]}
             </label>
@@ -93,7 +153,7 @@ export function ProductForm({
       ) : null}
       {state.error ? <p className="form-error">{state.error}</p> : null}
       {state.success ? <p className="form-success">{state.success}</p> : null}
-      <button type="submit" className="btn-primary" disabled={pending}>
+      <button type="submit" className="btn-primary" disabled={pending || lookingUp}>
         {pending
           ? "Guardando…"
           : product
@@ -104,7 +164,11 @@ export function ProductForm({
   );
 }
 
-export function NewProductPanel() {
+export function NewProductPanel({
+  defaultStores,
+}: {
+  defaultStores?: TrackedProductRow["stores"];
+}) {
   const [open, setOpen] = useState(false);
 
   if (!open) {
@@ -123,7 +187,7 @@ export function NewProductPanel() {
           Cerrar
         </button>
       </div>
-      <ProductForm onDone={() => setOpen(false)} />
+      <ProductForm defaultStores={defaultStores} onDone={() => setOpen(false)} />
     </div>
   );
 }

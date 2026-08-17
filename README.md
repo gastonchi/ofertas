@@ -7,9 +7,10 @@ Una sola app: panel de usuario + job de scraping. Un `package.json`, un `node_mo
 ## Qué hace
 
 1. Cargás productos (nombre, EAN, precio objetivo, tiendas)
-2. Un job consulta Carrefour, Día, Jumbo, Disco y Vea
-3. Si hay oferta (precio ≤ objetivo, descuento de lista o promo), te llega un mail
-4. En el panel ves productos, alertas y configuración
+2. En Configuración elegís tiendas, días y horarios de alerta
+3. Un job consulta esas cadenas (cruzadas con las del producto)
+4. Si hay oferta (precio ≤ objetivo, descuento de lista o promo), te llega un mail
+5. En el panel ves productos, alertas y configuración
 
 ## Estructura
 
@@ -47,7 +48,7 @@ Variables:
 
 En Supabase SQL Editor:
 
-1. `supabase/schema.sql`
+1. `supabase/schema.sql` (si ya tenías la DB, volvé a ejecutarlo: agrega `alert_days` y `alert_hours`)
 2. (opcional) `supabase/seed-products.sql`
 
 ```bash
@@ -66,4 +67,6 @@ Mismas env vars que arriba.
 
 ## GitHub Actions
 
-Cron 08:00 y 20:00 (Argentina). Secrets iguales a las env de Vercel (salvo `ADMIN_PASSWORD`).
+Cron cada hora. El job lee Configuración y **sale sin scrapear** si no es un día/horario elegido (hora Argentina, en punto: 08:00, 20:00, …).
+
+Por defecto: todos los días a las 08:00 y 20:00. Un run manual (“Run workflow”) ignora la ventana para poder probar.

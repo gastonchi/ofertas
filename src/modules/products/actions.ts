@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/auth";
 import { createDb } from "@/lib/db/client";
 import { parseStores } from "@/lib/stores";
-import type { TrackedProductRow } from "@/lib/types";
+import type { ProductNameLookupSource, TrackedProductRow } from "@/lib/types";
+import { lookupProductNameByEan } from "@/scraping/lookup-name";
 
 export type ProductActionState = {
   error?: string;
@@ -34,6 +35,30 @@ function parseProductForm(formData: FormData) {
 function revalidateProductViews() {
   revalidatePath("/");
   revalidatePath("/productos");
+}
+
+export type ProductLookupState = {
+  name: string | null;
+  source: ProductNameLookupSource | null;
+  error?: string;
+};
+
+export async function lookupProductNameAction(
+  ean: string,
+): Promise<ProductLookupState> {
+  await requireAuth();
+  const trimmed = String(ean ?? "").replace(/\D/g, "");
+  if (!/^\d{8,14}$/.test(trimmed)) {
+    return {
+      name: null,
+      source: null,
+      error: "El EAN debe tener entre 8 y 14 dígitos.",
+    };
+  }
+
+  const result = await lookupProductNameByEan(trimmed);
+  if (!result) return { name: null, source: null };
+  return result;
 }
 
 export async function listProducts(): Promise<TrackedProductRow[]> {

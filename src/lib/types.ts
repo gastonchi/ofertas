@@ -1,3 +1,5 @@
+import type { Weekday } from "./schedule";
+
 export const ALL_STORES = ["carrefour", "dia", "jumbo", "disco", "vea"] as const;
 
 export type StoreId = (typeof ALL_STORES)[number];
@@ -7,6 +9,13 @@ export type TrackedProduct = {
   ean: string;
   target_price: number;
   stores?: StoreId[];
+};
+
+export type ProductNameLookupSource = "carrefour" | "dia";
+
+export type ProductNameLookupResult = {
+  name: string;
+  source: ProductNameLookupSource;
 };
 
 export type TrackedProductRow = {
@@ -90,5 +99,7 @@ export type AppSettings = {
   id: string;
   alert_email: string | null;
   default_stores: StoreId[];
+  alert_days: Weekday[];
+  alert_hours: string[];
   updated_at: string;
 };

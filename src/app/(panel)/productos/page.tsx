@@ -3,12 +3,14 @@ import { NewProductPanel } from "@/components/products/product-form";
 import { ProductTable } from "@/components/products/product-table";
 import { hasSupabaseConfig } from "@/lib/env";
 import { listProducts } from "@/modules/products/actions";
+import { getSettings } from "@/modules/settings/actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProductsPage() {
   const configured = hasSupabaseConfig();
   const products = configured ? await listProducts() : [];
+  const settings = configured ? await getSettings() : null;
 
   return (
     <AppShell title="Productos" pathname="/productos">
@@ -19,10 +21,10 @@ export default async function ProductsPage() {
       ) : null}
       <div className="panel-head">
         <p className="muted" style={{ margin: 0 }}>
-          Estos productos se chequean dos veces al día. Si hay oferta, te llega un
-          mail.
+          Estos productos se chequean en los días y horarios de Configuración.
+          El job usa las tiendas de allá, cruzadas con las de cada producto.
         </p>
-        <NewProductPanel />
+        <NewProductPanel defaultStores={settings?.default_stores} />
       </div>
       <div className="panel">
         <ProductTable products={products} />

@@ -32,6 +32,10 @@ export function isForceAlert(argv = process.argv): boolean {
   return argv.includes("--force") || process.env.FORCE_ALERT === "true";
 }
 
+export function isIgnoreSchedule(argv = process.argv): boolean {
+  return argv.includes("--ignore-schedule") || process.env.IGNORE_SCHEDULE === "true";
+}
+
 export function getCheckConfig(dryRun: boolean) {
   if (dryRun) {
     return {
