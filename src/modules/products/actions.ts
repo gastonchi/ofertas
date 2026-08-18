@@ -20,6 +20,9 @@ function parseProductForm(formData: FormData) {
   const stores = parseStores(formData.getAll("stores"));
   const active =
     formData.get("active") === "on" || formData.get("active") === "true";
+  const alerts_enabled =
+    formData.get("alerts_enabled") === "on" ||
+    formData.get("alerts_enabled") === "true";
 
   if (!name) return { error: "El nombre es obligatorio." } as const;
   if (!/^\d{8,14}$/.test(ean)) {
@@ -29,7 +32,7 @@ function parseProductForm(formData: FormData) {
     return { error: "El precio objetivo debe ser un número mayor a 0." } as const;
   }
 
-  return { name, ean, target_price, stores, active } as const;
+  return { name, ean, target_price, stores, active, alerts_enabled } as const;
 }
 
 function revalidateProductViews() {
@@ -67,10 +70,13 @@ export async function listProducts(): Promise<TrackedProductRow[]> {
   const { data, error } = await db
     .from("tracked_products")
     .select("*")
-    .order("created_at", { ascending: true });
+    .order("name", { ascending: true });
 
   if (error) throw new Error(error.message);
-  return (data ?? []) as TrackedProductRow[];
+  return (data ?? []).map((row) => ({
+    ...(row as TrackedProductRow),
+    alerts_enabled: (row as TrackedProductRow).alerts_enabled !== false,
+  }));
 }
 
 export async function createProductAction(
@@ -88,6 +94,7 @@ export async function createProductAction(
     target_price: parsed.target_price,
     stores: parsed.stores,
     active: true,
+    alerts_enabled: true,
   });
 
   if (error) {
@@ -121,6 +128,7 @@ export async function updateProductAction(
       target_price: parsed.target_price,
       stores: parsed.stores,
       active: parsed.active,
+      alerts_enabled: parsed.alerts_enabled,
     })
     .eq("id", id);
 
@@ -145,6 +153,35 @@ export async function deleteProductAction(formData: FormData) {
   if (error) throw new Error(error.message);
 
   revalidateProductViews();
+}
+
+export async function toggleProductAlertsAction(
+  formData: FormData,
+): Promise<{ alertsEnabled: boolean } | { error: string }> {
+  await requireAuth();
+  const id = String(formData.get("id") ?? "");
+  const alertsEnabled = String(formData.get("alerts_enabled") ?? "") === "true";
+  if (!id) return { error: "Falta el id del producto." };
+
+  const next = !alertsEnabled;
+  const db = createDb();
+  const { error } = await db
+    .from("tracked_products")
+    .update({ alerts_enabled: next })
+    .eq("id", id);
+
+  if (error) {
+    if (error.code === "PGRST204" || error.message.includes("alerts_enabled")) {
+      return {
+        error:
+          "Falta la columna alerts_enabled. Ejecutá supabase/schema.sql en el SQL Editor.",
+      };
+    }
+    return { error: error.message };
+  }
+
+  revalidateProductViews();
+  return { alertsEnabled: next };
 }
 
 export async function toggleProductActiveAction(formData: FormData) {

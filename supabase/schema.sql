@@ -36,6 +36,7 @@ create table if not exists public.tracked_products (
   target_price numeric not null check (target_price > 0),
   stores text[] not null default array['carrefour', 'dia', 'jumbo', 'disco', 'vea'],
   active boolean not null default true,
+  alerts_enabled boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint tracked_products_ean_unique unique (ean)
@@ -44,6 +45,9 @@ create table if not exists public.tracked_products (
 create index if not exists tracked_products_active_idx
   on public.tracked_products (active)
   where active = true;
+
+alter table public.tracked_products
+  add column if not exists alerts_enabled boolean not null default true;
 
 create table if not exists public.app_settings (
   id uuid primary key default gen_random_uuid(),

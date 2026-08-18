@@ -79,17 +79,28 @@ function isMissingColumn(error: { code?: string; message: string }): boolean {
 export async function loadTrackedProducts(
   db: SupabaseClient,
 ): Promise<TrackedProduct[]> {
-  const { data, error } = await db
+  const withAlerts = await db
     .from("tracked_products")
-    .select("name, ean, target_price, stores, active")
+    .select("name, ean, target_price, stores, active, alerts_enabled")
     .eq("active", true)
     .order("created_at", { ascending: true });
 
-  if (error) {
-    throw new Error(`Supabase tracked_products: ${error.message}`);
+  const result =
+    withAlerts.error &&
+    (withAlerts.error.code === "PGRST204" ||
+      withAlerts.error.message.includes("alerts_enabled"))
+      ? await db
+          .from("tracked_products")
+          .select("name, ean, target_price, stores, active")
+          .eq("active", true)
+          .order("created_at", { ascending: true })
+      : withAlerts;
+
+  if (result.error) {
+    throw new Error(`Supabase tracked_products: ${result.error.message}`);
   }
 
-  return (data ?? []).map((row) => {
+  return (result.data ?? []).map((row) => {
     const stores = Array.isArray(row.stores)
       ? row.stores.map(String).filter(isStoreId)
       : [];
@@ -99,6 +110,7 @@ export async function loadTrackedProducts(
       ean: String(row.ean),
       target_price: Number(row.target_price),
       stores: stores.length > 0 ? stores : undefined,
+      alertsEnabled: row.alerts_enabled !== false,
     };
   });
 }

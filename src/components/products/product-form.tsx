@@ -1,7 +1,9 @@
 "use client";
 
 import { useActionState, useCallback, useEffect, useRef, useState } from "react";
+import { Pencil, Plus } from "lucide-react";
 import { BarcodeField } from "@/components/products/barcode-field";
+import { Modal } from "@/components/ui/modal";
 import { ALL_STORES, type TrackedProductRow } from "@/lib/types";
 import { STORE_LABELS } from "@/lib/stores";
 import {
@@ -141,15 +143,26 @@ export function ProductForm({
         </div>
       </fieldset>
       {product ? (
-        <label className="check-label">
-          <input
-            type="checkbox"
-            name="active"
-            value="true"
-            defaultChecked={product.active}
-          />
-          Activo (incluido en el chequeo)
-        </label>
+        <>
+          <label className="check-label">
+            <input
+              type="checkbox"
+              name="active"
+              value="true"
+              defaultChecked={product.active}
+            />
+            Activo (incluido en el chequeo)
+          </label>
+          <label className="check-label">
+            <input
+              type="checkbox"
+              name="alerts_enabled"
+              value="true"
+              defaultChecked={product.alerts_enabled}
+            />
+            Alertas por email
+          </label>
+        </>
       ) : null}
       {state.error ? <p className="form-error">{state.error}</p> : null}
       {state.success ? <p className="form-success">{state.success}</p> : null}
@@ -174,6 +187,7 @@ export function NewProductPanel({
   if (!open) {
     return (
       <button type="button" className="btn-primary" onClick={() => setOpen(true)}>
+        <Plus size={18} aria-hidden />
         Nuevo producto
       </button>
     );
@@ -195,20 +209,24 @@ export function NewProductPanel({
 export function EditProductPanel({ product }: { product: TrackedProductRow }) {
   const [open, setOpen] = useState(false);
 
-  if (!open) {
-    return (
-      <button type="button" className="btn-ghost" onClick={() => setOpen(true)}>
-        Editar
-      </button>
-    );
-  }
-
   return (
-    <div className="inline-edit">
-      <ProductForm product={product} onDone={() => setOpen(false)} />
-      <button type="button" className="btn-ghost" onClick={() => setOpen(false)}>
-        Cancelar
+    <>
+      <button
+        type="button"
+        className="btn-edit btn-icon"
+        onClick={() => setOpen(true)}
+        aria-label={`Editar ${product.name}`}
+        title="Editar"
+      >
+        <Pencil size={18} aria-hidden />
       </button>
-    </div>
+      <Modal
+        open={open}
+        title="Editar producto"
+        onClose={() => setOpen(false)}
+      >
+        <ProductForm product={product} onDone={() => setOpen(false)} />
+      </Modal>
+    </>
   );
 }

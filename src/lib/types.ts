@@ -9,6 +9,7 @@ export type TrackedProduct = {
   ean: string;
   target_price: number;
   stores?: StoreId[];
+  alertsEnabled?: boolean;
 };
 
 export type ProductNameLookupSource = "carrefour" | "dia";
@@ -25,6 +26,7 @@ export type TrackedProductRow = {
   target_price: number;
   stores: StoreId[];
   active: boolean;
+  alerts_enabled: boolean;
   created_at: string;
   updated_at: string;
 };

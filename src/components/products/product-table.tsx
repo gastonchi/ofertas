@@ -1,4 +1,4 @@
-import { ProductActions } from "@/components/products/product-actions";
+import { ProductActions, ProductAlertsToggle } from "@/components/products/product-actions";
 import { formatArs } from "@/lib/format";
 import { STORE_LABELS } from "@/lib/stores";
 import type { StoreId, TrackedProductRow } from "@/lib/types";
@@ -20,7 +20,7 @@ function ProductCard({ product }: { product: TrackedProductRow }) {
     <article className={`info-card ${product.active ? "" : "dimmed"}`.trim()}>
       <header className="info-card-head">
         <h3 className="product-name">{product.name}</h3>
-        <span className="chip">{product.active ? "Activo" : "Pausado"}</span>
+        <ProductAlertsToggle product={product} />
       </header>
       <dl className="info-card-meta">
         <div>
@@ -65,10 +65,8 @@ export function ProductTable({ products }: { products: TrackedProductRow[] }) {
               <th>EAN</th>
               <th>Objetivo</th>
               <th>Tiendas</th>
-              <th>Estado</th>
-              <th>
-                <span className="sr-only">Acciones</span>
-              </th>
+              <th>Alertas</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -87,7 +85,10 @@ export function ProductTable({ products }: { products: TrackedProductRow[] }) {
                 <td>
                   <StoreChips stores={product.stores} />
                 </td>
-                <td colSpan={2}>
+                <td>
+                  <ProductAlertsToggle product={product} />
+                </td>
+                <td>
                   <ProductActions product={product} />
                 </td>
               </tr>

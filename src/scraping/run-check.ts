@@ -158,6 +158,10 @@ export async function runOfferCheck(argv = process.argv): Promise<void> {
       }
 
       console.log(`  OFERTA: ${match.triggers.map((t) => t.message).join(" | ")}`);
+      if (product.alertsEnabled === false) {
+        console.log("  (alertas desactivadas para este producto)");
+        continue;
+      }
       freshMatches.push(match);
     }
   }

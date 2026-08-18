@@ -1,11 +1,19 @@
 import Link from "next/link";
+import {
+  Bell,
+  House,
+  LogOut,
+  Package,
+  Settings,
+  type LucideIcon,
+} from "lucide-react";
 import { logoutAction } from "@/modules/auth/actions";
 
-const NAV = [
-  { href: "/", label: "Inicio" },
-  { href: "/productos", label: "Productos" },
-  { href: "/alertas", label: "Alertas" },
-  { href: "/configuracion", label: "Configuración" },
+const NAV: { href: string; label: string; icon: LucideIcon }[] = [
+  { href: "/", label: "Inicio", icon: House },
+  { href: "/productos", label: "Productos", icon: Package },
+  { href: "/alertas", label: "Alertas", icon: Bell },
+  { href: "/configuracion", label: "Configuración", icon: Settings },
 ];
 
 export function AppShell({
@@ -33,6 +41,7 @@ export function AppShell({
                 href={item.href}
                 className={active ? "nav-link active" : "nav-link"}
               >
+                <item.icon size={18} aria-hidden />
                 {item.label}
               </Link>
             );
@@ -40,6 +49,7 @@ export function AppShell({
         </nav>
         <form action={logoutAction} className="logout-form">
           <button type="submit" className="btn-ghost">
+            <LogOut size={18} aria-hidden />
             Salir
           </button>
         </form>
