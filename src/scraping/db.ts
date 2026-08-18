@@ -101,16 +101,23 @@ export async function loadTrackedProducts(
   }
 
   return (result.data ?? []).map((row) => {
-    const stores = Array.isArray(row.stores)
-      ? row.stores.map(String).filter(isStoreId)
+    const data = row as {
+      name: unknown;
+      ean: unknown;
+      target_price: unknown;
+      stores: unknown;
+      alerts_enabled?: boolean;
+    };
+    const stores = Array.isArray(data.stores)
+      ? data.stores.map(String).filter(isStoreId)
       : [];
 
     return {
-      name: String(row.name),
-      ean: String(row.ean),
-      target_price: Number(row.target_price),
+      name: String(data.name),
+      ean: String(data.ean),
+      target_price: Number(data.target_price),
       stores: stores.length > 0 ? stores : undefined,
-      alertsEnabled: row.alerts_enabled !== false,
+      alertsEnabled: data.alerts_enabled !== false,
     };
   });
 }
