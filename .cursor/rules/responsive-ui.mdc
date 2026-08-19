@@ -24,7 +24,7 @@ Listas densas (alertas, precios) también se apilan en cards en mobile: título,
 
 ## Layout
 
-- Shell: sidebar en desktop; barra compacta + nav horizontal en mobile.
+- Shell: sidebar en desktop; barra compacta con hamburguesa (top right) que abre un sidebar drawer en mobile.
 - Grids (`stats-grid`, formularios, tiendas) a una columna en mobile.
 - `panel-head` se apila (título / CTA) en mobile.
 - Probar a 375px de ancho antes de dar una pantalla por cerrada.
