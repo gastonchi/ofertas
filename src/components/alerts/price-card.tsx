@@ -1,13 +1,13 @@
 import { formatArs, formatDateTime } from "@/lib/format";
-import { STORE_LABELS } from "@/lib/stores";
-import type { PriceHistoryRow, StoreId } from "@/lib/types";
+import { StoreLogo } from "@/components/ui/store-logo";
+import type { PriceHistoryRow } from "@/lib/types";
 
 export function PriceCard({ row }: { row: PriceHistoryRow }) {
   return (
     <article className="info-card">
       <header className="info-card-head">
         <h3 className="product-name">{row.product_name ?? row.ean}</h3>
-        <span className="chip">{STORE_LABELS[row.store as StoreId] ?? row.store}</span>
+        <StoreLogo store={row.store} size="sm" />
       </header>
       <dl className="info-card-meta">
         <div>

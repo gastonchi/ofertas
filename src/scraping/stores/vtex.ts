@@ -115,7 +115,7 @@ export async function fetchVtexByEan(opts: {
 
   return {
     store: opts.store,
-    ean: item.ean ?? opts.ean,
+    ean: opts.ean,
     productName: product.productName ?? "Producto sin nombre",
     url:
       product.link ??

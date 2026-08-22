@@ -1,6 +1,6 @@
 import { formatArs, formatDateTime } from "@/lib/format";
-import { STORE_LABELS } from "@/lib/stores";
-import type { AlertRow, StoreId } from "@/lib/types";
+import { StoreLogo } from "@/components/ui/store-logo";
+import type { AlertRow } from "@/lib/types";
 
 export function AlertCard({ alert }: { alert: AlertRow }) {
   const name =
@@ -11,13 +11,12 @@ export function AlertCard({ alert }: { alert: AlertRow }) {
     alert.payload?.triggers?.map((t) => t.message).join(" · ") ??
     "Oferta detectada";
   const price = alert.payload?.snapshot?.price;
-  const storeLabel = STORE_LABELS[alert.store as StoreId] ?? alert.store;
 
   return (
     <article className="info-card">
       <header className="info-card-head">
         <h3 className="product-name">{name}</h3>
-        <span className="chip">{storeLabel}</span>
+        <StoreLogo store={alert.store} size="sm" />
       </header>
       <p className="muted info-card-copy">{triggers}</p>
       <dl className="info-card-meta">

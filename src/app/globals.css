@@ -228,6 +228,17 @@ code,
   font-family: var(--font-display), serif;
   font-size: 2rem;
   letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+}
+
+.stat-store {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.55rem;
+  margin: 0.45rem 0 0;
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
 }
 
 .btn-primary,
@@ -499,6 +510,17 @@ code,
   max-width: 100%;
 }
 
+.info-card-best {
+  border-color: var(--brand);
+  background: rgba(31, 106, 69, 0.1);
+  box-shadow: 0 0 0 1px var(--brand), var(--shadow);
+}
+
+.info-card-best .product-name,
+.info-card-best strong {
+  color: var(--brand-ink);
+}
+
 .panel,
 .stat-card {
   min-width: 0;
@@ -584,11 +606,63 @@ code,
   min-height: 44px;
 }
 
+a.btn-edit,
+a.btn-ghost,
+a.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .store-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem;
+  align-items: center;
+  gap: 0.45rem 0.55rem;
   min-width: 0;
+}
+
+.store-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 1.75rem;
+}
+
+.store-logo img {
+  display: block;
+  height: 100%;
+  width: auto;
+  max-width: 5.75rem;
+  object-fit: contain;
+}
+
+.store-logo-sm {
+  height: 1.35rem;
+}
+
+.store-logo-sm img {
+  max-width: 4.5rem;
+}
+
+.store-logo-lg {
+  height: 2.4rem;
+}
+
+.store-logo-lg img {
+  max-width: 7.5rem;
+}
+
+.product-stats-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.65rem;
+}
+
+.check-label .store-logo {
+  height: 1.45rem;
 }
 
 .chip {

@@ -1,19 +1,7 @@
 import { ProductActions, ProductAlertsToggle } from "@/components/products/product-actions";
+import { StoreLogoList } from "@/components/ui/store-logo";
 import { formatArs } from "@/lib/format";
-import { STORE_LABELS } from "@/lib/stores";
-import type { StoreId, TrackedProductRow } from "@/lib/types";
-
-function StoreChips({ stores }: { stores: TrackedProductRow["stores"] }) {
-  return (
-    <span className="store-chips">
-      {stores.map((store) => (
-        <span key={store} className="chip">
-          {STORE_LABELS[store as StoreId] ?? store}
-        </span>
-      ))}
-    </span>
-  );
-}
+import type { TrackedProductRow } from "@/lib/types";
 
 function ProductCard({ product }: { product: TrackedProductRow }) {
   return (
@@ -36,7 +24,7 @@ function ProductCard({ product }: { product: TrackedProductRow }) {
         <div className="info-card-span">
           <dt>Tiendas</dt>
           <dd>
-            <StoreChips stores={product.stores} />
+            <StoreLogoList stores={product.stores} />
           </dd>
         </div>
       </dl>
@@ -83,7 +71,7 @@ export function ProductTable({ products }: { products: TrackedProductRow[] }) {
                 </td>
                 <td>{formatArs(Number(product.target_price))}</td>
                 <td>
-                  <StoreChips stores={product.stores} />
+                  <StoreLogoList stores={product.stores} />
                 </td>
                 <td>
                   <ProductAlertsToggle product={product} />

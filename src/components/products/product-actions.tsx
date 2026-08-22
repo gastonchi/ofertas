@@ -1,7 +1,8 @@
 "use client";
 
 import { useTransition } from "react";
-import { Bell, BellOff, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { Bell, BellOff, ChartColumn, Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
 import {
   deleteProductAction,
@@ -67,6 +68,14 @@ export function ProductActions({ product }: { product: TrackedProductRow }) {
 
   return (
     <div className="card-actions">
+      <Link
+        href={`/productos/${product.id}`}
+        className="btn-edit btn-icon"
+        aria-label={`Ver estadísticas de ${product.name}`}
+        title="Estadísticas"
+      >
+        <ChartColumn size={18} aria-hidden />
+      </Link>
       <EditProductPanel product={product} />
       <button
         type="button"

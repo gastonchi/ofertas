@@ -97,6 +97,19 @@ export type PriceHistoryRow = {
   checked_at: string;
 };
 
+export type PriceStat = {
+  price: number;
+  store: string;
+  checked_at: string;
+} | null;
+
+export type ProductPriceStats = {
+  latest: PriceStat;
+  best7d: PriceStat;
+  best30d: PriceStat;
+  latestByStore: NonNullable<PriceStat>[];
+};
+
 export type AppSettings = {
   id: string;
   alert_email: string | null;

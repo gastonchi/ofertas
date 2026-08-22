@@ -8,6 +8,14 @@ export const STORE_LABELS: Record<StoreId, string> = {
   vea: "Vea",
 };
 
+export const STORE_LOGOS: Record<StoreId, string> = {
+  carrefour: "/logos/Carrefour_id5WpI3zid_0.svg",
+  dia: "/logos/dia-old-logo.svg",
+  jumbo: "/logos/jumbo.png",
+  disco: "/logos/Disco-Supermarket-Logo.svg",
+  vea: "/logos/logo vea.webp",
+};
+
 export function isStoreId(value: string): value is StoreId {
   return (ALL_STORES as readonly string[]).includes(value);
 }

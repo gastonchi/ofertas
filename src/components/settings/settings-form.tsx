@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { ALL_STORES, type AppSettings } from "@/lib/types";
-import { STORE_LABELS } from "@/lib/stores";
+import { StoreLogo } from "@/components/ui/store-logo";
 import {
   DEFAULT_ALERT_DAYS,
   DEFAULT_ALERT_HOURS,
@@ -66,7 +66,7 @@ export function SettingsForm({
                 value={store}
                 defaultChecked={selectedStores.includes(store)}
               />
-              {STORE_LABELS[store]}
+              <StoreLogo store={store} size="sm" />
             </label>
           ))}
         </div>

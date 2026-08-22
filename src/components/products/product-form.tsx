@@ -5,7 +5,7 @@ import { Pencil, Plus } from "lucide-react";
 import { BarcodeField } from "@/components/products/barcode-field";
 import { Modal } from "@/components/ui/modal";
 import { ALL_STORES, type TrackedProductRow } from "@/lib/types";
-import { STORE_LABELS } from "@/lib/stores";
+import { StoreLogo } from "@/components/ui/store-logo";
 import {
   createProductAction,
   lookupProductNameAction,
@@ -137,7 +137,7 @@ export function ProductForm({
                 value={store}
                 defaultChecked={selectedStores.includes(store)}
               />
-              {STORE_LABELS[store]}
+              <StoreLogo store={store} size="sm" />
             </label>
           ))}
         </div>
