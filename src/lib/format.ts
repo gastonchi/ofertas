@@ -6,6 +6,15 @@ export function formatArs(value: number): string {
   }).format(value);
 }
 
+export function formatDay(ymd: string): string {
+  return new Intl.DateTimeFormat("es-AR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    timeZone: "America/Argentina/Buenos_Aires",
+  }).format(new Date(`${ymd}T12:00:00.000-03:00`));
+}
+
 export function formatDateTime(value: string): string {
   return new Intl.DateTimeFormat("es-AR", {
     dateStyle: "short",

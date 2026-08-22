@@ -23,11 +23,13 @@ const NAV: { href: string; label: string; icon: LucideIcon }[] = [
 
 export function AppShell({
   title,
+  titleNote,
   titleAction,
   children,
   pathname,
 }: {
   title: string;
+  titleNote?: string;
   titleAction?: ReactNode;
   children: ReactNode;
   pathname: string;
@@ -114,7 +116,12 @@ export function AppShell({
       </aside>
       <div className="app-main">
         <header className="app-header">
-          <h1>{title}</h1>
+          <h1>
+            {title}
+            {titleNote ? (
+              <span className="page-title-note">{titleNote}</span>
+            ) : null}
+          </h1>
           {titleAction}
         </header>
         <div className="app-content">{children}</div>

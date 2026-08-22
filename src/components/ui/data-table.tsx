@@ -41,6 +41,7 @@ function ViewToggle({
 export function DataTable({
   storageKey,
   defaultView = "table",
+  header,
   toolbar,
   endToolbar,
   table,
@@ -48,6 +49,7 @@ export function DataTable({
 }: {
   storageKey: string;
   defaultView?: DataViewMode;
+  header?: ReactNode;
   toolbar?: ReactNode;
   endToolbar?: ReactNode;
   table: ReactNode;
@@ -69,12 +71,19 @@ export function DataTable({
 
   return (
     <div className={`data-table-shell view-${view}`}>
-      <div className="data-table-toolbar">
-        <div className="data-table-toolbar-start">{toolbar}</div>
-        <div className="data-table-toolbar-end">
-          {endToolbar}
-          <div className="desktop-only">
-            <ViewToggle value={view} onChange={changeView} />
+      <div className="data-table-toolbar-stack">
+        {header ? (
+          <div className="data-table-toolbar-row data-table-toolbar-primary">
+            {header}
+          </div>
+        ) : null}
+        <div className="data-table-toolbar-row">
+          <div className="data-table-toolbar-start">{toolbar}</div>
+          <div className="data-table-toolbar-end">
+            {endToolbar}
+            <div className="desktop-only">
+              <ViewToggle value={view} onChange={changeView} />
+            </div>
           </div>
         </div>
       </div>

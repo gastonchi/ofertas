@@ -9,6 +9,24 @@ export async function listRecentAlerts(limit = 40): Promise<AlertRow[]> {
   return fetchAlerts(db, limit);
 }
 
+export async function listAlertsInRange(
+  fromDay: string,
+  toDay: string,
+): Promise<AlertRow[]> {
+  await requireAuth();
+  const db = createDb();
+  const { data, error } = await db
+    .from("alerts_sent")
+    .select("*")
+    .gte("alert_day", fromDay)
+    .lte("alert_day", toDay)
+    .order("sent_at", { ascending: false })
+    .limit(1000);
+
+  if (error) throw new Error(error.message);
+  return (data ?? []) as AlertRow[];
+}
+
 export async function listRecentPrices(limit = 8): Promise<PriceHistoryRow[]> {
   await requireAuth();
   const db = createDb();

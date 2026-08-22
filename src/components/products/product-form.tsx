@@ -184,25 +184,27 @@ export function NewProductPanel({
 }) {
   const [open, setOpen] = useState(false);
 
-  if (!open) {
-    return (
-      <button type="button" className="btn-primary" onClick={() => setOpen(true)}>
+  return (
+    <>
+      <button
+        type="button"
+        className="btn-primary"
+        onClick={() => setOpen(true)}
+      >
         <Plus size={18} aria-hidden />
         Nuevo producto
       </button>
-    );
-  }
-
-  return (
-    <div className="panel">
-      <div className="panel-head">
-        <h2>Nuevo producto</h2>
-        <button type="button" className="btn-ghost" onClick={() => setOpen(false)}>
-          Cerrar
-        </button>
-      </div>
-      <ProductForm defaultStores={defaultStores} onDone={() => setOpen(false)} />
-    </div>
+      <Modal
+        open={open}
+        title="Nuevo producto"
+        onClose={() => setOpen(false)}
+      >
+        <ProductForm
+          defaultStores={defaultStores}
+          onDone={() => setOpen(false)}
+        />
+      </Modal>
+    </>
   );
 }
 

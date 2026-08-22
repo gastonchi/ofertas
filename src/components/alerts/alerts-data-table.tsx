@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { AlertCard } from "@/components/alerts/alert-card";
+import { AlertsDateRange } from "@/components/alerts/alerts-date-range";
 import { getAlertDisplay } from "@/components/alerts/alert-display";
 import { DataTable } from "@/components/ui/data-table";
 import { StoreLogo } from "@/components/ui/store-logo";
@@ -79,7 +80,17 @@ function normalizeStore(store: string) {
   return store.trim().toLowerCase();
 }
 
-export function AlertsDataTable({ alerts }: { alerts: AlertRow[] }) {
+export function AlertsDataTable({
+  alerts,
+  from,
+  to,
+  max,
+}: {
+  alerts: AlertRow[];
+  from: string;
+  to: string;
+  max: string;
+}) {
   const [sort, setSort] = useState<{ key: SortKey; dir: SortDir } | null>(null);
   const [enabledStores, setEnabledStores] = useState<Set<StoreId>>(
     () => new Set(ALL_STORES),
@@ -123,13 +134,16 @@ export function AlertsDataTable({ alerts }: { alerts: AlertRow[] }) {
       <p className="empty-state">
         {query.trim()
           ? "No hay alertas que coincidan con la búsqueda."
-          : "No hay alertas para las tiendas seleccionadas."}
+          : alerts.length === 0
+            ? "No hay alertas en ese rango de fechas."
+            : "No hay alertas para las tiendas seleccionadas."}
       </p>
     ) : null;
 
   return (
     <DataTable
       storageKey="alerts"
+      header={<AlertsDateRange from={from} to={to} max={max} />}
       toolbar={
         <>
           <div className="store-filter" role="group" aria-label="Filtrar por supermercado">

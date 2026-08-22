@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { X } from "lucide-react";
 
 export function Modal({
   open,
@@ -59,8 +60,14 @@ export function Modal({
       <div className="modal-panel" onClick={(event) => event.stopPropagation()}>
         <div className="panel-head">
           <h2 id={titleId}>{title}</h2>
-          <button type="button" className="btn-ghost" onClick={onClose}>
-            Cerrar
+          <button
+            type="button"
+            className="btn-danger btn-icon"
+            onClick={onClose}
+            aria-label="Cerrar"
+            title="Cerrar"
+          >
+            <X size={18} aria-hidden />
           </button>
         </div>
         {children}

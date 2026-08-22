@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Loader2, ScanBarcode, X } from "lucide-react";
 
 type DetectedBarcode = { rawValue: string };
 
@@ -192,14 +193,34 @@ export function BarcodeField({
         />
         <button
           type="button"
-          className="btn-ghost"
+          className="btn-ghost btn-icon"
           disabled={lookingUp}
+          aria-label={
+            lookingUp
+              ? "Buscando nombre"
+              : cameraOpen
+                ? "Cerrar cámara"
+                : "Escanear código de barras"
+          }
+          title={
+            lookingUp
+              ? "Buscando…"
+              : cameraOpen
+                ? "Cerrar cámara"
+                : "Escanear"
+          }
           onClick={() => {
             setCameraError(null);
             setCameraOpen((open) => !open);
           }}
         >
-          {lookingUp ? "Buscando…" : cameraOpen ? "Cerrar cámara" : "Escanear"}
+          {lookingUp ? (
+            <Loader2 size={18} className="spin" aria-hidden />
+          ) : cameraOpen ? (
+            <X size={18} aria-hidden />
+          ) : (
+            <ScanBarcode size={18} aria-hidden />
+          )}
         </button>
       </div>
       {cameraOpen ? (
