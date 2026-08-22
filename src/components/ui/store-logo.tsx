@@ -16,7 +16,7 @@ export function StoreLogo({
   }
 
   return (
-    <span className={`store-logo store-logo-${size}`}>
+    <span className={`store-logo store-logo-${size} store-logo-${key}`}>
       <img src={encodeURI(src)} alt={label} title={label} />
     </span>
   );

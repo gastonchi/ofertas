@@ -10,21 +10,18 @@ function StatCard({
   stat: PriceStat;
 }) {
   return (
-    <article className="stat-card">
-      <span>{label}</span>
+    <article className="stat-card product-best-stat">
+      <header className="stat-card-head">
+        <span>{label}</span>
+        <strong>{stat ? formatArs(stat.price) : "—"}</strong>
+      </header>
       {stat ? (
-        <>
-          <strong>{formatArs(stat.price)}</strong>
-          <p className="stat-store">
-            <StoreLogo store={stat.store} size="md" />
-            <span className="muted">{formatWeekdayDate(stat.checked_at)}</span>
-          </p>
-        </>
+        <p className="stat-store">
+          <StoreLogo store={stat.store} size="md" />
+          <span className="muted">{formatWeekdayDate(stat.checked_at)}</span>
+        </p>
       ) : (
-        <>
-          <strong>—</strong>
-          <p className="stat-store muted">Sin datos en este período</p>
-        </>
+        <p className="stat-store muted">Sin datos en este período</p>
       )}
     </article>
   );
@@ -34,9 +31,9 @@ export function ProductStats({ stats }: { stats: ProductPriceStats }) {
   return (
     <>
       <section className="stats-grid">
-        <StatCard label="Mejor precio actual" stat={stats.latest} />
-        <StatCard label="Mejor precio · 7 días" stat={stats.best7d} />
-        <StatCard label="Mejor precio · 30 días" stat={stats.best30d} />
+        <StatCard label="Último mejor precio" stat={stats.latest} />
+        <StatCard label="Mejor en 7 días" stat={stats.best7d} />
+        <StatCard label="Mejor en 30 días" stat={stats.best30d} />
       </section>
       <section className="panel">
         <div className="panel-head">
@@ -52,7 +49,11 @@ export function ProductStats({ stats }: { stats: ProductPriceStats }) {
               return (
                 <article
                   key={stat.store}
-                  className={isBest ? "info-card info-card-best" : "info-card"}
+                  className={
+                    isBest
+                      ? "info-card info-card-best store-price-card"
+                      : "info-card store-price-card"
+                  }
                 >
                   <header className="info-card-head">
                     <StoreLogo store={stat.store} size="lg" />
