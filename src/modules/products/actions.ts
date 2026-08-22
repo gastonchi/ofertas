@@ -3,9 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/auth";
 import { createDb } from "@/lib/db/client";
-import { parseStores } from "@/lib/stores";
+import { parseStores, resolveProductStores } from "@/lib/stores";
 import type { ProductNameLookupSource, TrackedProductRow } from "@/lib/types";
 import { lookupProductNameByEan } from "@/scraping/lookup-name";
+import { loadJobSettings } from "@/scraping/db";
+import { refreshProductPrices } from "@/scraping/refresh-product-prices";
+import { productHasPriceToday } from "@/modules/products/queries";
 
 export type ProductActionState = {
   error?: string;
@@ -182,6 +185,86 @@ export async function toggleProductAlertsAction(
 
   revalidateProductViews();
   return { alertsEnabled: next };
+}
+
+export async function refreshProductPriceAction(
+  productId: string,
+): Promise<{ error: string } | { saved: number; message: string }> {
+  await requireAuth();
+  const id = String(productId ?? "").trim();
+  if (!id) return { error: "Falta el id del producto." };
+
+  const db = createDb();
+  const { data, error } = await db
+    .from("tracked_products")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) return { error: error.message };
+  if (!data) return { error: "No se encontró el producto." };
+
+  const product = data as TrackedProductRow;
+  const hasToday = await productHasPriceToday(product);
+  if (hasToday) {
+    return { error: "Hoy ya hay un precio cargado para este producto." };
+  }
+
+  const jobSettings = await loadJobSettings(db);
+  const stores = resolveProductStores(product.stores, jobSettings.stores);
+  if (stores.length === 0) {
+    return {
+      error: "Este producto no tiene tiendas en común con Configuración.",
+    };
+  }
+
+  const result = await refreshProductPrices(
+    db,
+    {
+      name: product.name,
+      ean: product.ean,
+      target_price: Number(product.target_price),
+      stores: product.stores,
+      alertsEnabled: product.alerts_enabled !== false,
+    },
+    jobSettings.stores,
+  );
+
+  revalidateProductViews();
+  revalidatePath(`/productos/${id}`);
+
+  if (result.saved === 0) {
+    const details = [
+      ...result.errors.map((item) => `${item.store}: ${item.message}`),
+      result.notFound.length > 0
+        ? `No encontrado en ${result.notFound.join(", ")}`
+        : "",
+    ]
+      .filter(Boolean)
+      .join(" · ");
+    return {
+      error: details || "No se pudo obtener el precio en ninguna tienda.",
+    };
+  }
+
+  const extras = [
+    result.notFound.length > 0
+      ? `Sin resultado en ${result.notFound.join(", ")}`
+      : "",
+    result.errors.length > 0
+      ? result.errors.map((item) => `${item.store}: ${item.message}`).join(" · ")
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  return {
+    saved: result.saved,
+    message:
+      extras.length > 0
+        ? `Se guardaron ${result.saved} precio(s). ${extras}`
+        : `Se guardaron ${result.saved} precio(s).`,
+  };
 }
 
 export async function toggleProductActiveAction(formData: FormData) {

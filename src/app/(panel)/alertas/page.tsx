@@ -1,4 +1,4 @@
-import { AlertCard } from "@/components/alerts/alert-card";
+import { AlertsDataTable } from "@/components/alerts/alerts-data-table";
 import { AppShell } from "@/components/layout/app-shell";
 import { hasSupabaseConfig } from "@/lib/env";
 import { listRecentAlerts } from "@/modules/alerts/queries";
@@ -13,10 +13,8 @@ export default async function AlertsPage() {
       {alerts.length === 0 ? (
         <p className="empty-state">Todavía no hay alertas enviadas.</p>
       ) : (
-        <div className="card-grid">
-          {alerts.map((alert) => (
-            <AlertCard key={alert.id} alert={alert} />
-          ))}
+        <div className="panel">
+          <AlertsDataTable alerts={alerts} />
         </div>
       )}
     </AppShell>

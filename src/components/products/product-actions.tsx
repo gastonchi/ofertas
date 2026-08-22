@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import Link from "next/link";
-import { Bell, BellOff, ChartColumn, Trash2 } from "lucide-react";
+import { Bell, BellOff, DollarSign, Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
 import {
   deleteProductAction,
@@ -70,11 +70,11 @@ export function ProductActions({ product }: { product: TrackedProductRow }) {
     <div className="card-actions">
       <Link
         href={`/productos/${product.id}`}
-        className="btn-edit btn-icon"
-        aria-label={`Ver estadísticas de ${product.name}`}
-        title="Estadísticas"
+        className="btn-prices btn-icon"
+        aria-label={`Ver precios de ${product.name}`}
+        title="Precios"
       >
-        <ChartColumn size={18} aria-hidden />
+        <DollarSign size={18} aria-hidden />
       </Link>
       <EditProductPanel product={product} />
       <button

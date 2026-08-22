@@ -53,7 +53,6 @@ export function ProductTable({ products }: { products: TrackedProductRow[] }) {
               <th>EAN</th>
               <th>Objetivo</th>
               <th>Tiendas</th>
-              <th>Alertas</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -72,9 +71,6 @@ export function ProductTable({ products }: { products: TrackedProductRow[] }) {
                 <td>{formatArs(Number(product.target_price))}</td>
                 <td>
                   <StoreLogoList stores={product.stores} />
-                </td>
-                <td>
-                  <ProductAlertsToggle product={product} />
                 </td>
                 <td>
                   <ProductActions product={product} />

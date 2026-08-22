@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
 import Link from "next/link";
 import {
   Bell,
@@ -23,11 +23,13 @@ const NAV: { href: string; label: string; icon: LucideIcon }[] = [
 
 export function AppShell({
   title,
+  titleAction,
   children,
   pathname,
 }: {
   title: string;
-  children: React.ReactNode;
+  titleAction?: ReactNode;
+  children: ReactNode;
   pathname: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -113,6 +115,7 @@ export function AppShell({
       <div className="app-main">
         <header className="app-header">
           <h1>{title}</h1>
+          {titleAction}
         </header>
         <div className="app-content">{children}</div>
       </div>

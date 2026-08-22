@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { formatArs, formatWeekdayDate } from "@/lib/format";
 import { StoreLogo } from "@/components/ui/store-logo";
 import type { PriceStat, ProductPriceStats } from "@/lib/types";
@@ -27,7 +28,13 @@ function StatCard({
   );
 }
 
-export function ProductStats({ stats }: { stats: ProductPriceStats }) {
+export function ProductStats({
+  stats,
+  emptyAction,
+}: {
+  stats: ProductPriceStats;
+  emptyAction?: ReactNode;
+}) {
   return (
     <>
       <section className="stats-grid">
@@ -40,7 +47,10 @@ export function ProductStats({ stats }: { stats: ProductPriceStats }) {
           <h2>Último precio por súper</h2>
         </div>
         {stats.latestByStore.length === 0 ? (
-          <p className="empty-state">Todavía no hay historial de precios.</p>
+          <p className="empty-state empty-state-with-action">
+            Todavía no hay historial de precios.
+            {emptyAction}
+          </p>
         ) : (
           <div className="card-grid">
             {stats.latestByStore.map((stat) => {

@@ -5,7 +5,8 @@ import { ProductStats } from "@/components/products/product-stats";
 import { StoreLogoList } from "@/components/ui/store-logo";
 import { formatArs } from "@/lib/format";
 import { hasSupabaseConfig } from "@/lib/env";
-import { getProduct, getProductPriceStats } from "@/modules/products/queries";
+import { getProduct, getProductPriceStats, productHasPriceToday } from "@/modules/products/queries";
+import { RefreshProductPriceButton } from "@/components/products/refresh-product-price-button";
 
 export const dynamic = "force-dynamic";
 
@@ -21,9 +22,18 @@ export default async function ProductStatsPage({
   if (!product) notFound();
 
   const stats = await getProductPriceStats(product);
+  const canRefreshPrice = !(await productHasPriceToday(product));
 
   return (
-    <AppShell title={product.name} pathname="/productos">
+    <AppShell
+      title={product.name}
+      pathname="/productos"
+      titleAction={
+        canRefreshPrice ? (
+          <RefreshProductPriceButton productId={product.id} />
+        ) : null
+      }
+    >
       <div className="panel-head">
         <p className="muted product-stats-meta" style={{ margin: 0 }}>
           EAN <code className="mono">{product.ean}</code>
@@ -35,7 +45,14 @@ export default async function ProductStatsPage({
           Volver a productos
         </Link>
       </div>
-      <ProductStats stats={stats} />
+      <ProductStats
+        stats={stats}
+        emptyAction={
+          canRefreshPrice ? (
+            <RefreshProductPriceButton productId={product.id} />
+          ) : null
+        }
+      />
     </AppShell>
   );
 }

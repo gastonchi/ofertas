@@ -6,6 +6,7 @@ import type {
   ProductPriceStats,
   TrackedProductRow,
 } from "@/lib/types";
+import { argentinaDay } from "@/scraping/db";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const PRICE_COLUMNS =
@@ -68,6 +69,23 @@ function latestRowPerStore(rows: PriceHistoryRow[]): PriceHistoryRow[] {
 
 function inWindow(rows: PriceHistoryRow[], sinceMs: number): PriceHistoryRow[] {
   return rows.filter((row) => new Date(row.checked_at).getTime() >= sinceMs);
+}
+
+export async function productHasPriceToday(
+  product: Pick<TrackedProductRow, "ean">,
+): Promise<boolean> {
+  await requireAuth();
+  const db = createDb();
+  const start = `${argentinaDay()}T00:00:00.000-03:00`;
+  const { data, error } = await db
+    .from("price_history")
+    .select("id")
+    .eq("ean", product.ean.trim())
+    .gte("checked_at", start)
+    .limit(1);
+
+  if (error) throw new Error(error.message);
+  return (data?.length ?? 0) > 0;
 }
 
 async function fetchPriceHistory(

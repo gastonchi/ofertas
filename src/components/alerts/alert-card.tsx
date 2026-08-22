@@ -1,16 +1,10 @@
+import { getAlertDisplay } from "@/components/alerts/alert-display";
 import { formatArs, formatDateTime } from "@/lib/format";
 import { StoreLogo } from "@/components/ui/store-logo";
 import type { AlertRow } from "@/lib/types";
 
 export function AlertCard({ alert }: { alert: AlertRow }) {
-  const name =
-    alert.payload?.trackedName ??
-    alert.payload?.snapshot?.productName ??
-    alert.ean;
-  const triggers =
-    alert.payload?.triggers?.map((t) => t.message).join(" · ") ??
-    "Oferta detectada";
-  const price = alert.payload?.snapshot?.price;
+  const { name, triggers, price } = getAlertDisplay(alert);
 
   return (
     <article className="info-card">
@@ -22,7 +16,9 @@ export function AlertCard({ alert }: { alert: AlertRow }) {
       <dl className="info-card-meta">
         <div>
           <dt>Precio</dt>
-          <dd>{typeof price === "number" ? formatArs(price) : "—"}</dd>
+          <dd className="price-emphasis">
+            {typeof price === "number" ? formatArs(price) : "—"}
+          </dd>
         </div>
         <div>
           <dt>Enviada</dt>
