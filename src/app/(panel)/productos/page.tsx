@@ -1,5 +1,5 @@
 import { AppShell } from "@/components/layout/app-shell";
-import { NewProductPanel } from "@/components/products/product-form";
+import { ProductPageActions } from "@/components/products/product-page-actions";
 import { ProductTable } from "@/components/products/product-table";
 import { hasSupabaseConfig } from "@/lib/env";
 import { listProducts } from "@/modules/products/actions";
@@ -22,9 +22,9 @@ export default async function ProductsPage() {
       <div className="panel-head">
         <p className="muted" style={{ margin: 0 }}>
           Estos productos se chequean en los días y horarios de Configuración.
-          El job usa las tiendas de allá, cruzadas con las de cada producto.
+      
         </p>
-        <NewProductPanel defaultStores={settings?.default_stores} />
+        <ProductPageActions defaultStores={settings?.default_stores} />
       </div>
       <div className="panel">
         <ProductTable products={products} />

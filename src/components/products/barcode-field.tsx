@@ -230,8 +230,7 @@ export function BarcodeField({
       ) : null}
       {cameraError ? <p className="form-error">{cameraError}</p> : null}
       <p className="muted" style={{ margin: 0, fontSize: "0.85rem" }}>
-        Escaneá con la cámara o con un lector USB. Al leer, se busca el nombre
-        en Carrefour y, si no está, en Día.
+        Escaneá con la cámara o con un lector USB.
       </p>
     </div>
   );

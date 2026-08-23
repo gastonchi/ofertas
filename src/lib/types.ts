@@ -12,11 +12,21 @@ export type TrackedProduct = {
   alertsEnabled?: boolean;
 };
 
-export type ProductNameLookupSource = "carrefour" | "dia";
-
 export type ProductNameLookupResult = {
-  name: string;
-  source: ProductNameLookupSource;
+  name: string | null;
+  source: StoreId | null;
+  averagePrice?: number;
+  storeCount?: number;
+};
+
+export type StorePriceQuote = {
+  store: StoreId;
+  price: number | null;
+};
+
+export type StorePricesLookupResult = {
+  name: string | null;
+  stores: StorePriceQuote[];
 };
 
 export type TrackedProductRow = {

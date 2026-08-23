@@ -4,8 +4,10 @@ import { useActionState, useCallback, useEffect, useRef, useState } from "react"
 import { Pencil, Plus } from "lucide-react";
 import { BarcodeField } from "@/components/products/barcode-field";
 import { Modal } from "@/components/ui/modal";
-import { ALL_STORES, type TrackedProductRow } from "@/lib/types";
+import { formatArs } from "@/lib/format";
+import { ALL_STORES, type StoreId, type TrackedProductRow } from "@/lib/types";
 import { StoreLogo } from "@/components/ui/store-logo";
+import type { ProductCreateDraft } from "@/components/products/product-create-draft";
 import {
   createProductAction,
   lookupProductNameAction,
@@ -18,24 +20,37 @@ const initial: ProductActionState = {};
 export function ProductForm({
   product,
   defaultStores,
+  draft,
   onDone,
 }: {
   product?: TrackedProductRow;
-  defaultStores?: TrackedProductRow["stores"];
+  defaultStores?: StoreId[];
+  draft?: ProductCreateDraft;
   onDone?: () => void;
 }) {
   const action = product ? updateProductAction : createProductAction;
   const [state, formAction, pending] = useActionState(action, initial);
-  const [name, setName] = useState(product?.name ?? "");
-  const [ean, setEan] = useState(product?.ean ?? "");
+  const [name, setName] = useState(product?.name ?? draft?.name ?? "");
+  const [ean, setEan] = useState(product?.ean ?? draft?.ean ?? "");
   const [lookingUp, setLookingUp] = useState(false);
   const [lookupMessage, setLookupMessage] = useState<string | null>(null);
+  const [targetHint, setTargetHint] = useState<string | null>(
+    draft?.targetHint ?? null,
+  );
+  const [targetPrice, setTargetPrice] = useState(
+    product != null
+      ? String(product.target_price)
+      : (draft?.targetPrice ?? ""),
+  );
+  const isNew = !product;
   const lookupSeq = useRef(0);
   const selectedStores = product
     ? product.stores
-    : defaultStores?.length
-      ? defaultStores
-      : [...ALL_STORES];
+    : draft?.stores?.length
+      ? draft.stores
+      : defaultStores?.length
+        ? defaultStores
+        : [...ALL_STORES];
 
   useEffect(() => {
     if (state.success) onDone?.();
@@ -45,7 +60,8 @@ export function ProductForm({
     const seq = ++lookupSeq.current;
     setEan(scannedEan);
     setLookingUp(true);
-    setLookupMessage("Buscando nombre…");
+    setLookupMessage("Consultando súpers…");
+    setTargetHint(null);
 
     try {
       const result = await lookupProductNameAction(scannedEan);
@@ -59,18 +75,27 @@ export function ProductForm({
 
       if (result.name) {
         setName(result.name);
-        setLookupMessage(
-          result.source === "carrefour"
-            ? "Nombre tomado de Carrefour."
-            : "Nombre tomado de Día.",
-        );
-        return;
+      } else {
+        setName(scannedEan);
       }
 
-      setName(scannedEan);
-      setLookupMessage(
-        "No se encontró en Carrefour ni Día. Quedó el código de barras.",
-      );
+      const lookupNotes: string[] = [];
+      if (!result.name) {
+        lookupNotes.push("No se encontró el nombre. Quedó el código de barras.");
+      }
+
+      const average = result.averagePrice;
+      const storeCount = result.storeCount ?? 0;
+      if (isNew && average && average > 0 && storeCount > 0) {
+        const suggested = Math.max(1, Math.round(average * 0.9));
+        setTargetPrice(String(suggested));
+        setTargetHint(
+          `Objetivo sugerido: precio promedio - 10% (${formatArs(average)} → ${formatArs(suggested)}).`,
+        );
+      }
+
+      setLookupMessage(lookupNotes.length > 0 ? lookupNotes.join(" ") : null);
+      return;
     } catch {
       if (seq !== lookupSeq.current) return;
       setName(scannedEan);
@@ -80,7 +105,7 @@ export function ProductForm({
     } finally {
       if (seq === lookupSeq.current) setLookingUp(false);
     }
-  }, []);
+  }, [isNew]);
 
   return (
     <form action={formAction} className="product-form">
@@ -92,7 +117,7 @@ export function ProductForm({
         onValueChange={setEan}
         onScan={lookupName}
         lookingUp={lookingUp}
-        autoFocus={!product}
+        autoFocus={!product && !draft?.ean}
       />
       <div className="field">
         <label htmlFor="name">Nombre</label>
@@ -119,8 +144,15 @@ export function ProductForm({
           min={1}
           step={1}
           required
-          defaultValue={product?.target_price ?? ""}
+          value={targetPrice}
+          onChange={(event) => setTargetPrice(event.target.value)}
+          autoFocus={!product && Boolean(draft?.ean)}
         />
+        {targetHint ? (
+          <p className="muted" style={{ margin: 0, fontSize: "0.85rem" }}>
+            {targetHint}
+          </p>
+        ) : null}
       </div>
       <fieldset className="stores-fieldset">
         <legend>Tiendas</legend>
@@ -179,30 +211,49 @@ export function ProductForm({
 
 export function NewProductPanel({
   defaultStores,
+  open,
+  draft,
+  onOpenChange,
 }: {
-  defaultStores?: TrackedProductRow["stores"];
+  defaultStores?: StoreId[];
+  open?: boolean;
+  draft?: ProductCreateDraft | null;
+  onOpenChange?: (open: boolean) => void;
 }) {
-  const [open, setOpen] = useState(false);
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const isControlled = open != null;
+  const isOpen = isControlled ? open : uncontrolledOpen;
+
+  function setOpen(next: boolean) {
+    if (!isControlled) setUncontrolledOpen(next);
+    onOpenChange?.(next);
+  }
 
   return (
     <>
-      <button
-        type="button"
-        className="btn-primary"
-        onClick={() => setOpen(true)}
-      >
-        <Plus size={18} aria-hidden />
-        Nuevo producto
-      </button>
+      {isControlled ? null : (
+        <button
+          type="button"
+          className="btn-primary"
+          onClick={() => setOpen(true)}
+        >
+          <Plus size={18} aria-hidden />
+          Nuevo producto
+        </button>
+      )}
       <Modal
-        open={open}
+        open={isOpen}
         title="Nuevo producto"
         onClose={() => setOpen(false)}
       >
-        <ProductForm
-          defaultStores={defaultStores}
-          onDone={() => setOpen(false)}
-        />
+        {isOpen ? (
+          <ProductForm
+            key={draft?.ean ?? "new"}
+            defaultStores={defaultStores}
+            draft={draft ?? undefined}
+            onDone={() => setOpen(false)}
+          />
+        ) : null}
       </Modal>
     </>
   );

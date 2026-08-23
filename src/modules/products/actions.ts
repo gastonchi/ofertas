@@ -4,8 +4,15 @@ import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/auth";
 import { createDb } from "@/lib/db/client";
 import { parseStores, resolveProductStores } from "@/lib/stores";
-import type { ProductNameLookupSource, TrackedProductRow } from "@/lib/types";
-import { lookupProductNameByEan } from "@/scraping/lookup-name";
+import type {
+  ProductNameLookupResult,
+  StorePricesLookupResult,
+  TrackedProductRow,
+} from "@/lib/types";
+import {
+  lookupProductNameByEan,
+  lookupStorePricesByEan,
+} from "@/scraping/lookup-name";
 import { loadJobSettings } from "@/scraping/db";
 import { refreshProductPrices } from "@/scraping/refresh-product-prices";
 import { productHasPriceToday } from "@/modules/products/queries";
@@ -45,7 +52,9 @@ function revalidateProductViews() {
 
 export type ProductLookupState = {
   name: string | null;
-  source: ProductNameLookupSource | null;
+  source: ProductNameLookupResult["source"];
+  averagePrice?: number;
+  storeCount?: number;
   error?: string;
 };
 
@@ -64,7 +73,24 @@ export async function lookupProductNameAction(
 
   const result = await lookupProductNameByEan(trimmed);
   if (!result) return { name: null, source: null };
-  return result;
+  return {
+    name: result.name,
+    source: result.source,
+    averagePrice: result.averagePrice,
+    storeCount: result.storeCount,
+  };
+}
+
+export async function lookupStorePricesAction(
+  ean: string,
+): Promise<StorePricesLookupResult | { error: string }> {
+  await requireAuth();
+  const trimmed = String(ean ?? "").replace(/\D/g, "");
+  if (!/^\d{8,14}$/.test(trimmed)) {
+    return { error: "El EAN debe tener entre 8 y 14 dígitos." };
+  }
+
+  return lookupStorePricesByEan(trimmed);
 }
 
 export async function listProducts(): Promise<TrackedProductRow[]> {
