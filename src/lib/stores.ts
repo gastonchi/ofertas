@@ -2,6 +2,7 @@ import { ALL_STORES, type StoreId } from "./types";
 
 export const STORE_LABELS: Record<StoreId, string> = {
   carrefour: "Carrefour",
+  coto: "Coto",
   dia: "Día",
   jumbo: "Jumbo",
   disco: "Disco",
@@ -10,6 +11,7 @@ export const STORE_LABELS: Record<StoreId, string> = {
 
 export const STORE_LOGOS: Record<StoreId, string> = {
   carrefour: "/logos/Carrefour_id5WpI3zid_0.svg",
+  coto: "/logos/coto.svg",
   dia: "/logos/dia-old-logo.svg",
   jumbo: "/logos/jumbo.png",
   disco: "/logos/Disco-Supermarket-Logo.svg",

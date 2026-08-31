@@ -1,5 +1,6 @@
 import type { OfferSnapshot, StoreId, TrackedProduct } from "../lib/types";
 import { fetchCarrefourByEan } from "./stores/carrefour";
+import { fetchCotoByEan } from "./stores/coto";
 import { fetchDiaByEan } from "./stores/dia";
 import { fetchDiscoByEan } from "./stores/disco";
 import { fetchJumboByEan } from "./stores/jumbo";
@@ -10,6 +11,7 @@ export const STORE_FETCHERS: Record<
   (ean: string) => Promise<OfferSnapshot | null>
 > = {
   carrefour: fetchCarrefourByEan,
+  coto: fetchCotoByEan,
   dia: fetchDiaByEan,
   jumbo: fetchJumboByEan,
   disco: fetchDiscoByEan,

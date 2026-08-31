@@ -1,6 +1,6 @@
 import type { Weekday } from "./schedule";
 
-export const ALL_STORES = ["carrefour", "dia", "jumbo", "disco", "vea"] as const;
+export const ALL_STORES = ["carrefour", "coto", "dia", "jumbo", "disco", "vea"] as const;
 
 export type StoreId = (typeof ALL_STORES)[number];
 

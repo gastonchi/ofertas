@@ -3,24 +3,24 @@
     "name": "Leche UAT Zero lactosa La Serenísima 1L",
     "ean": "7790742333605",
     "target_price": 2200,
-    "stores": ["carrefour", "dia", "jumbo", "disco", "vea"]
+    "stores": ["carrefour", "coto", "dia", "jumbo", "disco", "vea"]
   },
   {
     "name": "Café Torrado molido La Planta de Café Cabrales 500 g",
     "ean": "7790550000164",
     "target_price": 10000,
-    "stores": ["carrefour", "dia", "jumbo", "disco", "vea"]
+    "stores": ["carrefour", "coto", "dia", "jumbo", "disco", "vea"]
   },
   {
     "name": "Aceite de girasol Cañuelas 1.5 L",
     "ean": "7792180001665",
     "target_price": 4500,
-    "stores": ["carrefour", "dia", "jumbo", "disco", "vea"]
+    "stores": ["carrefour", "coto", "dia", "jumbo", "disco", "vea"]
   },
   {
     "name": "Yerba mate Playadito suave con palo 1 kg",
     "ean": "7793704000928",
     "target_price": 4000,
-    "stores": ["carrefour", "dia", "jumbo", "disco", "vea"]
+    "stores": ["carrefour", "coto", "dia", "jumbo", "disco", "vea"]
   }
 ]
