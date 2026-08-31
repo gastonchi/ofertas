@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Loader2, ScanBarcode, X } from "lucide-react";
+import { startZxingBarcodeScan } from "@/lib/barcode/zxing-scan";
 
 type DetectedBarcode = { rawValue: string };
 
@@ -75,17 +76,16 @@ export function BarcodeField({
     let cancelled = false;
     let raf = 0;
     let stream: MediaStream | null = null;
+    let zxingSession: { stop: () => void } | null = null;
 
-    async function run() {
-      const detector = await createDetector();
-      if (!detector) {
-        setCameraError(
-          "Este navegador no lee códigos con la cámara. Pegá el EAN o usá un lector USB.",
-        );
-        setCameraOpen(false);
-        return;
-      }
+    function finishScan(ean: string) {
+      cancelled = true;
+      onValueChangeRef.current(ean);
+      onScanRef.current(ean);
+      setCameraOpen(false);
+    }
 
+    async function runNativeDetector(detector: BarcodeDetectorLike) {
       if (!navigator.mediaDevices?.getUserMedia) {
         setCameraError(
           "Este navegador no puede usar la cámara. Pegá el EAN o usá un lector USB.",
@@ -94,49 +94,64 @@ export function BarcodeField({
         return;
       }
 
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: "environment" } },
-          audio: false,
-        });
-        if (cancelled) {
-          stream.getTracks().forEach((track) => track.stop());
-          return;
-        }
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+        audio: false,
+      });
+      if (cancelled) {
+        stream.getTracks().forEach((track) => track.stop());
+        return;
+      }
 
-        const video = videoRef.current;
-        if (!video) {
-          stream.getTracks().forEach((track) => track.stop());
-          return;
-        }
+      const video = videoRef.current;
+      if (!video) {
+        stream.getTracks().forEach((track) => track.stop());
+        return;
+      }
 
-        video.srcObject = stream;
-        await video.play();
-        if (cancelled) return;
+      video.srcObject = stream;
+      await video.play();
+      if (cancelled) return;
 
-        const tick = async () => {
-          if (cancelled || !videoRef.current) return;
-          try {
-            const codes = await detector.detect(videoRef.current);
-            const ean = normalizeEan(codes[0]?.rawValue ?? "");
-            if (EAN_RE.test(ean)) {
-              cancelled = true;
-              onValueChangeRef.current(ean);
-              onScanRef.current(ean);
-              setCameraOpen(false);
-              return;
-            }
-          } catch {
-            // El frame todavía no está listo para detectar.
+      const tick = async () => {
+        if (cancelled || !videoRef.current) return;
+        try {
+          const codes = await detector.detect(videoRef.current);
+          const ean = normalizeEan(codes[0]?.rawValue ?? "");
+          if (EAN_RE.test(ean)) {
+            finishScan(ean);
+            return;
           }
-          raf = requestAnimationFrame(() => {
-            void tick();
-          });
-        };
-
+        } catch {
+          // El frame todavía no está listo para detectar.
+        }
         raf = requestAnimationFrame(() => {
           void tick();
         });
+      };
+
+      raf = requestAnimationFrame(() => {
+        void tick();
+      });
+    }
+
+    async function runZxingDetector() {
+      const video = videoRef.current;
+      if (!video) return;
+
+      zxingSession = await startZxingBarcodeScan(video, (ean) => {
+        if (!cancelled) finishScan(ean);
+      });
+    }
+
+    async function run() {
+      try {
+        const detector = await createDetector();
+        if (detector) {
+          await runNativeDetector(detector);
+        } else {
+          await runZxingDetector();
+        }
       } catch {
         if (!cancelled) {
           setCameraError(
@@ -152,6 +167,7 @@ export function BarcodeField({
     return () => {
       cancelled = true;
       cancelAnimationFrame(raf);
+      zxingSession?.stop();
       stream?.getTracks().forEach((track) => track.stop());
       const video = videoRef.current;
       if (video) video.srcObject = null;
