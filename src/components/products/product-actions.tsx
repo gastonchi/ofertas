@@ -11,6 +11,42 @@ import {
 import { EditProductPanel } from "@/components/products/product-form";
 import type { TrackedProductRow } from "@/lib/types";
 
+async function deleteProductWithSwal(product: TrackedProductRow): Promise<void> {
+  const confirmed = await Swal.fire({
+    icon: "warning",
+    title: "Eliminar producto",
+    text: `¿Querés eliminar "${product.name}"? Esta acción no se puede deshacer.`,
+    showCancelButton: true,
+    confirmButtonText: "Eliminar",
+    cancelButtonText: "Cancelar",
+    confirmButtonColor: "#b42318",
+    cancelButtonColor: "#6b7280",
+    reverseButtons: true,
+    focusCancel: true,
+  });
+
+  if (!confirmed.isConfirmed) return;
+
+  const formData = new FormData();
+  formData.set("id", product.id);
+
+  try {
+    await deleteProductAction(formData);
+    await Swal.fire({
+      icon: "success",
+      title: "Producto eliminado",
+      timer: 2200,
+      showConfirmButton: false,
+    });
+  } catch {
+    await Swal.fire({
+      icon: "error",
+      title: "No se pudo eliminar el producto.",
+      confirmButtonColor: "#1f6a45",
+    });
+  }
+}
+
 async function toggleAlertsWithSwal(
   product: TrackedProductRow,
 ): Promise<void> {
@@ -91,17 +127,16 @@ export function ProductActions({ product }: { product: TrackedProductRow }) {
       >
         <BellIcon size={18} aria-hidden />
       </button>
-      <form action={deleteProductAction}>
-        <input type="hidden" name="id" value={product.id} />
-        <button
-          type="submit"
-          className="btn-danger btn-icon"
-          aria-label={`Eliminar ${product.name}`}
-          title="Eliminar"
-        >
-          <Trash2 size={18} aria-hidden />
-        </button>
-      </form>
+      <button
+        type="button"
+        className="btn-danger btn-icon"
+        disabled={pending}
+        onClick={() => startTransition(() => deleteProductWithSwal(product))}
+        aria-label={`Eliminar ${product.name}`}
+        title="Eliminar"
+      >
+        <Trash2 size={18} aria-hidden />
+      </button>
     </div>
   );
 }
