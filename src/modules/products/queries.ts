@@ -1,10 +1,13 @@
 import { requireAuth } from "@/lib/auth";
 import { createDb } from "@/lib/db/client";
-import type {
-  PriceHistoryRow,
-  PriceStat,
-  ProductPriceStats,
-  TrackedProductRow,
+import { resolveEnabledStores } from "@/lib/stores";
+import {
+  type PriceHistoryRow,
+  type PriceStat,
+  type ProductPriceStats,
+  type StoreId,
+  type StorePriceQuote,
+  type TrackedProductRow,
 } from "@/lib/types";
 import { argentinaDay } from "@/scraping/db";
 
@@ -50,6 +53,24 @@ function pickCheapest(rows: PriceHistoryRow[]): PriceStat {
       return stat;
     }
     return best;
+  });
+}
+
+function buildStoreQuotes(
+  latestRows: PriceHistoryRow[],
+  stores: readonly StoreId[],
+): StorePriceQuote[] {
+  const map = new Map<string, PriceHistoryRow>();
+  for (const row of latestRows) {
+    map.set(String(row.store).trim().toLowerCase(), row);
+  }
+
+  return stores.map((store) => {
+    const row = map.get(store);
+    if (!row) return { store, price: null };
+    const price = Number(row.price);
+    if (!Number.isFinite(price)) return { store, price: null };
+    return { store, price, checked_at: row.checked_at };
   });
 }
 
@@ -128,20 +149,24 @@ async function fetchPriceHistory(
 
 export async function getProductPriceStats(
   product: Pick<TrackedProductRow, "ean" | "name">,
+  displayStores?: StoreId[],
 ): Promise<ProductPriceStats> {
   await requireAuth();
   const rows = await fetchPriceHistory(product.ean, product.name);
   const now = Date.now();
   const latestRows = latestRowPerStore(rows);
   const latest = pickCheapest(latestRows);
+  const stores = resolveEnabledStores(displayStores);
 
   return {
     latest,
     best7d: pickCheapest(inWindow(rows, now - 7 * DAY_MS)),
     best30d: pickCheapest(inWindow(rows, now - 30 * DAY_MS)),
-    latestByStore: latestRows
-      .map((row) => toStat(row))
-      .filter((stat): stat is NonNullable<PriceStat> => stat !== null)
-      .sort((a, b) => a.price - b.price),
+    latestByStore: buildStoreQuotes(latestRows, stores).sort((a, b) => {
+      if (a.price == null && b.price == null) return 0;
+      if (a.price == null) return 1;
+      if (b.price == null) return -1;
+      return a.price - b.price;
+    }),
   };
 }

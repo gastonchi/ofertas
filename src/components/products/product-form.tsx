@@ -5,8 +5,7 @@ import { Pencil, Plus } from "lucide-react";
 import { BarcodeField } from "@/components/products/barcode-field";
 import { Modal } from "@/components/ui/modal";
 import { formatArs } from "@/lib/format";
-import { ALL_STORES, type StoreId, type TrackedProductRow } from "@/lib/types";
-import { StoreLogo } from "@/components/ui/store-logo";
+import type { TrackedProductRow } from "@/lib/types";
 import type { ProductCreateDraft } from "@/components/products/product-create-draft";
 import {
   createProductAction,
@@ -19,12 +18,10 @@ const initial: ProductActionState = {};
 
 export function ProductForm({
   product,
-  defaultStores,
   draft,
   onDone,
 }: {
   product?: TrackedProductRow;
-  defaultStores?: StoreId[];
   draft?: ProductCreateDraft;
   onDone?: () => void;
 }) {
@@ -44,13 +41,6 @@ export function ProductForm({
   );
   const isNew = !product;
   const lookupSeq = useRef(0);
-  const selectedStores = product
-    ? product.stores
-    : draft?.stores?.length
-      ? draft.stores
-      : defaultStores?.length
-        ? defaultStores
-        : [...ALL_STORES];
 
   useEffect(() => {
     if (state.success) onDone?.();
@@ -153,27 +143,12 @@ export function ProductForm({
             {targetHint}
           </p>
         ) : null}
+        {isNew ? (
+          <p className="muted" style={{ margin: 0, fontSize: "0.85rem" }}>
+            Las tiendas a consultar se configuran en Configuración.
+          </p>
+        ) : null}
       </div>
-      <fieldset className="stores-fieldset">
-        <legend>Tiendas</legend>
-        <p className="muted" style={{ margin: "0 0 0.65rem", fontSize: "0.85rem" }}>
-          Se cruza con las tiendas de Configuración. Si allá desmarcás una, el
-          job no la consulta aunque esté tildada acá.
-        </p>
-        <div className="stores-grid">
-          {ALL_STORES.map((store) => (
-            <label key={store} className="check-label">
-              <input
-                type="checkbox"
-                name="stores"
-                value={store}
-                defaultChecked={selectedStores.includes(store)}
-              />
-              <StoreLogo store={store} size="sm" />
-            </label>
-          ))}
-        </div>
-      </fieldset>
       {product ? (
         <>
           <label className="check-label">
@@ -210,12 +185,10 @@ export function ProductForm({
 }
 
 export function NewProductPanel({
-  defaultStores,
   open,
   draft,
   onOpenChange,
 }: {
-  defaultStores?: StoreId[];
   open?: boolean;
   draft?: ProductCreateDraft | null;
   onOpenChange?: (open: boolean) => void;
@@ -249,7 +222,6 @@ export function NewProductPanel({
         {isOpen ? (
           <ProductForm
             key={draft?.ean ?? "new"}
-            defaultStores={defaultStores}
             draft={draft ?? undefined}
             onDone={() => setOpen(false)}
           />

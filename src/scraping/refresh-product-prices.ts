@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { resolveProductStores } from "../lib/stores";
+import { resolveEnabledStores } from "../lib/stores";
 import type { StoreId, TrackedProduct } from "../lib/types";
 import { savePriceHistory } from "./db";
 import { fetchProductStore, sleep } from "./fetch-store";
@@ -15,7 +15,7 @@ export async function refreshProductPrices(
   product: TrackedProduct,
   enabledStores: StoreId[],
 ): Promise<RefreshProductPricesResult> {
-  const stores = resolveProductStores(product.stores, enabledStores);
+  const stores = resolveEnabledStores(enabledStores);
   const result: RefreshProductPricesResult = {
     saved: 0,
     notFound: [],

@@ -8,9 +8,9 @@ import type { ProductCreateDraft } from "@/components/products/product-create-dr
 import type { StoreId } from "@/lib/types";
 
 export function ProductPageActions({
-  defaultStores,
+  trackedStores,
 }: {
-  defaultStores?: StoreId[];
+  trackedStores: StoreId[];
 }) {
   const [createOpen, setCreateOpen] = useState(false);
   const [draft, setDraft] = useState<ProductCreateDraft | null>(null);
@@ -31,11 +31,10 @@ export function ProductPageActions({
         Nuevo producto
       </button>
       <LookupPricesPanel
-        defaultStores={defaultStores}
+        trackedStores={trackedStores}
         onAddProduct={(next) => openCreate(next)}
       />
       <NewProductPanel
-        defaultStores={defaultStores}
         open={createOpen}
         draft={draft}
         onOpenChange={(open) => {

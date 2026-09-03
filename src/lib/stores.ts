@@ -27,11 +27,6 @@ export function parseStores(values: FormDataEntryValue[]): StoreId[] {
   return stores.length > 0 ? stores : [...ALL_STORES];
 }
 
-export function resolveProductStores(
-  productStores: StoreId[] | undefined,
-  enabledStores: StoreId[],
-): StoreId[] {
-  const enabled = enabledStores.length > 0 ? enabledStores : [...ALL_STORES];
-  if (!productStores?.length) return enabled;
-  return productStores.filter((store) => enabled.includes(store));
+export function resolveEnabledStores(stores: StoreId[] | undefined): StoreId[] {
+  return stores?.length ? stores : [...ALL_STORES];
 }

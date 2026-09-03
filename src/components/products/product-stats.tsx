@@ -35,6 +35,8 @@ export function ProductStats({
   stats: ProductPriceStats;
   emptyAction?: ReactNode;
 }) {
+  const hasHistory = stats.latest !== null;
+
   return (
     <>
       <section className="stats-grid">
@@ -46,38 +48,47 @@ export function ProductStats({
         <div className="panel-head">
           <h2>Último precio por súper</h2>
         </div>
-        {stats.latestByStore.length === 0 ? (
+        <div className="card-grid">
+          {stats.latestByStore.map((stat) => {
+            const isBest =
+              stat.price != null &&
+              stats.latest !== null &&
+              stat.price === stats.latest.price;
+            return (
+              <article
+                key={stat.store}
+                className={
+                  isBest
+                    ? "info-card info-card-best store-price-card"
+                    : "info-card store-price-card"
+                }
+              >
+                <header className="info-card-head">
+                  <StoreLogo store={stat.store} size="lg" />
+                  <strong>
+                    {stat.price != null ? formatArs(stat.price) : "—"}
+                  </strong>
+                </header>
+                {stat.checked_at ? (
+                  <p className="muted info-card-copy">
+                    {formatWeekdayDate(stat.checked_at)}
+                  </p>
+                ) : null}
+                {stat.price == null ? (
+                  <p className="muted info-card-copy">No encontrado</p>
+                ) : isBest ? (
+                  <span className="chip">Mejor precio</span>
+                ) : null}
+              </article>
+            );
+          })}
+        </div>
+        {!hasHistory && emptyAction ? (
           <p className="empty-state empty-state-with-action">
             Todavía no hay historial de precios.
             {emptyAction}
           </p>
-        ) : (
-          <div className="card-grid">
-            {stats.latestByStore.map((stat) => {
-              const isBest =
-                stats.latest !== null && stat.price === stats.latest.price;
-              return (
-                <article
-                  key={stat.store}
-                  className={
-                    isBest
-                      ? "info-card info-card-best store-price-card"
-                      : "info-card store-price-card"
-                  }
-                >
-                  <header className="info-card-head">
-                    <StoreLogo store={stat.store} size="lg" />
-                    <strong>{formatArs(stat.price)}</strong>
-                  </header>
-                  <p className="muted info-card-copy">
-                    {formatWeekdayDate(stat.checked_at)}
-                  </p>
-                  {isBest ? <span className="chip">Mejor precio</span> : null}
-                </article>
-              );
-            })}
-          </div>
-        )}
+        ) : null}
       </section>
     </>
   );

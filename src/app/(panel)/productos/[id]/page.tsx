@@ -2,11 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/layout/app-shell";
 import { ProductStats } from "@/components/products/product-stats";
-import { StoreLogoList } from "@/components/ui/store-logo";
 import { formatArs } from "@/lib/format";
+import { resolveEnabledStores } from "@/lib/stores";
 import { hasSupabaseConfig } from "@/lib/env";
 import { getProduct, getProductPriceStats, productHasPriceToday } from "@/modules/products/queries";
 import { RefreshProductPriceButton } from "@/components/products/refresh-product-price-button";
+import { getSettings } from "@/modules/settings/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,9 @@ export default async function ProductStatsPage({
 
   if (!product) notFound();
 
-  const stats = await getProductPriceStats(product);
+  const settings = configured ? await getSettings() : null;
+  const trackedStores = resolveEnabledStores(settings?.default_stores);
+  const stats = await getProductPriceStats(product, trackedStores);
   const canRefreshPrice = !(await productHasPriceToday(product));
 
   return (
@@ -39,7 +42,6 @@ export default async function ProductStatsPage({
           EAN <code className="mono">{product.ean}</code>
           {" · "}
           Objetivo {formatArs(Number(product.target_price))}
-          <StoreLogoList stores={product.stores} size="sm" />
         </p>
         <Link href="/productos" className="btn-ghost">
           Volver a productos

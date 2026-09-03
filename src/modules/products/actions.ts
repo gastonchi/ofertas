@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/auth";
 import { createDb } from "@/lib/db/client";
-import { parseStores, resolveProductStores } from "@/lib/stores";
+import { resolveEnabledStores } from "@/lib/stores";
 import type {
   ProductNameLookupResult,
   StorePricesLookupResult,
@@ -16,6 +16,7 @@ import {
 import { loadJobSettings } from "@/scraping/db";
 import { refreshProductPrices } from "@/scraping/refresh-product-prices";
 import { productHasPriceToday } from "@/modules/products/queries";
+import { getSettings } from "@/modules/settings/actions";
 
 export type ProductActionState = {
   error?: string;
@@ -27,7 +28,6 @@ function parseProductForm(formData: FormData) {
   const ean = String(formData.get("ean") ?? "").trim();
   const targetRaw = String(formData.get("target_price") ?? "").trim();
   const target_price = Number(targetRaw.replace(",", "."));
-  const stores = parseStores(formData.getAll("stores"));
   const active =
     formData.get("active") === "on" || formData.get("active") === "true";
   const alerts_enabled =
@@ -42,7 +42,7 @@ function parseProductForm(formData: FormData) {
     return { error: "El precio objetivo debe ser un número mayor a 0." } as const;
   }
 
-  return { name, ean, target_price, stores, active, alerts_enabled } as const;
+  return { name, ean, target_price, active, alerts_enabled } as const;
 }
 
 function revalidateProductViews() {
@@ -71,7 +71,9 @@ export async function lookupProductNameAction(
     };
   }
 
-  const result = await lookupProductNameByEan(trimmed);
+  const result = await lookupProductNameByEan(trimmed, resolveEnabledStores(
+    (await getSettings())?.default_stores,
+  ));
   if (!result) return { name: null, source: null };
   return {
     name: result.name,
@@ -90,7 +92,10 @@ export async function lookupStorePricesAction(
     return { error: "El EAN debe tener entre 8 y 14 dígitos." };
   }
 
-  return lookupStorePricesByEan(trimmed);
+  return lookupStorePricesByEan(
+    trimmed,
+    resolveEnabledStores((await getSettings())?.default_stores),
+  );
 }
 
 export async function listProducts(): Promise<TrackedProductRow[]> {
@@ -117,11 +122,13 @@ export async function createProductAction(
   if ("error" in parsed) return { error: parsed.error };
 
   const db = createDb();
+  const settings = await getSettings();
+  const stores = resolveEnabledStores(settings?.default_stores);
   const { error } = await db.from("tracked_products").insert({
     name: parsed.name,
     ean: parsed.ean,
     target_price: parsed.target_price,
-    stores: parsed.stores,
+    stores,
     active: true,
     alerts_enabled: true,
   });
@@ -155,7 +162,6 @@ export async function updateProductAction(
       name: parsed.name,
       ean: parsed.ean,
       target_price: parsed.target_price,
-      stores: parsed.stores,
       active: parsed.active,
       alerts_enabled: parsed.alerts_enabled,
     })
@@ -237,10 +243,10 @@ export async function refreshProductPriceAction(
   }
 
   const jobSettings = await loadJobSettings(db);
-  const stores = resolveProductStores(product.stores, jobSettings.stores);
+  const stores = resolveEnabledStores(jobSettings.stores);
   if (stores.length === 0) {
     return {
-      error: "Este producto no tiene tiendas en común con Configuración.",
+      error: "No hay tiendas habilitadas en Configuración.",
     };
   }
 
@@ -250,7 +256,6 @@ export async function refreshProductPriceAction(
       name: product.name,
       ean: product.ean,
       target_price: Number(product.target_price),
-      stores: product.stores,
       alertsEnabled: product.alerts_enabled !== false,
     },
     jobSettings.stores,

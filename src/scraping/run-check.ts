@@ -1,5 +1,5 @@
 import { createDbFromConfig } from "../lib/db/client";
-import { resolveProductStores } from "../lib/stores";
+import { resolveEnabledStores } from "../lib/stores";
 import {
   argentinaHourLabel,
   argentinaWeekday,
@@ -78,13 +78,8 @@ export async function runOfferCheck(argv = process.argv): Promise<void> {
   let errors = 0;
 
   for (const product of products) {
-    const stores = resolveProductStores(product.stores, jobSettings.stores);
+    const stores = resolveEnabledStores(jobSettings.stores);
     console.log(`\n→ ${product.name} (${product.ean}) objetivo $${product.target_price}`);
-
-    if (stores.length === 0) {
-      console.warn("  (sin tiendas: el producto no coincide con Configuración)");
-      continue;
-    }
 
     for (const store of stores) {
       const { snapshot, error } = await fetchProductStore(product, store);

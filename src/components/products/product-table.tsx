@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { ProductActions, ProductAlertsToggle } from "@/components/products/product-actions";
-import { StoreLogoList } from "@/components/ui/store-logo";
 import { formatArs } from "@/lib/format";
 import type { TrackedProductRow } from "@/lib/types";
 
@@ -23,12 +22,6 @@ function ProductCard({ product }: { product: TrackedProductRow }) {
         <div>
           <dt>Objetivo</dt>
           <dd>{formatArs(Number(product.target_price))}</dd>
-        </div>
-        <div className="info-card-span">
-          <dt>Tiendas</dt>
-          <dd>
-            <StoreLogoList stores={product.stores} />
-          </dd>
         </div>
       </dl>
       <ProductActions product={product} />
@@ -85,7 +78,6 @@ export function ProductTable({ products }: { products: TrackedProductRow[] }) {
                   <th>Producto</th>
                   <th>EAN</th>
                   <th>Objetivo</th>
-                  <th>Tiendas</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -102,9 +94,6 @@ export function ProductTable({ products }: { products: TrackedProductRow[] }) {
                       <code className="mono">{product.ean}</code>
                     </td>
                     <td>{formatArs(Number(product.target_price))}</td>
-                    <td>
-                      <StoreLogoList stores={product.stores} />
-                    </td>
                     <td>
                       <ProductActions product={product} />
                     </td>
