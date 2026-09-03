@@ -14,6 +14,7 @@ type VtexProduct = {
   link?: string;
   items?: Array<{
     ean?: string;
+    images?: Array<{ imageUrl?: string }>;
     sellers?: Array<{
       sellerDefault?: boolean;
       commertialOffer?: {
@@ -78,6 +79,13 @@ function pickSeller(item: NonNullable<VtexProduct["items"]>[number]) {
   return sellers.find((s) => s.sellerDefault) ?? sellers[0];
 }
 
+function pickImageUrl(
+  item: NonNullable<VtexProduct["items"]>[number],
+): string | undefined {
+  const url = item.images?.[0]?.imageUrl?.trim();
+  return url || undefined;
+}
+
 export async function fetchVtexByEan(opts: {
   store: StoreId;
   baseUrl: string;
@@ -120,6 +128,7 @@ export async function fetchVtexByEan(opts: {
     url:
       product.link ??
       (product.linkText ? `${base}/${product.linkText}/p` : undefined),
+    imageUrl: pickImageUrl(item),
     price,
     listPrice: Number(offer.ListPrice ?? offer.Price ?? 0),
     available: (offer.AvailableQuantity ?? 0) > 0,

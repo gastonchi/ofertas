@@ -13,6 +13,7 @@ import {
   loadTrackedProducts,
   recordAlertSent,
   savePriceHistory,
+  updateTrackedProductImage,
   wasAlertSentToday,
 } from "./db";
 import { evaluateOffer } from "./offers/evaluate";
@@ -105,6 +106,7 @@ export async function runOfferCheck(argv = process.argv): Promise<void> {
 
       if (db) {
         await savePriceHistory(db, snapshot);
+        await updateTrackedProductImage(db, snapshot.ean, snapshot.imageUrl);
       }
 
       const match = evaluateOffer(product, snapshot);

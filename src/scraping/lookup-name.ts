@@ -62,6 +62,23 @@ function usablePrice(snapshot: OfferSnapshot | null): number | null {
   return null;
 }
 
+function usableImage(snapshot: OfferSnapshot | null): string | null {
+  const url = snapshot?.imageUrl?.trim();
+  return url ? url : null;
+}
+
+export async function fetchProductImageByEan(
+  ean: string,
+  stores?: StoreId[],
+): Promise<string | null> {
+  const snapshots = await fetchEanSnapshots(ean, stores);
+  for (const item of snapshots) {
+    const image = usableImage(item.snapshot);
+    if (image) return image;
+  }
+  return null;
+}
+
 export async function lookupProductNameByEan(
   ean: string,
   stores?: StoreId[],

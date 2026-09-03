@@ -2,13 +2,19 @@
 
 import { useMemo, useState } from "react";
 import { ProductActions } from "@/components/products/product-actions";
+import { ProductThumb } from "@/components/products/product-thumb";
 import { formatArs } from "@/lib/format";
 import type { TrackedProductRow } from "@/lib/types";
 
 function ProductCard({ product }: { product: TrackedProductRow }) {
   return (
     <article className={`info-card ${product.active ? "" : "dimmed"}`.trim()}>
-      <header className="info-card-head">
+      <header className="info-card-head product-card-head">
+        <ProductThumb
+          name={product.name}
+          imageUrl={product.image_url}
+          size="md"
+        />
         <h3 className="product-name">{product.name}</h3>
       </header>
       <dl className="info-card-meta">
@@ -87,7 +93,14 @@ export function ProductTable({ products }: { products: TrackedProductRow[] }) {
                     className={product.active ? undefined : "dimmed"}
                   >
                     <td>
-                      <div className="product-name">{product.name}</div>
+                      <div className="product-row-main">
+                        <ProductThumb
+                          name={product.name}
+                          imageUrl={product.image_url}
+                          size="sm"
+                        />
+                        <div className="product-name">{product.name}</div>
+                      </div>
                     </td>
                     <td>
                       <code className="mono">{product.ean}</code>

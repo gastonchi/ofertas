@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { resolveEnabledStores } from "../lib/stores";
 import type { StoreId, TrackedProduct } from "../lib/types";
-import { savePriceHistory } from "./db";
+import { savePriceHistory, updateTrackedProductImage } from "./db";
 import { fetchProductStore, sleep } from "./fetch-store";
 
 export type RefreshProductPricesResult = {
@@ -37,6 +37,7 @@ export async function refreshProductPrices(
     }
 
     await savePriceHistory(db, snapshot);
+    await updateTrackedProductImage(db, snapshot.ean, snapshot.imageUrl);
     result.saved += 1;
   }
 

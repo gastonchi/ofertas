@@ -881,6 +881,73 @@ code,
   grid-column: 1 / -1;
 }
 
+.product-thumb {
+  display: block;
+  flex-shrink: 0;
+  border-radius: 0.55rem;
+  border: 1px solid var(--line);
+  background: white;
+  object-fit: contain;
+}
+
+.product-thumb-sm {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.product-thumb-md {
+  width: 3.25rem;
+  height: 3.25rem;
+}
+
+.product-thumb-lg {
+  width: 4.5rem;
+  height: 4.5rem;
+}
+
+.product-thumb-placeholder {
+  background: linear-gradient(
+    145deg,
+    rgba(31, 106, 69, 0.08),
+    rgba(20, 32, 26, 0.04)
+  );
+}
+
+.product-row-main {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.product-row-main .product-name {
+  min-width: 0;
+}
+
+.product-card-head {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.product-card-head .product-name {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.product-detail-head {
+  align-items: flex-start;
+}
+
+.product-detail-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
 .card-actions {
   display: flex;
   flex-wrap: wrap;
