@@ -2,14 +2,20 @@ type ProductThumbProps = {
   name: string;
   imageUrl?: string | null;
   size?: "sm" | "md" | "lg";
+  layout?: "fixed" | "card";
 };
 
 export function ProductThumb({
   name,
   imageUrl,
   size = "sm",
+  layout = "fixed",
 }: ProductThumbProps) {
   const label = `Foto de ${name}`;
+  const className =
+    layout === "card"
+      ? "product-thumb product-thumb-card"
+      : `product-thumb product-thumb-${size}`;
 
   if (imageUrl?.trim()) {
     return (
@@ -17,7 +23,7 @@ export function ProductThumb({
         src={imageUrl}
         alt=""
         title={label}
-        className={`product-thumb product-thumb-${size}`}
+        className={className}
         loading="lazy"
         decoding="async"
       />
@@ -26,7 +32,7 @@ export function ProductThumb({
 
   return (
     <span
-      className={`product-thumb product-thumb-${size} product-thumb-placeholder`}
+      className={`${className} product-thumb-placeholder`}
       role="img"
       aria-label={label}
     />

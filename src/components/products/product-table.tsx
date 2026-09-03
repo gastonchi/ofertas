@@ -10,12 +10,12 @@ function ProductCard({ product }: { product: TrackedProductRow }) {
   return (
     <article className={`info-card ${product.active ? "" : "dimmed"}`.trim()}>
       <header className="info-card-head product-card-head">
+        <h3 className="product-name">{product.name}</h3>
         <ProductThumb
           name={product.name}
           imageUrl={product.image_url}
-          size="md"
+          layout="card"
         />
-        <h3 className="product-name">{product.name}</h3>
       </header>
       <dl className="info-card-meta">
         <div>
@@ -94,12 +94,12 @@ export function ProductTable({ products }: { products: TrackedProductRow[] }) {
                   >
                     <td>
                       <div className="product-row-main">
+                        <div className="product-name">{product.name}</div>
                         <ProductThumb
                           name={product.name}
                           imageUrl={product.image_url}
-                          size="sm"
+                          layout="card"
                         />
-                        <div className="product-name">{product.name}</div>
                       </div>
                     </td>
                     <td>
