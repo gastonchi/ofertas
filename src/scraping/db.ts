@@ -76,6 +76,13 @@ function isMissingColumn(error: { code?: string; message: string }): boolean {
   );
 }
 
+export function isMissingImageUrlColumn(error: {
+  code?: string;
+  message: string;
+}): boolean {
+  return error.code === "PGRST204" || error.message.includes("image_url");
+}
+
 export async function loadTrackedProducts(
   db: SupabaseClient,
 ): Promise<TrackedProduct[]> {
@@ -208,7 +215,7 @@ export async function updateTrackedProductImage(
     .is("image_url", null);
 
   if (error) {
-    if (error.code === "PGRST204" || error.message.includes("image_url")) {
+    if (isMissingImageUrlColumn(error)) {
       return;
     }
     throw new Error(`Supabase tracked_products image: ${error.message}`);
