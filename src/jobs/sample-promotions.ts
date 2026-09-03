@@ -5,6 +5,7 @@ import { fetchCotoRawByEan, type CotoRawOffer } from "../scraping/promotions/cot
 import { PROMO_SAMPLE_EANS } from "../scraping/promotions/sample-eans";
 import { isVtexStore, VTEX_STORE_BASES } from "../scraping/promotions/vtex-bases";
 import { fetchVtexRawByEan, type VtexRawOffer } from "../scraping/promotions/vtex-raw";
+import { classifyPromoText } from "../scraping/promotions/text-patterns";
 import { sleep } from "../scraping/fetch-store";
 
 type StorePromoResult = VtexRawOffer | CotoRawOffer;
@@ -29,7 +30,9 @@ type PromoResearchReport = {
   sampleCount: number;
   samples: SampleRow[];
   teaserTextCatalog: string[];
+  clusterTextCatalog: string[];
   cotoDiscountTextCatalog: string[];
+  patternSummary: Record<string, number>;
 };
 
 function uniqueSorted(values: string[]): string[] {
@@ -47,6 +50,58 @@ function collectTeaserTexts(samples: SampleRow[]): string[] {
     }
   }
   return uniqueSorted(texts);
+}
+
+function collectClusterTexts(samples: SampleRow[]): string[] {
+  const texts: string[] = [];
+  for (const sample of samples) {
+    for (const row of Object.values(sample.stores)) {
+      if (!row || !isVtexRaw(row)) continue;
+      for (const label of row.clusterPromoLabels ?? []) {
+        texts.push(label);
+      }
+    }
+  }
+  return uniqueSorted(texts);
+}
+
+function buildPatternSummary(samples: SampleRow[]): Record<string, number> {
+  const counts: Record<string, number> = {};
+  const bump = (kind: string) => {
+    counts[kind] = (counts[kind] ?? 0) + 1;
+  };
+
+  for (const sample of samples) {
+    for (const row of Object.values(sample.stores)) {
+      if (!row) continue;
+      if (isCotoRaw(row)) {
+        for (const d of row.discounts) {
+          const text = [d.takingText, d.discountText].filter(Boolean).join(" ");
+          bump(classifyPromoText(text).kind);
+        }
+        continue;
+      }
+      if (!isVtexRaw(row)) continue;
+      for (const t of row.teasers) {
+        if (t.name) bump(classifyPromoText(t.name).kind);
+      }
+      for (const label of row.clusterPromoLabels ?? []) {
+        bump(classifyPromoText(label).kind);
+      }
+    }
+  }
+  return counts;
+}
+
+function formatPricingLabel(
+  name: string,
+  pricing: { summary: string; unitEffectivePrice: number; unitsToBuy: number; kind?: string } | undefined,
+): string {
+  if (!pricing) {
+    const c = classifyPromoText(name);
+    return `sin parser (${c.kind}${c.skipReason ? `: ${c.skipReason}` : ""})`;
+  }
+  return `${pricing.summary} [${pricing.kind ?? "?"}] → $${pricing.unitEffectivePrice}/u (${pricing.unitsToBuy} u)`;
 }
 
 function collectCotoDiscountTexts(samples: SampleRow[]): string[] {
@@ -97,18 +152,27 @@ function printConsoleSummary(report: PromoResearchReport) {
       }
 
       const teaserNames = vtex.teasers.map((t) => t.name).filter(Boolean);
+      const clusterLabels = vtex.clusterPromoLabels ?? [];
       const parsed = vtex.extractedPromotions;
       console.log(
-        `  [${store}] $${vtex.price ?? "?"} | teasers=${teaserNames.length} parsed=${parsed.length}`,
+        `  [${store}] $${vtex.price ?? "?"} | teasers=${teaserNames.length} clusters=${clusterLabels.length} parsed=${parsed.length}`,
       );
       for (const name of teaserNames) {
         const match = parsed.find((p) => p.name === name);
-        const pricing = match?.pricing;
-        const parsedLabel = pricing
-          ? `${pricing.summary} → $${pricing.unitEffectivePrice}/u (${pricing.unitsToBuy} u)`
-          : "sin parser";
-        console.log(`         · ${name}`);
-        console.log(`           → ${parsedLabel}`);
+        console.log(`         [teaser] ${name}`);
+        console.log(`           → ${formatPricingLabel(name, match?.pricing)}`);
+      }
+      for (const label of clusterLabels) {
+        const match = parsed.find((p) => p.name === label);
+        const classified = classifyPromoText(label);
+        console.log(`         [cluster] ${label} (${classified.kind})`);
+        console.log(`           → ${formatPricingLabel(label, match?.pricing)}`);
+      }
+      if (teaserNames.length === 0 && clusterLabels.length === 0) {
+        const allClusters = Object.values(vtex.productClusters ?? {});
+        if (allClusters.length > 0) {
+          console.log(`         (sin promo accionable; ${allClusters.length} clusters totales)`);
+        }
       }
     }
     console.log("");
@@ -122,6 +186,17 @@ function printConsoleSummary(report: PromoResearchReport) {
   console.log("\n--- Catálogo de textos Coto (discounts) ---");
   for (const t of report.cotoDiscountTextCatalog) {
     console.log(`  · ${t}`);
+  }
+
+  console.log("\n--- Catálogo productClusters Cencosud (Jumbo/Disco/Vea) ---");
+  for (const t of report.clusterTextCatalog) {
+    const c = classifyPromoText(t);
+    console.log(`  · [${c.kind}] ${t}`);
+  }
+
+  console.log("\n--- Resumen de patrones detectados ---");
+  for (const [kind, count] of Object.entries(report.patternSummary).sort()) {
+    console.log(`  ${kind}: ${count}`);
   }
   console.log("");
 }
@@ -174,7 +249,9 @@ async function main() {
     sampleCount: samples.length,
     samples,
     teaserTextCatalog: collectTeaserTexts(samples),
+    clusterTextCatalog: collectClusterTexts(samples),
     cotoDiscountTextCatalog: collectCotoDiscountTexts(samples),
+    patternSummary: buildPatternSummary(samples),
   };
 
   mkdirSync(resolve(outPath, ".."), { recursive: true });

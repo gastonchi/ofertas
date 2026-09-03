@@ -1,3 +1,8 @@
+import {
+  classifyPromoText,
+  type ClassifiedPromoText,
+} from "../promotions/text-patterns";
+
 export type PromoPricing = {
   /** Etiqueta corta, ej. "2do al 50%" */
   summary: string;
@@ -7,6 +12,8 @@ export type PromoPricing = {
   unitEffectivePrice: number;
   /** Texto de vigencia si se pudo inferir, ej. "hasta el 10/08" */
   validUntilLabel?: string;
+  /** Clasificación del texto parseado */
+  kind?: ClassifiedPromoText["kind"];
 };
 
 function roundMoney(n: number): number {
@@ -34,8 +41,69 @@ export function parseValidUntilLabel(name: string): string | undefined {
   return undefined;
 }
 
+function pricingFromSecondUnit(
+  percent: number,
+  shelfPrice: number,
+  minimumQuantity: number | undefined,
+  validUntilLabel?: string,
+): PromoPricing {
+  const unitsToBuy = Math.max(2, minimumQuantity ?? 2);
+  const pairs = Math.floor(unitsToBuy / 2);
+  const remainder = unitsToBuy % 2;
+  const pairCost = shelfPrice + shelfPrice * (1 - percent / 100);
+  const totalToPay = roundMoney(pairs * pairCost + remainder * shelfPrice);
+  return {
+    summary: `2do al ${percent}%`,
+    unitsToBuy,
+    totalToPay,
+    unitEffectivePrice: roundMoney(totalToPay / unitsToBuy),
+    validUntilLabel,
+    kind: "second_unit_percent",
+  };
+}
+
+function pricingFromNxm(
+  take: number,
+  pay: number,
+  shelfPrice: number,
+  minimumQuantity: number | undefined,
+  validUntilLabel?: string,
+): PromoPricing {
+  const unitsToBuy = Math.max(take, minimumQuantity ?? take);
+  const sets = Math.floor(unitsToBuy / take);
+  const remainder = unitsToBuy % take;
+  const totalToPay = roundMoney(sets * pay * shelfPrice + remainder * shelfPrice);
+  return {
+    summary: `${take}x${pay}`,
+    unitsToBuy,
+    totalToPay,
+    unitEffectivePrice: roundMoney(totalToPay / unitsToBuy),
+    validUntilLabel,
+    kind: "nxm",
+  };
+}
+
+function pricingFromDirectPercent(
+  percent: number,
+  shelfPrice: number,
+  minimumQuantity: number | undefined,
+  validUntilLabel?: string,
+  ambiguous = false,
+): PromoPricing {
+  const unitsToBuy = minimumQuantity && minimumQuantity > 0 ? minimumQuantity : 1;
+  const unitEffectivePrice = roundMoney(shelfPrice * (1 - percent / 100));
+  return {
+    summary: ambiguous ? `hasta ${percent}% dto` : `${percent}% dto`,
+    unitsToBuy,
+    totalToPay: roundMoney(unitEffectivePrice * unitsToBuy),
+    unitEffectivePrice,
+    validUntilLabel,
+    kind: ambiguous ? "ambiguous" : "direct_percent",
+  };
+}
+
 /**
- * Calcula precio a pagar según el nombre de la promo VTEX.
+ * Calcula precio a pagar según el nombre de la promo VTEX / cluster / Coto.
  * Ej.: 2do al 50% con precio 5800 → total 8700 / $4350 c/u.
  */
 export function computePromoPricing(
@@ -46,44 +114,51 @@ export function computePromoPricing(
   if (shelfPrice <= 0) return null;
 
   const validUntilLabel = parseValidUntilLabel(name);
+  const classified = classifyPromoText(name);
 
-  const secondAt = name.match(/2(?:do|[°º]|da)\s*al\s*(\d+(?:[.,]\d+)?)\s*%/i);
-  if (secondAt) {
-    const pct = Number(secondAt[1].replace(",", "."));
-    if (Number.isFinite(pct) && pct >= 0 && pct <= 100) {
-      const unitsToBuy = Math.max(2, minimumQuantity ?? 2);
-      // La promo clásica es en múltiplos de 2: 2da unidad al X%.
-      const pairs = Math.floor(unitsToBuy / 2);
-      const remainder = unitsToBuy % 2;
-      const pairCost = shelfPrice + shelfPrice * (1 - pct / 100);
-      const totalToPay = roundMoney(pairs * pairCost + remainder * shelfPrice);
-      return {
-        summary: `2do al ${pct}%`,
-        unitsToBuy,
-        totalToPay,
-        unitEffectivePrice: roundMoney(totalToPay / unitsToBuy),
-        validUntilLabel,
-      };
-    }
+  if (classified.kind === "payment_only" || classified.kind === "loyalty") {
+    return validUntilLabel
+      ? {
+          summary: "promo",
+          unitsToBuy: minimumQuantity && minimumQuantity > 0 ? minimumQuantity : 1,
+          totalToPay: roundMoney(shelfPrice * (minimumQuantity && minimumQuantity > 0 ? minimumQuantity : 1)),
+          unitEffectivePrice: roundMoney(shelfPrice),
+          validUntilLabel,
+          kind: classified.kind,
+        }
+      : null;
   }
 
-  const nxm = name.match(/\b(\d)\s*[x×]\s*(\d)\b/i);
-  if (nxm) {
-    const take = Number(nxm[1]);
-    const pay = Number(nxm[2]);
-    if (take > pay && pay >= 1) {
-      const unitsToBuy = Math.max(take, minimumQuantity ?? take);
-      const sets = Math.floor(unitsToBuy / take);
-      const remainder = unitsToBuy % take;
-      const totalToPay = roundMoney(sets * pay * shelfPrice + remainder * shelfPrice);
-      return {
-        summary: `${take}x${pay}`,
-        unitsToBuy,
-        totalToPay,
-        unitEffectivePrice: roundMoney(totalToPay / unitsToBuy),
-        validUntilLabel,
-      };
-    }
+  if (classified.kind === "nxm" && classified.take != null && classified.pay != null) {
+    return pricingFromNxm(
+      classified.take,
+      classified.pay,
+      shelfPrice,
+      minimumQuantity,
+      validUntilLabel,
+    );
+  }
+
+  if (classified.kind === "second_unit_percent" && classified.percent != null) {
+    return pricingFromSecondUnit(
+      classified.percent,
+      shelfPrice,
+      minimumQuantity,
+      validUntilLabel,
+    );
+  }
+
+  if (
+    (classified.kind === "direct_percent" || classified.kind === "ambiguous") &&
+    classified.percent != null
+  ) {
+    return pricingFromDirectPercent(
+      classified.percent,
+      shelfPrice,
+      minimumQuantity,
+      validUntilLabel,
+      classified.kind === "ambiguous",
+    );
   }
 
   return validUntilLabel
@@ -93,6 +168,7 @@ export function computePromoPricing(
         totalToPay: roundMoney(shelfPrice * (minimumQuantity && minimumQuantity > 0 ? minimumQuantity : 1)),
         unitEffectivePrice: roundMoney(shelfPrice),
         validUntilLabel,
+        kind: "ambiguous",
       }
     : null;
 }

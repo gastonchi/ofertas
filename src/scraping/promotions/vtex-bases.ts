@@ -9,6 +9,13 @@ export const VTEX_STORE_BASES: Partial<Record<StoreId, string>> = {
   vea: "https://www.vea.com.ar",
 };
 
+/** Jumbo/Disco/Vea exponen promos en productClusters, no en teasers. */
+export const CENCOSUD_CLUSTER_STORES = new Set<StoreId>([
+  "jumbo",
+  "disco",
+  "vea",
+]);
+
 export function isVtexStore(store: StoreId): boolean {
   return store in VTEX_STORE_BASES;
 }

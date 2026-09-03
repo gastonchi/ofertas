@@ -1,5 +1,11 @@
 import type { StoreId } from "../../lib/types";
 import { extractPromotions } from "../stores/vtex";
+import {
+  classifyPromoText,
+  filterProductClusterLabels,
+  type ClassifiedPromoText,
+} from "./text-patterns";
+import { CENCOSUD_CLUSTER_STORES } from "./vtex-bases";
 
 const USER_AGENT = "ofertas-mvp/0.1 (personal price watcher)";
 
@@ -31,6 +37,8 @@ type VtexProduct = {
   productName?: string;
   link?: string;
   linkText?: string;
+  productClusters?: Record<string, string>;
+  clusterHighlights?: Record<string, string>;
   items?: Array<{
     ean?: string;
     clusterHighlights?: unknown;
@@ -64,6 +72,12 @@ export type VtexRawOffer = {
   availableQuantity?: number;
   discountHighlight?: unknown;
   teasers: VtexRawTeaser[];
+  /** Todos los productClusters del producto (Jumbo/Disco/Vea) */
+  productClusters?: Record<string, string>;
+  /** Labels de cluster que parecen promos accionables */
+  clusterPromoLabels?: string[];
+  /** Clasificación de cada label accionable */
+  classifiedClusters?: ClassifiedPromoText[];
   /** Promos ya filtradas por `extractPromotions` + pricing calculado */
   extractedPromotions: ReturnType<typeof extractPromotions>;
   /** Fragmento útil del commertialOffer para depuración */
@@ -154,6 +168,13 @@ export async function fetchVtexRawByEan(
   const teasers = mapTeasers(offer.Teasers, "Teasers");
   const allTeasers = [...promotionTeasers, ...teasers];
   const price = Number(offer.Price ?? 0);
+  const productClusters = product.productClusters;
+  const clusterPromoLabels = filterProductClusterLabels(
+    CENCOSUD_CLUSTER_STORES.has(store) ? productClusters : undefined,
+  );
+  const classifiedClusters = clusterPromoLabels.map((label) =>
+    classifyPromoText(label),
+  );
 
   return {
     store,
@@ -170,9 +191,13 @@ export async function fetchVtexRawByEan(
     availableQuantity: offer.AvailableQuantity,
     discountHighlight: offer.DiscountHighLight ?? offer.DiscountHighlights,
     teasers: allTeasers,
+    productClusters,
+    clusterPromoLabels,
+    classifiedClusters,
     extractedPromotions: extractPromotions(
       [...(offer.PromotionTeasers ?? []), ...(offer.Teasers ?? [])],
       price,
+      clusterPromoLabels,
     ),
     commertialOfferKeys: Object.keys(offer).sort(),
   };
