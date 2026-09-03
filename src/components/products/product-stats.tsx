@@ -28,7 +28,7 @@ function StatCard({
             <p className="stat-promo-hint muted">
               c/u con promo · góndola {formatArs(stat.shelfPrice)}
             </p>
-          ) : stat.listPrice != null && stat.listPrice > stat.shelfPrice ? (
+          ) : stat.listPrice != null ? (
             <p className="stat-promo-hint muted">
               góndola · lista {formatArs(stat.listPrice)}
             </p>
@@ -55,10 +55,7 @@ function StorePriceCard({
   const displayPrice =
     quote.effectivePrice != null ? quote.effectivePrice : quote.price;
   const promoText = promoDetailText(quote);
-  const showList =
-    quote.listPrice != null &&
-    quote.price != null &&
-    quote.listPrice > quote.price;
+  const showList = quote.listPrice != null;
   const showShelf =
     quote.hasPromo &&
     quote.price != null &&
@@ -85,7 +82,7 @@ function StorePriceCard({
         </div>
       </header>
 
-      {quote.price != null ? (
+      {quote.price != null && (showList || showShelf) ? (
         <dl className="info-card-meta store-price-meta">
           {showList ? (
             <>
@@ -97,12 +94,6 @@ function StorePriceCard({
             <>
               <dt>Góndola</dt>
               <dd>{formatArs(quote.price)}</dd>
-            </>
-          ) : null}
-          {!showList && !showShelf && quote.listPrice != null ? (
-            <>
-              <dt>Lista</dt>
-              <dd>{formatArs(quote.listPrice)}</dd>
             </>
           ) : null}
         </dl>
@@ -137,14 +128,10 @@ export function ProductStats({
   emptyAction?: ReactNode;
 }) {
   const hasHistory = stats.latest !== null;
+  const bestEffectivePrice = stats.latest?.price ?? null;
 
   return (
     <>
-      <section className="stats-grid">
-        <StatCard label="Último mejor precio" stat={stats.latest} />
-        <StatCard label="Mejor en 7 días" stat={stats.best7d} />
-        <StatCard label="Mejor en 30 días" stat={stats.best30d} />
-      </section>
       <section className="panel">
         <div className="panel-head">
           <h2>Último precio por súper</h2>
@@ -153,8 +140,8 @@ export function ProductStats({
           {stats.latestByStore.map((quote) => {
             const isBest =
               quote.effectivePrice != null &&
-              stats.latest !== null &&
-              quote.effectivePrice === stats.latest.price;
+              bestEffectivePrice != null &&
+              quote.effectivePrice === bestEffectivePrice;
             return (
               <StorePriceCard key={quote.store} quote={quote} isBest={isBest} />
             );
@@ -166,6 +153,17 @@ export function ProductStats({
             {emptyAction}
           </p>
         ) : null}
+      </section>
+
+      <section className="panel product-history-panel">
+        <div className="panel-head">
+          <h2>Precios históricos</h2>
+        </div>
+        <div className="stats-grid">
+          <StatCard label="Mejor en 7 días" stat={stats.best7d} />
+          <StatCard label="Mejor en 15 días" stat={stats.best15d} />
+          <StatCard label="Mejor en 30 días" stat={stats.best30d} />
+        </div>
       </section>
     </>
   );

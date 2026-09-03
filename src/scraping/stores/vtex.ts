@@ -1,4 +1,5 @@
 import type { OfferSnapshot, PromotionInfo, StoreId } from "../../lib/types";
+import { normalizeVtexListPrice } from "../../lib/prices";
 import { computePromoPricing } from "../offers/pricing";
 import { isPaymentOnlyPromo, looksLikePromoText } from "../promotions/text-patterns";
 
@@ -114,6 +115,8 @@ export async function fetchVtexByEan(opts: {
 
   const teasers = [...(offer.PromotionTeasers ?? []), ...(offer.Teasers ?? [])];
   const price = Number(offer.Price ?? 0);
+  const rawListPrice = Number(offer.ListPrice ?? offer.Price ?? 0);
+  const listPrice = normalizeVtexListPrice(opts.store, price, rawListPrice);
 
   return {
     store: opts.store,
@@ -124,7 +127,7 @@ export async function fetchVtexByEan(opts: {
       (product.linkText ? `${base}/${product.linkText}/p` : undefined),
     imageUrl: pickImageUrl(item),
     price,
-    listPrice: Number(offer.ListPrice ?? offer.Price ?? 0),
+    listPrice,
     available: (offer.AvailableQuantity ?? 0) > 0,
     promotions: extractPromotions(teasers, price),
     checkedAt: new Date().toISOString(),

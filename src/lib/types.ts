@@ -130,8 +130,10 @@ export type PriceStat = {
 } | null;
 
 export type ProductPriceStats = {
+  /** Mejor precio actual (para chip en cards); no se muestra como panel. */
   latest: PriceStat;
   best7d: PriceStat;
+  best15d: PriceStat;
   best30d: PriceStat;
   latestByStore: StorePriceQuote[];
 };

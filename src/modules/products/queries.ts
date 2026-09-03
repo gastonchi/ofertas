@@ -4,6 +4,7 @@ import {
   effectiveUnitPrice,
   parsePromotions,
 } from "@/lib/promotions";
+import { normalizeStoreListPrice } from "@/lib/prices";
 import { resolveEnabledStores } from "@/lib/stores";
 import {
   type PriceHistoryRow,
@@ -86,8 +87,11 @@ function toStat(row: PriceHistoryRow | null | undefined): PriceStat {
     shelfPrice,
     promotions,
   );
-  const listPrice = Number(row.list_price);
-  const listPriceValue = Number.isFinite(listPrice) ? listPrice : null;
+  const listPriceValue = normalizeStoreListPrice(
+    String(row.store),
+    shelfPrice,
+    Number(row.list_price),
+  );
 
   return {
     price: effective,
@@ -136,8 +140,11 @@ function buildStoreQuotes(
       shelfPrice,
       promotions,
     );
-    const listPrice = Number(row.list_price);
-    const listPriceValue = Number.isFinite(listPrice) ? listPrice : null;
+    const listPriceValue = normalizeStoreListPrice(
+      store,
+      shelfPrice,
+      Number(row.list_price),
+    );
 
     return {
       store,
@@ -239,6 +246,7 @@ export async function getProductPriceStats(
   return {
     latest,
     best7d: pickCheapest(inWindow(rows, now - 7 * DAY_MS)),
+    best15d: pickCheapest(inWindow(rows, now - 15 * DAY_MS)),
     best30d: pickCheapest(inWindow(rows, now - 30 * DAY_MS)),
     latestByStore: buildStoreQuotes(latestRows, stores).sort((a, b) => {
       if (a.effectivePrice == null && b.effectivePrice == null) return 0;
