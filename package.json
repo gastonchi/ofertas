@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "check": "tsx src/jobs/check-offers.ts",
     "check:dry": "tsx src/jobs/check-offers.ts --dry-run",
-    "check:force": "tsx src/jobs/check-offers.ts --force"
+    "check:force": "tsx src/jobs/check-offers.ts --force",
+    "sample:promos": "tsx src/jobs/sample-promotions.ts"
   },
   "engines": {
     "node": ">=20"

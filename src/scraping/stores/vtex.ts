@@ -1,5 +1,6 @@
 import type { OfferSnapshot, PromotionInfo, StoreId } from "../../lib/types";
 import { computePromoPricing } from "../offers/pricing";
+import { isPaymentOnlyPromo, looksLikePromoText } from "../promotions/text-patterns";
 
 type VtexTeaser = {
   Name?: string;
@@ -52,23 +53,16 @@ export function extractPromotions(
     const name = teaserName(t);
     if (!name) continue;
 
-    const cardOnly =
-      /tarjeta|banco|cr[eé]dito|visa|master|prepaga|naranja|cabal/i.test(name) &&
-      !/\b(2do|2[°º]|2x1|3x2|4x3)/i.test(name);
-    if (cardOnly) continue;
-
-    const looksLikeOffer =
-      /\b(2do|2[°º]|2x1|3x2|4x3|\d+\s*%|off|dto|desc|promo|ahora\s*\d)/i.test(
-        name,
-      ) || (teaserMinQty(t) ?? 0) >= 2;
-
-    if (!looksLikeOffer) continue;
+    const minQty = teaserMinQty(t);
+    if (isPaymentOnlyPromo(name) && !looksLikePromoText(name, minQty)) {
+      continue;
+    }
+    if (!looksLikePromoText(name, minQty)) continue;
     if (seen.has(name)) continue;
     seen.add(name);
 
-    const minimumQuantity = teaserMinQty(t);
-    const pricing = computePromoPricing(name, shelfPrice, minimumQuantity) ?? undefined;
-    out.push({ name, minimumQuantity, pricing });
+    const pricing = computePromoPricing(name, shelfPrice, minQty) ?? undefined;
+    out.push({ name, minimumQuantity: minQty, pricing });
   }
 
   return out;
