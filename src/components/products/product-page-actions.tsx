@@ -1,30 +1,92 @@
 "use client";
 
-import { useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+  type ReactNode,
+} from "react";
 import { Plus } from "lucide-react";
 import { LookupPricesPanel } from "@/components/products/lookup-prices-panel";
 import { NewProductPanel } from "@/components/products/product-form";
 import type { ProductCreateDraft } from "@/components/products/product-create-draft";
 import type { StoreId } from "@/lib/types";
 
-export function ProductPageActions({
+type ProductPageActionsContextValue = {
+  openCreate: (draft?: ProductCreateDraft) => void;
+  trackedStores: StoreId[];
+};
+
+const ProductPageActionsContext =
+  createContext<ProductPageActionsContextValue | null>(null);
+
+function useProductPageActions() {
+  const ctx = useContext(ProductPageActionsContext);
+  if (!ctx) {
+    throw new Error(
+      "ProductPageActions components must be used within ProductPageActionsProvider",
+    );
+  }
+  return ctx;
+}
+
+export function ProductPageActionsProvider({
   trackedStores,
+  children,
 }: {
   trackedStores: StoreId[];
+  children: ReactNode;
 }) {
   const [createOpen, setCreateOpen] = useState(false);
   const [draft, setDraft] = useState<ProductCreateDraft | null>(null);
 
-  function openCreate(next?: ProductCreateDraft) {
+  const openCreate = useCallback((next?: ProductCreateDraft) => {
     setDraft(next ?? null);
     setCreateOpen(true);
-  }
+  }, []);
+
+  return (
+    <ProductPageActionsContext.Provider
+      value={{ openCreate, trackedStores }}
+    >
+      {children}
+      <NewProductPanel
+        open={createOpen}
+        draft={draft}
+        onOpenChange={(open) => {
+          setCreateOpen(open);
+          if (!open) setDraft(null);
+        }}
+      />
+    </ProductPageActionsContext.Provider>
+  );
+}
+
+export function ProductNewTitleAction() {
+  const { openCreate } = useProductPageActions();
+
+  return (
+    <button
+      type="button"
+      className="btn-primary btn-icon product-new-header-btn"
+      onClick={() => openCreate()}
+      aria-label="Nuevo producto"
+      title="Nuevo producto"
+    >
+      <Plus size={20} aria-hidden />
+    </button>
+  );
+}
+
+export function ProductPageToolbar() {
+  const { openCreate, trackedStores } = useProductPageActions();
 
   return (
     <div className="panel-actions">
       <button
         type="button"
-        className="btn-primary"
+        className="btn-primary product-new-panel-btn"
         onClick={() => openCreate()}
       >
         <Plus size={18} aria-hidden />
@@ -33,14 +95,6 @@ export function ProductPageActions({
       <LookupPricesPanel
         trackedStores={trackedStores}
         onAddProduct={(next) => openCreate(next)}
-      />
-      <NewProductPanel
-        open={createOpen}
-        draft={draft}
-        onOpenChange={(open) => {
-          setCreateOpen(open);
-          if (!open) setDraft(null);
-        }}
       />
     </div>
   );

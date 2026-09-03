@@ -15,6 +15,9 @@ type CotoStorePrice = {
 
 type CotoProductData = {
   url?: string;
+  image_url?: string;
+  product_medium_image_url?: string;
+  product_large_image_url?: string;
   product_main_ean?: number | string;
   sku_display_name?: string;
   sku_description?: string;
@@ -52,6 +55,19 @@ function productUrl(data: CotoProductData): string | undefined {
   if (!data.url) return undefined;
   const path = data.url.startsWith("/") ? data.url : `/${data.url}`;
   return `${COTO_BASE}/sitios/cdigi/productos${path}`;
+}
+
+function pickImageUrl(data: CotoProductData): string | undefined {
+  const candidates = [
+    data.image_url,
+    data.product_medium_image_url,
+    data.product_large_image_url,
+  ];
+  for (const value of candidates) {
+    const url = String(value ?? "").trim();
+    if (url) return url;
+  }
+  return undefined;
 }
 
 export async function fetchCotoByEan(ean: string): Promise<OfferSnapshot | null> {
@@ -98,6 +114,7 @@ export async function fetchCotoByEan(ean: string): Promise<OfferSnapshot | null>
       data.sku_description?.trim() ||
       "Producto sin nombre",
     url: productUrl(data),
+    imageUrl: pickImageUrl(data),
     price: shelfPrice,
     listPrice,
     available: (data.store_availability ?? []).includes(COTO_CATALOG_STORE),

@@ -193,6 +193,28 @@ export async function savePriceHistory(
   }
 }
 
+export async function updateTrackedProductImage(
+  db: SupabaseClient,
+  ean: string,
+  imageUrl: string | undefined,
+): Promise<void> {
+  const url = imageUrl?.trim();
+  if (!url) return;
+
+  const { error } = await db
+    .from("tracked_products")
+    .update({ image_url: url })
+    .eq("ean", ean.trim())
+    .is("image_url", null);
+
+  if (error) {
+    if (error.code === "PGRST204" || error.message.includes("image_url")) {
+      return;
+    }
+    throw new Error(`Supabase tracked_products image: ${error.message}`);
+  }
+}
+
 export async function wasAlertSentToday(
   db: SupabaseClient,
   match: OfferMatch,

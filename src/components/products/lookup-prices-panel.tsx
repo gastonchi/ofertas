@@ -150,7 +150,7 @@ export function LookupPricesPanel({
               </div>
               <button
                 type="button"
-                className="btn-primary"
+                className="btn-primary lookup-add-btn"
                 onClick={() => {
                   onAddProduct(draftFromLookup(ean, result));
                   close();

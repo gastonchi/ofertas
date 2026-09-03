@@ -49,6 +49,9 @@ create index if not exists tracked_products_active_idx
 alter table public.tracked_products
   add column if not exists alerts_enabled boolean not null default true;
 
+alter table public.tracked_products
+  add column if not exists image_url text;
+
 create table if not exists public.app_settings (
   id uuid primary key default gen_random_uuid(),
   alert_email text,

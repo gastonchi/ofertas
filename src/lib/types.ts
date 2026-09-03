@@ -34,6 +34,7 @@ export type TrackedProductRow = {
   name: string;
   ean: string;
   target_price: number;
+  image_url?: string | null;
   stores?: StoreId[];
   active: boolean;
   alerts_enabled: boolean;
@@ -58,6 +59,7 @@ export type OfferSnapshot = {
   ean: string;
   productName: string;
   url?: string;
+  imageUrl?: string;
   price: number;
   listPrice: number;
   available: boolean;

@@ -11,6 +11,42 @@ import {
 import { EditProductPanel } from "@/components/products/product-form";
 import type { TrackedProductRow } from "@/lib/types";
 
+async function deleteProductWithSwal(product: TrackedProductRow): Promise<void> {
+  const confirmed = await Swal.fire({
+    icon: "warning",
+    title: "Eliminar producto",
+    text: `¿Querés eliminar "${product.name}"? Esta acción no se puede deshacer.`,
+    showCancelButton: true,
+    confirmButtonText: "Eliminar",
+    cancelButtonText: "Cancelar",
+    confirmButtonColor: "#b42318",
+    cancelButtonColor: "#6b7280",
+    reverseButtons: true,
+    focusCancel: true,
+  });
+
+  if (!confirmed.isConfirmed) return;
+
+  const formData = new FormData();
+  formData.set("id", product.id);
+
+  try {
+    await deleteProductAction(formData);
+    await Swal.fire({
+      icon: "success",
+      title: "Producto eliminado",
+      timer: 2200,
+      showConfirmButton: false,
+    });
+  } catch {
+    await Swal.fire({
+      icon: "error",
+      title: "No se pudo eliminar el producto.",
+      confirmButtonColor: "#1f6a45",
+    });
+  }
+}
+
 async function toggleAlertsWithSwal(
   product: TrackedProductRow,
 ): Promise<void> {
@@ -41,45 +77,43 @@ async function toggleAlertsWithSwal(
   });
 }
 
-export function ProductAlertsToggle({
+export function ProductActions({
   product,
+  layout = "icons",
 }: {
   product: TrackedProductRow;
+  layout?: "icons" | "grid";
 }) {
   const [pending, startTransition] = useTransition();
   const alertsOn = product.alerts_enabled;
-
-  return (
-    <button
-      type="button"
-      className={`status-btn ${alertsOn ? "" : "status-inactive"}`.trim()}
-      disabled={pending}
-      onClick={() => startTransition(() => toggleAlertsWithSwal(product))}
-    >
-      {alertsOn ? "Activas" : "Inactivas"}
-    </button>
-  );
-}
-
-export function ProductActions({ product }: { product: TrackedProductRow }) {
-  const [pending, startTransition] = useTransition();
-  const alertsOn = product.alerts_enabled;
   const BellIcon = alertsOn ? Bell : BellOff;
+  const isGrid = layout === "grid";
 
   return (
-    <div className="card-actions">
+    <div
+      className={
+        isGrid ? "card-actions card-actions-grid" : "card-actions"
+      }
+    >
       <Link
         href={`/productos/${product.id}`}
-        className="btn-prices btn-icon"
+        className={
+          isGrid ? "btn-prices card-action-btn" : "btn-prices btn-icon"
+        }
         aria-label={`Ver precios de ${product.name}`}
         title="Precios"
       >
         <DollarSign size={18} aria-hidden />
+        {isGrid ? <span>Ver precios</span> : null}
       </Link>
-      <EditProductPanel product={product} />
+      <EditProductPanel product={product} labeled={isGrid} />
       <button
         type="button"
-        className={`btn-alert btn-icon ${alertsOn ? "" : "alert-off"}`.trim()}
+        className={
+          isGrid
+            ? `btn-alert card-action-btn ${alertsOn ? "" : "alert-off"}`.trim()
+            : `btn-alert btn-icon ${alertsOn ? "" : "alert-off"}`.trim()
+        }
         disabled={pending}
         onClick={() => startTransition(() => toggleAlertsWithSwal(product))}
         aria-label={
@@ -90,18 +124,21 @@ export function ProductActions({ product }: { product: TrackedProductRow }) {
         title={alertsOn ? "Alertas activas" : "Alertas desactivadas"}
       >
         <BellIcon size={18} aria-hidden />
+        {isGrid ? <span>Alertas</span> : null}
       </button>
-      <form action={deleteProductAction}>
-        <input type="hidden" name="id" value={product.id} />
-        <button
-          type="submit"
-          className="btn-danger btn-icon"
-          aria-label={`Eliminar ${product.name}`}
-          title="Eliminar"
-        >
-          <Trash2 size={18} aria-hidden />
-        </button>
-      </form>
+      <button
+        type="button"
+        className={
+          isGrid ? "btn-danger card-action-btn" : "btn-danger btn-icon"
+        }
+        disabled={pending}
+        onClick={() => startTransition(() => deleteProductWithSwal(product))}
+        aria-label={`Eliminar ${product.name}`}
+        title="Eliminar"
+      >
+        <Trash2 size={18} aria-hidden />
+        {isGrid ? <span>Eliminar</span> : null}
+      </button>
     </div>
   );
 }

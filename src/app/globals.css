@@ -426,10 +426,10 @@ code,
   min-width: 0;
 }
 
-.ean-scan-row .btn-ghost {
+.ean-scan-row .ean-scan-btn {
   flex: 0 0 auto;
-  border: 1px solid var(--line);
-  background: white;
+  width: auto;
+  max-width: none;
 }
 
 .barcode-preview {
@@ -555,6 +555,14 @@ code,
 
 .desktop-only {
   display: block;
+}
+
+.product-new-header-btn {
+  display: none;
+}
+
+.product-new-panel-btn {
+  display: inline-flex;
 }
 
 .mobile-only {
@@ -875,6 +883,73 @@ code,
   grid-column: 1 / -1;
 }
 
+.product-thumb {
+  display: block;
+  flex-shrink: 0;
+  border-radius: 0.55rem;
+  border: 1px solid var(--line);
+  background: white;
+  object-fit: contain;
+}
+
+.product-thumb-sm {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.product-thumb-md {
+  width: 3.25rem;
+  height: 3.25rem;
+}
+
+.product-thumb-lg {
+  width: 4.5rem;
+  height: 4.5rem;
+}
+
+.product-thumb-placeholder {
+  background: linear-gradient(
+    145deg,
+    rgba(31, 106, 69, 0.08),
+    rgba(20, 32, 26, 0.04)
+  );
+}
+
+.product-row-main {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.product-row-main .product-name {
+  min-width: 0;
+}
+
+.product-card-head {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.product-card-head .product-name {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.product-detail-head {
+  align-items: flex-start;
+}
+
+.product-detail-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
 .card-actions {
   display: flex;
   flex-wrap: wrap;
@@ -1048,7 +1123,7 @@ a.btn-secondary {
   margin: 0;
 }
 
-.lookup-prices .btn-primary {
+.lookup-prices .lookup-add-btn {
   width: 100%;
 }
 
@@ -1184,8 +1259,7 @@ a.btn-secondary {
 
   .stats-grid,
   .field-row,
-  .stores-grid,
-  .ean-scan-row {
+  .stores-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1217,10 +1291,22 @@ a.btn-secondary {
 
   .app-header {
     padding: 1.15rem 1rem 0.25rem;
+    flex-wrap: nowrap;
+    align-items: center;
   }
 
   .app-header h1 {
     font-size: 1.7rem;
+  }
+
+  .product-new-header-btn {
+    display: inline-flex;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  .product-new-panel-btn {
+    display: none;
   }
 
   .app-content {
@@ -1323,5 +1409,30 @@ a.btn-secondary {
 
   .product-best-stat .stat-card-head strong {
     font-size: 1.85rem;
+  }
+
+  .card-actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .card-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    width: 100%;
+    min-height: 44px;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: none;
+  }
+
+  .card-actions-grid .card-action-btn.alert-off {
+    opacity: 0.55;
   }
 }

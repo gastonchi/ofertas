@@ -9,7 +9,8 @@ import {
   type StorePriceQuote,
   type TrackedProductRow,
 } from "@/lib/types";
-import { argentinaDay } from "@/scraping/db";
+import { argentinaDay, updateTrackedProductImage } from "@/scraping/db";
+import { fetchProductImageByEan } from "@/scraping/lookup-name";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const PRICE_COLUMNS =
@@ -28,6 +29,20 @@ export async function getProduct(id: string): Promise<TrackedProductRow | null> 
   if (!data) return null;
   const row = data as TrackedProductRow;
   return { ...row, alerts_enabled: row.alerts_enabled !== false };
+}
+
+export async function ensureProductImage(
+  product: TrackedProductRow,
+  stores: StoreId[],
+): Promise<TrackedProductRow> {
+  if (product.image_url?.trim()) return product;
+
+  const imageUrl = await fetchProductImageByEan(product.ean, stores);
+  if (!imageUrl) return product;
+
+  const db = createDb();
+  await updateTrackedProductImage(db, product.ean, imageUrl);
+  return { ...product, image_url: imageUrl };
 }
 
 function toStat(row: PriceHistoryRow | null | undefined): PriceStat {
