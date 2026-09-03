@@ -1,4 +1,8 @@
 import type { OfferSnapshot } from "../../lib/types";
+import {
+  extractCotoPromotions,
+  type CotoDiscount,
+} from "../promotions/coto-promotions";
 
 const COTO_BASE = "https://www.coto.com.ar";
 /** Sucursal de referencia del catálogo digital (precio online). */
@@ -23,6 +27,7 @@ type CotoProductData = {
   sku_description?: string;
   product_list_price?: number;
   store_availability?: string[];
+  discounts?: CotoDiscount[];
   price?: CotoStorePrice[];
 };
 
@@ -118,7 +123,7 @@ export async function fetchCotoByEan(ean: string): Promise<OfferSnapshot | null>
     price: shelfPrice,
     listPrice,
     available: (data.store_availability ?? []).includes(COTO_CATALOG_STORE),
-    promotions: [],
+    promotions: extractCotoPromotions(data.discounts, shelfPrice),
     checkedAt: new Date().toISOString(),
   };
 }
