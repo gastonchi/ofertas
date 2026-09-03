@@ -1,6 +1,7 @@
 import type { OfferSnapshot, PromotionInfo, StoreId } from "../../lib/types";
 import { normalizeVtexListPrice } from "../../lib/prices";
 import { computePromoPricing } from "../offers/pricing";
+import { onlineExclusiveLabelFromHighlights } from "../promotions/online-exclusive";
 import { isPaymentOnlyPromo, looksLikePromoText } from "../promotions/text-patterns";
 
 type VtexTeaser = {
@@ -8,6 +9,17 @@ type VtexTeaser = {
   Conditions?: { MinimumQuantity?: number };
   "<Name>k__BackingField"?: string;
   "<Conditions>k__BackingField"?: { "<MinimumQuantity>k__BackingField"?: number };
+};
+
+type VtexCommertialOffer = {
+  Price?: number;
+  ListPrice?: number;
+  PriceWithoutDiscount?: number;
+  AvailableQuantity?: number;
+  Teasers?: VtexTeaser[];
+  PromotionTeasers?: VtexTeaser[];
+  DiscountHighLight?: unknown;
+  DiscountHighlights?: unknown;
 };
 
 type VtexProduct = {
@@ -19,13 +31,7 @@ type VtexProduct = {
     images?: Array<{ imageUrl?: string }>;
     sellers?: Array<{
       sellerDefault?: boolean;
-      commertialOffer?: {
-        Price?: number;
-        ListPrice?: number;
-        AvailableQuantity?: number;
-        Teasers?: VtexTeaser[];
-        PromotionTeasers?: VtexTeaser[];
-      };
+      commertialOffer?: VtexCommertialOffer;
     }>;
   }>;
 };
@@ -115,8 +121,14 @@ export async function fetchVtexByEan(opts: {
 
   const teasers = [...(offer.PromotionTeasers ?? []), ...(offer.Teasers ?? [])];
   const price = Number(offer.Price ?? 0);
-  const rawListPrice = Number(offer.ListPrice ?? offer.Price ?? 0);
+  const rawListPrice = Number(
+    offer.ListPrice ?? offer.PriceWithoutDiscount ?? offer.Price ?? 0,
+  );
   const listPrice = normalizeVtexListPrice(opts.store, price, rawListPrice);
+  const onlineExclusiveLabel =
+    onlineExclusiveLabelFromHighlights(
+      offer.DiscountHighLight ?? offer.DiscountHighlights,
+    ) ?? undefined;
 
   return {
     store: opts.store,
@@ -131,5 +143,6 @@ export async function fetchVtexByEan(opts: {
     available: (offer.AvailableQuantity ?? 0) > 0,
     promotions: extractPromotions(teasers, price),
     checkedAt: new Date().toISOString(),
+    onlineExclusiveLabel,
   };
 }

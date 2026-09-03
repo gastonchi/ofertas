@@ -8,6 +8,7 @@ import {
   type Weekday,
 } from "../lib/schedule";
 import { ALL_STORES, type OfferMatch, type OfferSnapshot, type StoreId, type TrackedProduct } from "../lib/types";
+import { promotionsForStorage } from "../lib/promotions";
 
 export type JobSettings = {
   alertEmail?: string;
@@ -191,7 +192,10 @@ export async function savePriceHistory(
     product_name: snapshot.productName,
     price: snapshot.price,
     list_price: snapshot.listPrice,
-    promotions: snapshot.promotions,
+    promotions: promotionsForStorage(
+      snapshot.promotions,
+      snapshot.onlineExclusiveLabel,
+    ),
     checked_at: snapshot.checkedAt,
   });
 

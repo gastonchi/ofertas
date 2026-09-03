@@ -3,6 +3,7 @@ import { createDb } from "@/lib/db/client";
 import {
   effectiveUnitPrice,
   parsePromotions,
+  splitOnlineExclusivePromotion,
 } from "@/lib/promotions";
 import { normalizeStoreListPrice } from "@/lib/prices";
 import { resolveEnabledStores } from "@/lib/stores";
@@ -84,9 +85,10 @@ function toStat(row: PriceHistoryRow | null | undefined): PriceStat {
   if (!Number.isFinite(shelfPrice)) return null;
 
   const promotions = parsePromotions(row.promotions);
+  const { promotions: promoRows } = splitOnlineExclusivePromotion(promotions);
   const { effective, bestPromotion, hasPromo } = effectiveUnitPrice(
     shelfPrice,
-    promotions,
+    promoRows,
   );
   const listPriceValue = normalizeStoreListPrice(
     String(row.store),
@@ -136,10 +138,12 @@ function buildStoreQuotes(
     const shelfPrice = Number(row.price);
     if (!Number.isFinite(shelfPrice)) return { store, price: null };
 
-    const promotions = row.promotions ?? [];
+    const promotions = parsePromotions(row.promotions);
+    const { promotions: promoRows, onlineExclusiveLabel } =
+      splitOnlineExclusivePromotion(promotions);
     const { effective, bestPromotion, hasPromo } = effectiveUnitPrice(
       shelfPrice,
-      promotions,
+      promoRows,
     );
     const listPriceValue = normalizeStoreListPrice(
       store,
@@ -152,10 +156,11 @@ function buildStoreQuotes(
       price: shelfPrice,
       listPrice: listPriceValue,
       checked_at: row.checked_at,
-      promotions,
+      promotions: promoRows,
       effectivePrice: effective,
       bestPromotion: bestPromotion ?? null,
       hasPromo,
+      onlineExclusiveLabel,
     };
   });
 }
