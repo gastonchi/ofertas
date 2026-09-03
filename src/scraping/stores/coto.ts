@@ -83,10 +83,7 @@ export async function fetchCotoByEan(ean: string): Promise<OfferSnapshot | null>
   const data = match.data;
   const storePrice = pickStorePrice(data.price, COTO_CATALOG_STORE);
   const shelfPrice = Number(
-    storePrice?.formatPrice ??
-      storePrice?.listPrice ??
-      data.product_list_price ??
-      0,
+    storePrice?.listPrice ?? data.product_list_price ?? 0,
   );
   const listPrice = Number(
     storePrice?.listPrice ?? data.product_list_price ?? shelfPrice,
