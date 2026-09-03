@@ -1,11 +1,6 @@
 import type { OfferSnapshot, PromotionInfo, StoreId } from "../../lib/types";
 import { computePromoPricing } from "../offers/pricing";
-import {
-  filterProductClusterLabels,
-  isPaymentOnlyPromo,
-  looksLikePromoText,
-} from "../promotions/text-patterns";
-import { CENCOSUD_CLUSTER_STORES } from "../promotions/vtex-bases";
+import { isPaymentOnlyPromo, looksLikePromoText } from "../promotions/text-patterns";
 
 type VtexTeaser = {
   Name?: string;
@@ -18,8 +13,6 @@ type VtexProduct = {
   productName?: string;
   linkText?: string;
   link?: string;
-  productClusters?: Record<string, string>;
-  clusterHighlights?: Record<string, string>;
   items?: Array<{
     ean?: string;
     images?: Array<{ imageUrl?: string }>;
@@ -50,38 +43,26 @@ function teaserMinQty(t: VtexTeaser): number | undefined {
 export function extractPromotions(
   teasers: VtexTeaser[] | undefined,
   shelfPrice: number,
-  clusterLabels?: string[],
 ): PromotionInfo[] {
-  if (!teasers?.length && !clusterLabels?.length) return [];
+  if (!teasers?.length) return [];
 
   const seen = new Set<string>();
   const out: PromotionInfo[] = [];
 
-  const addPromo = (name: string, minimumQuantity?: number) => {
-    const trimmed = name.trim();
-    if (!trimmed || seen.has(trimmed)) return;
-    seen.add(trimmed);
-    const pricing = computePromoPricing(trimmed, shelfPrice, minimumQuantity) ?? undefined;
-    out.push({ name: trimmed, minimumQuantity, pricing });
-  };
-
-  for (const t of teasers ?? []) {
+  for (const t of teasers) {
     const name = teaserName(t);
     if (!name) continue;
 
-    if (isPaymentOnlyPromo(name) && !looksLikePromoText(name, teaserMinQty(t))) {
+    const minQty = teaserMinQty(t);
+    if (isPaymentOnlyPromo(name) && !looksLikePromoText(name, minQty)) {
       continue;
     }
+    if (!looksLikePromoText(name, minQty)) continue;
+    if (seen.has(name)) continue;
+    seen.add(name);
 
-    if (!looksLikePromoText(name, teaserMinQty(t))) continue;
-
-    addPromo(name, teaserMinQty(t));
-  }
-
-  for (const label of clusterLabels ?? []) {
-    if (!looksLikePromoText(label)) continue;
-    if (isPaymentOnlyPromo(label)) continue;
-    addPromo(label);
+    const pricing = computePromoPricing(name, shelfPrice, minQty) ?? undefined;
+    out.push({ name, minimumQuantity: minQty, pricing });
   }
 
   return out;
@@ -133,9 +114,6 @@ export async function fetchVtexByEan(opts: {
 
   const teasers = [...(offer.PromotionTeasers ?? []), ...(offer.Teasers ?? [])];
   const price = Number(offer.Price ?? 0);
-  const clusterLabels = CENCOSUD_CLUSTER_STORES.has(opts.store)
-    ? filterProductClusterLabels(product.productClusters)
-    : undefined;
 
   return {
     store: opts.store,
@@ -148,7 +126,7 @@ export async function fetchVtexByEan(opts: {
     price,
     listPrice: Number(offer.ListPrice ?? offer.Price ?? 0),
     available: (offer.AvailableQuantity ?? 0) > 0,
-    promotions: extractPromotions(teasers, price, clusterLabels),
+    promotions: extractPromotions(teasers, price),
     checkedAt: new Date().toISOString(),
   };
 }

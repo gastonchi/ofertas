@@ -197,7 +197,6 @@ export async function fetchVtexRawByEan(
     extractedPromotions: extractPromotions(
       [...(offer.PromotionTeasers ?? []), ...(offer.Teasers ?? [])],
       price,
-      clusterPromoLabels,
     ),
     commertialOfferKeys: Object.keys(offer).sort(),
   };
