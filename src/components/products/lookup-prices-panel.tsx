@@ -4,8 +4,11 @@ import { useCallback, useState } from "react";
 import { Plus, Search } from "lucide-react";
 import { BarcodeField } from "@/components/products/barcode-field";
 import type { ProductCreateDraft } from "@/components/products/product-create-draft";
+import {
+  bestEffectivePriceFromQuotes,
+  StorePriceCard,
+} from "@/components/products/store-price-card";
 import { Modal } from "@/components/ui/modal";
-import { StoreLogo } from "@/components/ui/store-logo";
 import { formatArs } from "@/lib/format";
 import type { StoreId, StorePricesLookupResult } from "@/lib/types";
 import { lookupStorePricesAction } from "@/modules/products/actions";
@@ -15,7 +18,7 @@ function draftFromLookup(
   result: StorePricesLookupResult,
 ): ProductCreateDraft {
   const prices = result.stores
-    .map((item) => item.price)
+    .map((item) => item.effectivePrice ?? item.price)
     .filter((price): price is number => price != null);
   const average =
     prices.length > 0
@@ -76,13 +79,7 @@ export function LookupPricesPanel({
     }
   }, []);
 
-  const bestPrice = result
-    ? Math.min(
-        ...result.stores
-          .map((item) => item.price)
-          .filter((price): price is number => price != null),
-      )
-    : Number.POSITIVE_INFINITY;
+  const bestPrice = result ? bestEffectivePriceFromQuotes(result.stores) : null;
 
   return (
     <>
@@ -118,33 +115,21 @@ export function LookupPricesPanel({
               )}
               <div className="card-grid">
                 {trackedStores.map((store) => {
-                  const quote = result.stores.find((item) => item.store === store);
-                  const price = quote?.price ?? null;
+                  const quote = result.stores.find((item) => item.store === store) ?? {
+                    store,
+                    price: null,
+                  };
+                  const effective = quote.effectivePrice ?? quote.price;
                   const isBest =
-                    price != null &&
-                    Number.isFinite(bestPrice) &&
-                    price === bestPrice;
+                    effective != null &&
+                    bestPrice != null &&
+                    effective === bestPrice;
                   return (
-                    <article
+                    <StorePriceCard
                       key={store}
-                      className={
-                        isBest
-                          ? "info-card info-card-best store-price-card"
-                          : "info-card store-price-card"
-                      }
-                    >
-                      <header className="info-card-head">
-                        <StoreLogo store={store} size="lg" />
-                        <strong>
-                          {price != null ? formatArs(price) : "—"}
-                        </strong>
-                      </header>
-                      {price == null ? (
-                        <p className="muted info-card-copy">No encontrado</p>
-                      ) : isBest ? (
-                        <span className="chip">Mejor precio</span>
-                      ) : null}
-                    </article>
+                      quote={quote}
+                      isBest={isBest}
+                    />
                   );
                 })}
               </div>

@@ -1,9 +1,12 @@
 import { resolveEnabledStores } from "../lib/stores";
+import { effectiveUnitPrice } from "../lib/promotions";
+import { normalizeStoreListPrice } from "../lib/prices";
 import {
   ALL_STORES,
   type OfferSnapshot,
   type ProductNameLookupResult,
   type StoreId,
+  type StorePriceQuote,
   type StorePricesLookupResult,
 } from "../lib/types";
 import { STORE_FETCHERS } from "./fetch-store";
@@ -62,6 +65,36 @@ function usablePrice(snapshot: OfferSnapshot | null): number | null {
   return null;
 }
 
+function snapshotToQuote(
+  store: StoreId,
+  snapshot: OfferSnapshot | null,
+): StorePriceQuote {
+  if (!snapshot) return { store, price: null };
+
+  const shelfPrice = usablePrice(snapshot);
+  if (shelfPrice == null) return { store, price: null };
+
+  const { effective, bestPromotion, hasPromo } = effectiveUnitPrice(
+    shelfPrice,
+    snapshot.promotions,
+  );
+  const listPrice = normalizeStoreListPrice(
+    store,
+    shelfPrice,
+    snapshot.listPrice,
+  );
+
+  return {
+    store,
+    price: shelfPrice,
+    listPrice,
+    promotions: snapshot.promotions,
+    effectivePrice: effective,
+    bestPromotion: bestPromotion ?? null,
+    hasPromo,
+  };
+}
+
 function usableImage(snapshot: OfferSnapshot | null): string | null {
   const url = snapshot?.imageUrl?.trim();
   return url ? url : null;
@@ -114,15 +147,12 @@ export async function lookupStorePricesByEan(
   const enabled = resolveEnabledStores(stores);
   const snapshots = await fetchEanSnapshots(ean, enabled);
   const named = snapshots.find((item) => usableName(item.snapshot));
-  const priceByStore = new Map<StoreId, number | null>(
-    snapshots.map((item) => [item.store, usablePrice(item.snapshot)]),
+  const quoteByStore = new Map<StoreId, StorePriceQuote>(
+    snapshots.map((item) => [item.store, snapshotToQuote(item.store, item.snapshot)]),
   );
 
   return {
     name: named ? usableName(named.snapshot) : null,
-    stores: enabled.map((store) => ({
-      store,
-      price: priceByStore.get(store) ?? null,
-    })),
+    stores: enabled.map((store) => quoteByStore.get(store) ?? { store, price: null }),
   };
 }
