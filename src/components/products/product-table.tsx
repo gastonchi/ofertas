@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ProductActions, ProductAlertsToggle } from "@/components/products/product-actions";
+import { ProductActions } from "@/components/products/product-actions";
 import { formatArs } from "@/lib/format";
 import type { TrackedProductRow } from "@/lib/types";
 
@@ -10,7 +10,6 @@ function ProductCard({ product }: { product: TrackedProductRow }) {
     <article className={`info-card ${product.active ? "" : "dimmed"}`.trim()}>
       <header className="info-card-head">
         <h3 className="product-name">{product.name}</h3>
-        <ProductAlertsToggle product={product} />
       </header>
       <dl className="info-card-meta">
         <div>

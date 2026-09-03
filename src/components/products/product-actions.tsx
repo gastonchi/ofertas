@@ -77,26 +77,6 @@ async function toggleAlertsWithSwal(
   });
 }
 
-export function ProductAlertsToggle({
-  product,
-}: {
-  product: TrackedProductRow;
-}) {
-  const [pending, startTransition] = useTransition();
-  const alertsOn = product.alerts_enabled;
-
-  return (
-    <button
-      type="button"
-      className={`status-btn ${alertsOn ? "" : "status-inactive"}`.trim()}
-      disabled={pending}
-      onClick={() => startTransition(() => toggleAlertsWithSwal(product))}
-    >
-      {alertsOn ? "Activas" : "Inactivas"}
-    </button>
-  );
-}
-
 export function ProductActions({ product }: { product: TrackedProductRow }) {
   const [pending, startTransition] = useTransition();
   const alertsOn = product.alerts_enabled;
