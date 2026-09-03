@@ -20,8 +20,15 @@ export type ProductNameLookupResult = {
 
 export type StorePriceQuote = {
   store: StoreId;
+  /** Precio de góndola (sin promo). */
   price: number | null;
+  listPrice?: number | null;
   checked_at?: string | null;
+  promotions?: PromotionInfo[];
+  /** Menor precio unitario aplicando la mejor promo detectada. */
+  effectivePrice?: number | null;
+  bestPromotion?: PromotionInfo | null;
+  hasPromo?: boolean;
 };
 
 export type StorePricesLookupResult = {
@@ -106,13 +113,20 @@ export type PriceHistoryRow = {
   product_name: string | null;
   price: number;
   list_price: number | null;
+  promotions?: PromotionInfo[];
   checked_at: string;
 };
 
 export type PriceStat = {
+  /** Precio unitario a comparar (con promo si aplica). */
   price: number;
+  /** Precio de góndola sin promo. */
+  shelfPrice: number;
+  listPrice?: number | null;
   store: string;
   checked_at: string;
+  hasPromo?: boolean;
+  bestPromotion?: PromotionInfo;
 } | null;
 
 export type ProductPriceStats = {

@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
-import type { OfferMatch, OfferSnapshot } from "../../lib/types";
+import { bestPromo } from "../../lib/promotions";
+import type { OfferMatch } from "../../lib/types";
 
 function formatMoney(n: number): string {
   return new Intl.NumberFormat("es-AR", {
@@ -9,11 +10,6 @@ function formatMoney(n: number): string {
   }).format(n);
 }
 
-function bestPromo(snapshot: OfferSnapshot) {
-  return snapshot.promotions.find((p) => p.pricing && p.pricing.summary !== "promo")
-    ?? snapshot.promotions.find((p) => p.pricing)
-    ?? snapshot.promotions[0];
-}
 
 function priceBlockText(m: OfferMatch): string[] {
   const lines = [
@@ -21,7 +17,7 @@ function priceBlockText(m: OfferMatch): string[] {
     `Objetivo: ${formatMoney(m.targetPrice)}`,
   ];
 
-  const promo = bestPromo(m.snapshot);
+  const promo = bestPromo(m.snapshot.promotions);
   if (promo?.pricing && promo.pricing.summary !== "promo") {
     lines.push(
       `Con oferta (${promo.pricing.summary}): ${formatMoney(promo.pricing.unitEffectivePrice)} c/u` +
@@ -38,7 +34,7 @@ function priceBlockText(m: OfferMatch): string[] {
 }
 
 function priceBlockHtml(m: OfferMatch): string {
-  const promo = bestPromo(m.snapshot);
+  const promo = bestPromo(m.snapshot.promotions);
   const offerPrice =
     promo?.pricing && promo.pricing.summary !== "promo"
       ? `<p style="margin:8px 0 4px;font-size:20px">
@@ -69,7 +65,7 @@ export function buildAlertEmail(matches: OfferMatch[]): {
   text: string;
 } {
   const count = matches.length;
-  const firstPromo = count === 1 ? bestPromo(matches[0].snapshot) : undefined;
+  const firstPromo = count === 1 ? bestPromo(matches[0].snapshot.promotions) : undefined;
   const subject =
     count === 1
       ? firstPromo?.pricing && firstPromo.pricing.summary !== "promo"

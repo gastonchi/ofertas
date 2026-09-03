@@ -1,5 +1,9 @@
 import { requireAuth } from "@/lib/auth";
 import { createDb } from "@/lib/db/client";
+import {
+  effectiveUnitPrice,
+  parsePromotions,
+} from "@/lib/promotions";
 import { resolveEnabledStores } from "@/lib/stores";
 import {
   type PriceHistoryRow,
@@ -14,7 +18,7 @@ import { fetchProductImageByEan } from "@/scraping/lookup-name";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const PRICE_COLUMNS =
-  "id, ean, store, product_name, price, list_price, checked_at";
+  "id, ean, store, product_name, price, list_price, promotions, checked_at";
 
 export async function getProduct(id: string): Promise<TrackedProductRow | null> {
   await requireAuth();
@@ -65,20 +69,40 @@ export async function enrichProductsImages(
   );
 }
 
+function normalizePriceRow(row: PriceHistoryRow): PriceHistoryRow {
+  return {
+    ...row,
+    promotions: parsePromotions(row.promotions),
+  };
+}
+
 function toStat(row: PriceHistoryRow | null | undefined): PriceStat {
   if (!row) return null;
-  const price = Number(row.price);
-  if (!Number.isFinite(price)) return null;
+  const shelfPrice = Number(row.price);
+  if (!Number.isFinite(shelfPrice)) return null;
+
+  const promotions = parsePromotions(row.promotions);
+  const { effective, bestPromotion, hasPromo } = effectiveUnitPrice(
+    shelfPrice,
+    promotions,
+  );
+  const listPrice = Number(row.list_price);
+  const listPriceValue = Number.isFinite(listPrice) ? listPrice : null;
+
   return {
-    price,
+    price: effective,
+    shelfPrice,
+    listPrice: listPriceValue,
     store: String(row.store).trim().toLowerCase(),
     checked_at: row.checked_at,
+    hasPromo,
+    bestPromotion: hasPromo ? bestPromotion : undefined,
   };
 }
 
 function pickCheapest(rows: PriceHistoryRow[]): PriceStat {
   const stats = rows
-    .map((row) => toStat(row))
+    .map((row) => toStat(normalizePriceRow(row)))
     .filter((stat): stat is NonNullable<PriceStat> => stat !== null);
   if (stats.length === 0) return null;
 
@@ -97,15 +121,34 @@ function buildStoreQuotes(
 ): StorePriceQuote[] {
   const map = new Map<string, PriceHistoryRow>();
   for (const row of latestRows) {
-    map.set(String(row.store).trim().toLowerCase(), row);
+    map.set(String(row.store).trim().toLowerCase(), normalizePriceRow(row));
   }
 
   return stores.map((store) => {
     const row = map.get(store);
     if (!row) return { store, price: null };
-    const price = Number(row.price);
-    if (!Number.isFinite(price)) return { store, price: null };
-    return { store, price, checked_at: row.checked_at };
+
+    const shelfPrice = Number(row.price);
+    if (!Number.isFinite(shelfPrice)) return { store, price: null };
+
+    const promotions = row.promotions ?? [];
+    const { effective, bestPromotion, hasPromo } = effectiveUnitPrice(
+      shelfPrice,
+      promotions,
+    );
+    const listPrice = Number(row.list_price);
+    const listPriceValue = Number.isFinite(listPrice) ? listPrice : null;
+
+    return {
+      store,
+      price: shelfPrice,
+      listPrice: listPriceValue,
+      checked_at: row.checked_at,
+      promotions,
+      effectivePrice: effective,
+      bestPromotion: bestPromotion ?? null,
+      hasPromo,
+    };
   });
 }
 
@@ -198,10 +241,10 @@ export async function getProductPriceStats(
     best7d: pickCheapest(inWindow(rows, now - 7 * DAY_MS)),
     best30d: pickCheapest(inWindow(rows, now - 30 * DAY_MS)),
     latestByStore: buildStoreQuotes(latestRows, stores).sort((a, b) => {
-      if (a.price == null && b.price == null) return 0;
-      if (a.price == null) return 1;
-      if (b.price == null) return -1;
-      return a.price - b.price;
+      if (a.effectivePrice == null && b.effectivePrice == null) return 0;
+      if (a.effectivePrice == null) return 1;
+      if (b.effectivePrice == null) return -1;
+      return a.effectivePrice - b.effectivePrice;
     }),
   };
 }
