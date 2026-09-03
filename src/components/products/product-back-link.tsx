@@ -5,7 +5,7 @@ export function ProductBackLink() {
   return (
     <Link
       href="/productos"
-      className="btn-ghost btn-icon app-header-back"
+      className="btn-secondary btn-icon app-header-back"
       aria-label="Volver a productos"
       title="Volver a productos"
     >

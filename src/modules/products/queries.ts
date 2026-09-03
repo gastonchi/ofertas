@@ -14,8 +14,9 @@ import {
   type StorePriceQuote,
   type TrackedProductRow,
 } from "@/lib/types";
-import { argentinaDay, updateTrackedProductImage } from "@/scraping/db";
+import { argentinaDay, loadJobSettings, updateTrackedProductImage } from "@/scraping/db";
 import { fetchProductImageByEan } from "@/scraping/lookup-name";
+import { refreshProductPrices } from "@/scraping/refresh-product-prices";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const PRICE_COLUMNS =
@@ -175,6 +176,32 @@ function latestRowPerStore(rows: PriceHistoryRow[]): PriceHistoryRow[] {
 
 function inWindow(rows: PriceHistoryRow[], sinceMs: number): PriceHistoryRow[] {
   return rows.filter((row) => new Date(row.checked_at).getTime() >= sinceMs);
+}
+
+export async function ensureProductPricesToday(
+  product: Pick<
+    TrackedProductRow,
+    "ean" | "name" | "target_price" | "alerts_enabled"
+  >,
+): Promise<void> {
+  const hasToday = await productHasPriceToday(product);
+  if (hasToday) return;
+
+  const db = createDb();
+  const jobSettings = await loadJobSettings(db);
+  const stores = resolveEnabledStores(jobSettings.stores);
+  if (stores.length === 0) return;
+
+  await refreshProductPrices(
+    db,
+    {
+      name: product.name,
+      ean: product.ean,
+      target_price: Number(product.target_price),
+      alertsEnabled: product.alerts_enabled !== false,
+    },
+    jobSettings.stores,
+  );
 }
 
 export async function productHasPriceToday(
