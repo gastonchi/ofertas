@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/layout/app-shell";
+import { ProductBackLink } from "@/components/products/product-back-link";
 import { ProductStats } from "@/components/products/product-stats";
 import { ProductThumb } from "@/components/products/product-thumb";
 import { formatArs } from "@/lib/format";
@@ -39,9 +39,12 @@ export default async function ProductStatsPage({
       title={product.name}
       pathname="/productos"
       titleAction={
-        canRefreshPrice ? (
-          <RefreshProductPriceButton productId={product.id} />
-        ) : null
+        <div className="app-header-actions">
+          {canRefreshPrice ? (
+            <RefreshProductPriceButton productId={product.id} />
+          ) : null}
+          <ProductBackLink />
+        </div>
       }
     >
       <div className="panel-head product-detail-head">
@@ -56,9 +59,6 @@ export default async function ProductStatsPage({
             {" · "}
             Objetivo {formatArs(Number(product.target_price))}
           </p>
-          <Link href="/productos" className="btn-ghost">
-            Volver a productos
-          </Link>
         </div>
       </div>
       <ProductStats

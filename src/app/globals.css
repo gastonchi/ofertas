@@ -177,6 +177,14 @@ code,
   overflow-wrap: anywhere;
 }
 
+.app-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
 .page-title-note {
   margin-left: 0.85rem;
   font-family: var(--font-sans), sans-serif;
