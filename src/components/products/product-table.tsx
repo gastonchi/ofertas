@@ -23,7 +23,7 @@ function ProductCard({ product }: { product: TrackedProductRow }) {
           <dd>{formatArs(Number(product.target_price))}</dd>
         </div>
       </dl>
-      <ProductActions product={product} />
+      <ProductActions product={product} layout="grid" />
     </article>
   );
 }

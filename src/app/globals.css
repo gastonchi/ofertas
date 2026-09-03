@@ -1324,4 +1324,29 @@ a.btn-secondary {
   .product-best-stat .stat-card-head strong {
     font-size: 1.85rem;
   }
+
+  .card-actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .card-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    width: 100%;
+    min-height: 44px;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: none;
+  }
+
+  .card-actions-grid .card-action-btn.alert-off {
+    opacity: 0.55;
+  }
 }

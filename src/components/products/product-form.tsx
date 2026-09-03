@@ -231,19 +231,28 @@ export function NewProductPanel({
   );
 }
 
-export function EditProductPanel({ product }: { product: TrackedProductRow }) {
+export function EditProductPanel({
+  product,
+  labeled = false,
+}: {
+  product: TrackedProductRow;
+  labeled?: boolean;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
     <>
       <button
         type="button"
-        className="btn-edit btn-icon"
+        className={
+          labeled ? "btn-edit card-action-btn" : "btn-edit btn-icon"
+        }
         onClick={() => setOpen(true)}
         aria-label={`Editar ${product.name}`}
         title="Editar"
       >
         <Pencil size={18} aria-hidden />
+        {labeled ? <span>Editar</span> : null}
       </button>
       <Modal
         open={open}
