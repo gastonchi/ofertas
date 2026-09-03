@@ -14,7 +14,7 @@ import {
   lookupStorePricesByEan,
   fetchProductImageByEan,
 } from "@/scraping/lookup-name";
-import { loadJobSettings } from "@/scraping/db";
+import { loadJobSettings, isMissingImageUrlColumn } from "@/scraping/db";
 import { refreshProductPrices } from "@/scraping/refresh-product-prices";
 import { productHasPriceToday } from "@/modules/products/queries";
 import { getSettings } from "@/modules/settings/actions";
@@ -126,15 +126,23 @@ export async function createProductAction(
   const settings = await getSettings();
   const stores = resolveEnabledStores(settings?.default_stores);
   const image_url = await fetchProductImageByEan(parsed.ean, stores);
-  const { error } = await db.from("tracked_products").insert({
+  const baseRow = {
     name: parsed.name,
     ean: parsed.ean,
     target_price: parsed.target_price,
     stores,
-    image_url: image_url ?? null,
     active: true,
     alerts_enabled: true,
+  };
+
+  let { error } = await db.from("tracked_products").insert({
+    ...baseRow,
+    image_url: image_url ?? null,
   });
+
+  if (error && isMissingImageUrlColumn(error)) {
+    ({ error } = await db.from("tracked_products").insert(baseRow));
+  }
 
   if (error) {
     if (error.code === "23505") {
