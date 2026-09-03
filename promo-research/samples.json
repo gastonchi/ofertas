@@ -1,0 +1,2310 @@
+{
+  "generatedAt": "2026-09-03T17:37:34.747Z",
+  "storeCount": 6,
+  "sampleCount": 10,
+  "samples": [
+    {
+      "ean": "7790550000164",
+      "notes": "VTEX: 2do al 50% (Carrefour Mi Crf). Base products.json.",
+      "stores": {
+        "carrefour": {
+          "store": "carrefour",
+          "ean": "7790550000164",
+          "found": true,
+          "productName": "Café Torrado molido La planta de Café Cabrales 500 g.",
+          "url": "https://www.carrefour.com.ar/cafe-torrado-molido-la-planta-de-cafe-cabrales-500-g/p",
+          "price": 14549,
+          "listPrice": 14549,
+          "priceWithoutDiscount": 14549,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [
+            {
+              "name": "PROMO-2do al 50% Mi Crf Max 8 unidades Combinable CABRALES-Reg-2-50-Gigante1 al 8.9",
+              "minimumQuantity": 2,
+              "conditions": {
+                "MinimumQuantity": 2,
+                "Parameters": []
+              },
+              "effects": {
+                "Parameters": []
+              },
+              "generalValues": {},
+              "source": "PromotionTeasers"
+            },
+            {
+              "name": "PROMO-2do al 50% Mi Crf Max 8 unidades Combinable CABRALES-Reg-2-50-Gigante1 al 8.9",
+              "minimumQuantity": 2,
+              "conditions": {
+                "<MinimumQuantity>k__BackingField": 2,
+                "<Parameters>k__BackingField": []
+              },
+              "source": "Teasers"
+            }
+          ],
+          "extractedPromotions": [
+            {
+              "name": "PROMO-2do al 50% Mi Crf Max 8 unidades Combinable CABRALES-Reg-2-50-Gigante1 al 8.9",
+              "minimumQuantity": 2,
+              "pricing": {
+                "summary": "2do al 50%",
+                "unitsToBuy": 2,
+                "totalToPay": 21824,
+                "unitEffectivePrice": 10912,
+                "validUntilLabel": "hasta el 08/09"
+              }
+            }
+          ],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "coto": {
+          "store": "coto",
+          "ean": "7790550000164",
+          "found": true,
+          "productName": "Café Torrado CABRALES La Planta De Café 500g",
+          "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00005915-00005915-200",
+          "price": 14548,
+          "listPrice": 14548,
+          "available": true,
+          "discounts": [],
+          "discountsPaymentMethods": [],
+          "currentSnapshot": {
+            "store": "coto",
+            "ean": "7790550000164",
+            "productName": "Café Torrado CABRALES La Planta De Café 500g",
+            "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00005915-00005915-200",
+            "imageUrl": "https://static.cotodigital3.com.ar/sitios/fotos/large/00005900/00005915.jpg",
+            "price": 14548,
+            "listPrice": 14548,
+            "available": true,
+            "promotions": [],
+            "checkedAt": "2026-09-03T17:37:25.753Z"
+          }
+        },
+        "dia": {
+          "store": "dia",
+          "ean": "7790550000164",
+          "found": true,
+          "productName": "Café Torrado Cabrales La Planta de Café 500 Gr.",
+          "url": "https://diaonline.supermercadosdia.com.ar/cafe-torrado-cabrales-la-planta-de-cafe-500-gr-141534/p",
+          "price": 14550,
+          "listPrice": 14550,
+          "priceWithoutDiscount": 14550,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 56,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "jumbo": {
+          "store": "jumbo",
+          "ean": "7790550000164",
+          "found": true,
+          "productName": "Café Molido Torrado con Azúcar 500 Grs La Planta de Café",
+          "url": "https://www.jumbo.com.ar/cafe-la-planta-de-cafe-molido-500-gr/p",
+          "price": 15650,
+          "listPrice": 1293388,
+          "priceWithoutDiscount": 15650,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "disco": {
+          "store": "disco",
+          "ean": "7790550000164",
+          "found": true,
+          "productName": "Café Molido Torrado con Azúcar 500 Grs La Planta de Café",
+          "url": "https://www.disco.com.ar/cafe-la-planta-de-cafe-molido-500-gr/p",
+          "price": 16000,
+          "listPrice": 1322314,
+          "priceWithoutDiscount": 16000,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 100,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "vea": {
+          "store": "vea",
+          "ean": "7790550000164",
+          "found": true,
+          "productName": "Café Molido Torrado con Azúcar 500 Grs La Planta de Café",
+          "url": "https://www.vea.com.ar/cafe-la-planta-de-cafe-molido-500-gr/p",
+          "price": 14490,
+          "listPrice": 1197521,
+          "priceWithoutDiscount": 14490,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 100,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        }
+      }
+    },
+    {
+      "ean": "8480017258922",
+      "notes": "VTEX Día: 2do al 80%.",
+      "stores": {
+        "carrefour": {
+          "store": "carrefour",
+          "ean": "8480017258922",
+          "found": false,
+          "teasers": [],
+          "extractedPromotions": []
+        },
+        "coto": {
+          "store": "coto",
+          "ean": "8480017258922",
+          "found": false,
+          "discounts": [],
+          "discountsPaymentMethods": []
+        },
+        "dia": {
+          "store": "dia",
+          "ean": "8480017258922",
+          "found": true,
+          "productName": "Mega Rollo De Cocina Dia 200 Paños 1 Ud.",
+          "url": "https://diaonline.supermercadosdia.com.ar/mega-rollo-de-cocina-dia-200-panos-1-ud-278565/p",
+          "price": 2800,
+          "listPrice": 2800,
+          "priceWithoutDiscount": 2800,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 988,
+          "discountHighlight": [],
+          "teasers": [
+            {
+              "name": "2do al 80%",
+              "minimumQuantity": 2,
+              "conditions": {
+                "MinimumQuantity": 2,
+                "Parameters": []
+              },
+              "effects": {
+                "Parameters": []
+              },
+              "generalValues": {},
+              "source": "PromotionTeasers"
+            },
+            {
+              "name": "2do al 80%",
+              "minimumQuantity": 2,
+              "conditions": {
+                "<MinimumQuantity>k__BackingField": 2,
+                "<Parameters>k__BackingField": []
+              },
+              "source": "Teasers"
+            }
+          ],
+          "extractedPromotions": [
+            {
+              "name": "2do al 80%",
+              "minimumQuantity": 2,
+              "pricing": {
+                "summary": "2do al 80%",
+                "unitsToBuy": 2,
+                "totalToPay": 3360,
+                "unitEffectivePrice": 1680
+              }
+            }
+          ],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "jumbo": {
+          "store": "jumbo",
+          "ean": "8480017258922",
+          "found": false,
+          "teasers": [],
+          "extractedPromotions": []
+        },
+        "disco": {
+          "store": "disco",
+          "ean": "8480017258922",
+          "found": false,
+          "teasers": [],
+          "extractedPromotions": []
+        },
+        "vea": {
+          "store": "vea",
+          "ean": "8480017258922",
+          "found": false,
+          "teasers": [],
+          "extractedPromotions": []
+        }
+      }
+    },
+    {
+      "ean": "7791337010017",
+      "notes": "VTEX: 2do al 70% (Día / Carrefour).",
+      "stores": {
+        "carrefour": {
+          "store": "carrefour",
+          "ean": "7791337010017",
+          "found": true,
+          "productName": "Yogur Griego natural sin endulzar Yogurísimo 300 grs",
+          "url": "https://www.carrefour.com.ar/yogur-griego-natural-sin-endulzar-yogurisimo-300-grs-765556/p",
+          "price": 4915,
+          "listPrice": 4915,
+          "priceWithoutDiscount": 4915,
+          "priceValidUntil": "2027-09-03T17:34:39Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [
+            {
+              "name": "PROMO-2do al 70% Max 24 unidades Combinable LA SERENISIMA-Reg-2-70-Gigante1 al 8.9",
+              "minimumQuantity": 2,
+              "conditions": {
+                "MinimumQuantity": 2,
+                "Parameters": []
+              },
+              "effects": {
+                "Parameters": []
+              },
+              "generalValues": {},
+              "source": "PromotionTeasers"
+            },
+            {
+              "name": "PROMO-2do al 70% Max 24 unidades Combinable LA SERENISIMA-Reg-2-70-Gigante1 al 8.9",
+              "minimumQuantity": 2,
+              "conditions": {
+                "<MinimumQuantity>k__BackingField": 2,
+                "<Parameters>k__BackingField": []
+              },
+              "source": "Teasers"
+            }
+          ],
+          "extractedPromotions": [
+            {
+              "name": "PROMO-2do al 70% Max 24 unidades Combinable LA SERENISIMA-Reg-2-70-Gigante1 al 8.9",
+              "minimumQuantity": 2,
+              "pricing": {
+                "summary": "2do al 70%",
+                "unitsToBuy": 2,
+                "totalToPay": 6390,
+                "unitEffectivePrice": 3195,
+                "validUntilLabel": "hasta el 08/09"
+              }
+            }
+          ],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "coto": {
+          "store": "coto",
+          "ean": "7791337010017",
+          "found": true,
+          "productName": "Yogur Griego Sabor Natural Sin Endulzar YOGURISIMO 300g",
+          "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00612391-00612391-200",
+          "price": 4915,
+          "listPrice": 4915,
+          "available": true,
+          "discounts": [
+            {
+              "id": "37460882",
+              "comments": "No acumulable con otras promos",
+              "takingText": "Llevando 2",
+              "discountText": "70% 2da",
+              "regularPrice": null,
+              "discountImage": null,
+              "discountPrice": "$3194.75",
+              "regularPriceText": "Precio Contado: $4915"
+            }
+          ],
+          "discountsPaymentMethods": [
+            {
+              "id": "80787896",
+              "comentarios": "",
+              "precioCuota": "$3194.75",
+              "cantidadCuotas": "1",
+              "imagenDescuento": "/content/images/cdigi/ofertas/pagando-con-todas-tarjetas.png"
+            }
+          ],
+          "currentSnapshot": {
+            "store": "coto",
+            "ean": "7791337010017",
+            "productName": "Yogur Griego Sabor Natural Sin Endulzar YOGURISIMO 300g",
+            "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00612391-00612391-200",
+            "imageUrl": "https://static.cotodigital3.com.ar/sitios/fotos/large/00612300/00612391.jpg",
+            "price": 4915,
+            "listPrice": 4915,
+            "available": true,
+            "promotions": [],
+            "checkedAt": "2026-09-03T17:37:27.579Z"
+          }
+        },
+        "dia": {
+          "store": "dia",
+          "ean": "7791337010017",
+          "found": true,
+          "productName": "Yogur Griego Natural Sin Endulzar Yogurísimo 300 Gr.",
+          "url": "https://diaonline.supermercadosdia.com.ar/yogur-griego-natural-sin-endulzar-yogurisimo-300-gr-308933/p",
+          "price": 4915,
+          "listPrice": 4915,
+          "priceWithoutDiscount": 4915,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 112,
+          "discountHighlight": [],
+          "teasers": [
+            {
+              "name": "2do al 70%",
+              "minimumQuantity": 2,
+              "conditions": {
+                "MinimumQuantity": 2,
+                "Parameters": []
+              },
+              "effects": {
+                "Parameters": []
+              },
+              "generalValues": {},
+              "source": "PromotionTeasers"
+            },
+            {
+              "name": "2do al 70%",
+              "minimumQuantity": 2,
+              "conditions": {
+                "<MinimumQuantity>k__BackingField": 2,
+                "<Parameters>k__BackingField": []
+              },
+              "source": "Teasers"
+            }
+          ],
+          "extractedPromotions": [
+            {
+              "name": "2do al 70%",
+              "minimumQuantity": 2,
+              "pricing": {
+                "summary": "2do al 70%",
+                "unitsToBuy": 2,
+                "totalToPay": 6390,
+                "unitEffectivePrice": 3195
+              }
+            }
+          ],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "jumbo": {
+          "store": "jumbo",
+          "ean": "7791337010017",
+          "found": true,
+          "productName": "Yogur Sabor Natural Griego Sin Azúcar 300 Grs Yogurisimo",
+          "url": "https://www.jumbo.com.ar/yogur-griego-natural-sin-endulzar-x-300-grs-yogurisimo/p",
+          "price": 4915,
+          "listPrice": 406198,
+          "priceWithoutDiscount": 4915,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "disco": {
+          "store": "disco",
+          "ean": "7791337010017",
+          "found": true,
+          "productName": "Yogur Sabor Natural Griego Sin Azúcar 300 Grs Yogurisimo",
+          "url": "https://www.disco.com.ar/yogur-griego-natural-sin-endulzar-x-300-grs-yogurisimo/p",
+          "price": 4915,
+          "listPrice": 406198,
+          "priceWithoutDiscount": 4915,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "vea": {
+          "store": "vea",
+          "ean": "7791337010017",
+          "found": true,
+          "productName": "Yogur Sabor Natural Griego Sin Azúcar 300 Grs Yogurisimo",
+          "url": "https://www.vea.com.ar/yogur-griego-natural-sin-endulzar-x-300-grs-yogurisimo/p",
+          "price": 4890,
+          "listPrice": 404132,
+          "priceWithoutDiscount": 4890,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 100,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        }
+      }
+    },
+    {
+      "ean": "7622201703080",
+      "notes": "VTEX Día: 2x1. Carrefour: 4x2.",
+      "stores": {
+        "carrefour": {
+          "store": "carrefour",
+          "ean": "7622201703080",
+          "found": true,
+          "productName": "Jugo en Polvo Clight Manzana Deliciosa 7 grs",
+          "url": "https://www.carrefour.com.ar/jugo-en-polvo-clight-manzana-deliciosa-7-grs-711437/p",
+          "price": 579,
+          "listPrice": 579,
+          "priceWithoutDiscount": 579,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [
+            {
+              "name": "PROMO-4x2 Max 72 unidades Combinable CLIGHT-Reg-4-200-Gigante1 al 8.9",
+              "minimumQuantity": 4,
+              "conditions": {
+                "MinimumQuantity": 4,
+                "Parameters": []
+              },
+              "effects": {
+                "Parameters": []
+              },
+              "generalValues": {},
+              "source": "PromotionTeasers"
+            },
+            {
+              "name": "PROMO-4x2 Max 72 unidades Combinable CLIGHT-Reg-4-200-Gigante1 al 8.9",
+              "minimumQuantity": 4,
+              "conditions": {
+                "<MinimumQuantity>k__BackingField": 4,
+                "<Parameters>k__BackingField": []
+              },
+              "source": "Teasers"
+            }
+          ],
+          "extractedPromotions": [
+            {
+              "name": "PROMO-4x2 Max 72 unidades Combinable CLIGHT-Reg-4-200-Gigante1 al 8.9",
+              "minimumQuantity": 4,
+              "pricing": {
+                "summary": "4x2",
+                "unitsToBuy": 4,
+                "totalToPay": 1158,
+                "unitEffectivePrice": 290,
+                "validUntilLabel": "hasta el 08/09"
+              }
+            }
+          ],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "coto": {
+          "store": "coto",
+          "ean": "7622201703080",
+          "found": true,
+          "productName": "Jugo En Polvo CLIGHT Manzana Deliciosa 7g",
+          "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00547417-00547417-200",
+          "price": 580,
+          "listPrice": 580,
+          "available": true,
+          "discounts": [],
+          "discountsPaymentMethods": [],
+          "currentSnapshot": {
+            "store": "coto",
+            "ean": "7622201703080",
+            "productName": "Jugo En Polvo CLIGHT Manzana Deliciosa 7g",
+            "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00547417-00547417-200",
+            "imageUrl": "https://static.cotodigital3.com.ar/sitios/fotos/large/00547400/00547417.jpg",
+            "price": 580,
+            "listPrice": 580,
+            "available": true,
+            "promotions": [],
+            "checkedAt": "2026-09-03T17:37:28.507Z"
+          }
+        },
+        "dia": {
+          "store": "dia",
+          "ean": "7622201703080",
+          "found": true,
+          "productName": "Jugo En Polvo Clight Manzana Deliciosa 7 Gr.",
+          "url": "https://diaonline.supermercadosdia.com.ar/jugo-en-polvo-clight-manzana-deliciosa-7-gr-274216/p",
+          "price": 580,
+          "listPrice": 580,
+          "priceWithoutDiscount": 580,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 12154,
+          "discountHighlight": [],
+          "teasers": [
+            {
+              "name": "2x1",
+              "minimumQuantity": 2,
+              "conditions": {
+                "MinimumQuantity": 2,
+                "Parameters": []
+              },
+              "effects": {
+                "Parameters": []
+              },
+              "generalValues": {},
+              "source": "PromotionTeasers"
+            },
+            {
+              "name": "2x1",
+              "minimumQuantity": 2,
+              "conditions": {
+                "<MinimumQuantity>k__BackingField": 2,
+                "<Parameters>k__BackingField": []
+              },
+              "source": "Teasers"
+            }
+          ],
+          "extractedPromotions": [
+            {
+              "name": "2x1",
+              "minimumQuantity": 2,
+              "pricing": {
+                "summary": "2x1",
+                "unitsToBuy": 2,
+                "totalToPay": 580,
+                "unitEffectivePrice": 290
+              }
+            }
+          ],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "jumbo": {
+          "store": "jumbo",
+          "ean": "7622201703080",
+          "found": true,
+          "productName": "Jugo en Polvo Sabor Manzana 7 Grs Clight",
+          "url": "https://www.jumbo.com.ar/jugo-en-polvo-manzana-deliciosa-7-grs-clight/p",
+          "price": 580,
+          "listPrice": 47934,
+          "priceWithoutDiscount": 580,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "disco": {
+          "store": "disco",
+          "ean": "7622201703080",
+          "found": true,
+          "productName": "Jugo en Polvo Sabor Manzana 7 Grs Clight",
+          "url": "https://www.disco.com.ar/jugo-en-polvo-manzana-deliciosa-7-grs-clight/p",
+          "price": 579,
+          "listPrice": 47851,
+          "priceWithoutDiscount": 579,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "vea": {
+          "store": "vea",
+          "ean": "7622201703080",
+          "found": true,
+          "productName": "Jugo en Polvo Sabor Manzana 7 Grs Clight",
+          "url": "https://www.vea.com.ar/jugo-en-polvo-manzana-deliciosa-7-grs-clight/p",
+          "price": 580,
+          "listPrice": 47934,
+          "priceWithoutDiscount": 580,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        }
+      }
+    },
+    {
+      "ean": "77969071",
+      "notes": "VTEX Día: 3x2.",
+      "stores": {
+        "carrefour": {
+          "store": "carrefour",
+          "ean": "77969071",
+          "found": true,
+          "productName": "Chicles Beldent Menta Refrescante 6 uni",
+          "url": "https://www.carrefour.com.ar/chicles-beldent-menta-refrescante-6-uni-670221/p",
+          "price": 1050,
+          "listPrice": 1050,
+          "priceWithoutDiscount": 1050,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "coto": {
+          "store": "coto",
+          "ean": "77969071",
+          "found": true,
+          "productName": "Chicles BELDENT Menta 20g",
+          "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00503839-00503839-200",
+          "price": 1000,
+          "listPrice": 1000,
+          "available": true,
+          "discounts": [],
+          "discountsPaymentMethods": [],
+          "currentSnapshot": {
+            "store": "coto",
+            "ean": "77969071",
+            "productName": "Chicles BELDENT Menta 20g",
+            "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00503839-00503839-200",
+            "imageUrl": "https://static.cotodigital3.com.ar/sitios/fotos/large/00503800/00503839.jpg",
+            "price": 1000,
+            "listPrice": 1000,
+            "available": true,
+            "promotions": [],
+            "checkedAt": "2026-09-03T17:37:29.434Z"
+          }
+        },
+        "dia": {
+          "store": "dia",
+          "ean": "77969071",
+          "found": true,
+          "productName": "Chicles Beldent Menta Refrescante 6 Ud.",
+          "url": "https://diaonline.supermercadosdia.com.ar/chicles-beldent-menta-refrescante-6-ud-269580/p",
+          "price": 1080,
+          "listPrice": 1080,
+          "priceWithoutDiscount": 1080,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 1652,
+          "discountHighlight": [],
+          "teasers": [
+            {
+              "name": "3x2",
+              "minimumQuantity": 3,
+              "conditions": {
+                "MinimumQuantity": 3,
+                "Parameters": []
+              },
+              "effects": {
+                "Parameters": []
+              },
+              "generalValues": {},
+              "source": "PromotionTeasers"
+            },
+            {
+              "name": "3x2",
+              "minimumQuantity": 3,
+              "conditions": {
+                "<MinimumQuantity>k__BackingField": 3,
+                "<Parameters>k__BackingField": []
+              },
+              "source": "Teasers"
+            }
+          ],
+          "extractedPromotions": [
+            {
+              "name": "3x2",
+              "minimumQuantity": 3,
+              "pricing": {
+                "summary": "3x2",
+                "unitsToBuy": 3,
+                "totalToPay": 2160,
+                "unitEffectivePrice": 720
+              }
+            }
+          ],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "jumbo": {
+          "store": "jumbo",
+          "ean": "77969071",
+          "found": true,
+          "productName": "Chicles Sabor Menta 10 Grs x 6 Un Beldent",
+          "url": "https://www.jumbo.com.ar/chicles-menta-refrescante-x-6-un-beldent/p",
+          "price": 1100,
+          "listPrice": 90909,
+          "priceWithoutDiscount": 1100,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "disco": {
+          "store": "disco",
+          "ean": "77969071",
+          "found": true,
+          "productName": "Chicles Sabor Menta 10 Grs x 6 Un Beldent",
+          "url": "https://www.disco.com.ar/chicles-menta-refrescante-x-6-un-beldent/p",
+          "price": 1100,
+          "listPrice": 90909,
+          "priceWithoutDiscount": 1100,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "vea": {
+          "store": "vea",
+          "ean": "77969071",
+          "found": true,
+          "productName": "Chicles Sabor Menta 10 Grs x 6 Un Beldent",
+          "url": "https://www.vea.com.ar/chicles-menta-refrescante-x-6-un-beldent/p",
+          "price": 1000,
+          "listPrice": 82645,
+          "priceWithoutDiscount": 1000,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 100,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        }
+      }
+    },
+    {
+      "ean": "7798338291056",
+      "notes": "Coto: Llevando 2 + 2x1.",
+      "stores": {
+        "carrefour": {
+          "store": "carrefour",
+          "ean": "7798338291056",
+          "found": true,
+          "productName": "Leche chocolatada Las 3 niñas 200 cc",
+          "url": "https://www.carrefour.com.ar/leche-chocolatada-las-3-ninas-200-cc-716507/p",
+          "price": 1899,
+          "listPrice": 1899,
+          "priceWithoutDiscount": 1899,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [
+            {
+              "name": "PROMO-2x1 Mi Crf Iguales-Reg-2-100-Gigante1 al 8.9",
+              "minimumQuantity": 2,
+              "conditions": {
+                "MinimumQuantity": 2,
+                "Parameters": []
+              },
+              "effects": {
+                "Parameters": []
+              },
+              "generalValues": {},
+              "source": "PromotionTeasers"
+            },
+            {
+              "name": "PROMO-2x1 Mi Crf Iguales-Reg-2-100-Gigante1 al 8.9",
+              "minimumQuantity": 2,
+              "conditions": {
+                "<MinimumQuantity>k__BackingField": 2,
+                "<Parameters>k__BackingField": []
+              },
+              "source": "Teasers"
+            }
+          ],
+          "extractedPromotions": [
+            {
+              "name": "PROMO-2x1 Mi Crf Iguales-Reg-2-100-Gigante1 al 8.9",
+              "minimumQuantity": 2,
+              "pricing": {
+                "summary": "2x1",
+                "unitsToBuy": 2,
+                "totalToPay": 1899,
+                "unitEffectivePrice": 950,
+                "validUntilLabel": "hasta el 08/09"
+              }
+            }
+          ],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "coto": {
+          "store": "coto",
+          "ean": "7798338291056",
+          "found": true,
+          "productName": "Leche Chocolatada Leche Con Cacao Tres Niñas 200ml",
+          "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00559491-00559491-200",
+          "price": 1900,
+          "listPrice": 1900,
+          "available": true,
+          "discounts": [
+            {
+              "id": "37441430",
+              "comments": "No acumulable con otras promos",
+              "takingText": "Llevando 2",
+              "discountText": "2x1",
+              "regularPrice": null,
+              "discountImage": null,
+              "discountPrice": "$950.00",
+              "regularPriceText": "Precio Contado: $1900"
+            }
+          ],
+          "discountsPaymentMethods": [
+            {
+              "id": "80761294",
+              "comentarios": "",
+              "precioCuota": "$950",
+              "cantidadCuotas": "1",
+              "imagenDescuento": "/content/images/cdigi/ofertas/pagando-con-todas-tarjetas.png"
+            }
+          ],
+          "currentSnapshot": {
+            "store": "coto",
+            "ean": "7798338291056",
+            "productName": "Leche Chocolatada Leche Con Cacao Tres Niñas 200ml",
+            "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00559491-00559491-200",
+            "imageUrl": "https://static.cotodigital3.com.ar/sitios/fotos/large/00559400/00559491.jpg",
+            "price": 1900,
+            "listPrice": 1900,
+            "available": true,
+            "promotions": [],
+            "checkedAt": "2026-09-03T17:37:30.342Z"
+          }
+        },
+        "dia": {
+          "store": "dia",
+          "ean": "7798338291056",
+          "found": true,
+          "productName": "Leche Chocolatada Las 3 Niñas 200 Ml.",
+          "url": "https://diaonline.supermercadosdia.com.ar/leche-chocolatada-las-3-ninas-200-ml-293784/p",
+          "price": 1900,
+          "listPrice": 1900,
+          "priceWithoutDiscount": 1900,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 103,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "jumbo": {
+          "store": "jumbo",
+          "ean": "7798338291056",
+          "found": true,
+          "productName": "Leche Saborizada Sabor Chocolate Reducida en lactosa 200 Ml Las Tres Niñas",
+          "url": "https://www.jumbo.com.ar/leche-chocolatada-las-tres-ninas-reducida-en-lactosa-200ml/p",
+          "price": 2000,
+          "listPrice": 165289,
+          "priceWithoutDiscount": 2000,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "disco": {
+          "store": "disco",
+          "ean": "7798338291056",
+          "found": true,
+          "productName": "Leche Saborizada Sabor Chocolate Reducida en lactosa 200 Ml Las Tres Niñas",
+          "url": "https://www.disco.com.ar/leche-chocolatada-las-tres-ninas-reducida-en-lactosa-200ml/p",
+          "price": 2000,
+          "listPrice": 165289,
+          "priceWithoutDiscount": 2000,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 100,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "vea": {
+          "store": "vea",
+          "ean": "7798338291056",
+          "found": true,
+          "productName": "Leche Saborizada Sabor Chocolate Reducida en lactosa 200 Ml Las Tres Niñas",
+          "url": "https://www.vea.com.ar/leche-chocolatada-las-tres-ninas-reducida-en-lactosa-200ml/p",
+          "price": 1890,
+          "listPrice": 156198,
+          "priceWithoutDiscount": 1890,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        }
+      }
+    },
+    {
+      "ean": "7730105821745",
+      "notes": "Coto: Llevando 2 + 70% 2da.",
+      "stores": {
+        "carrefour": {
+          "store": "carrefour",
+          "ean": "7730105821745",
+          "found": false,
+          "teasers": [],
+          "extractedPromotions": []
+        },
+        "coto": {
+          "store": "coto",
+          "ean": "7730105821745",
+          "found": true,
+          "productName": "Leche Larga Vida Descremada CONAPROLE 1l",
+          "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00083564-00083564-200",
+          "price": 2749,
+          "listPrice": 2749,
+          "available": true,
+          "discounts": [
+            {
+              "id": "37458189",
+              "comments": "No acumulable con otras promos",
+              "takingText": "Llevando 2",
+              "discountText": "70% 2da",
+              "regularPrice": null,
+              "discountImage": null,
+              "discountPrice": "$1786.85",
+              "regularPriceText": "Precio Contado: $2749"
+            }
+          ],
+          "discountsPaymentMethods": [
+            {
+              "id": "80785221",
+              "comentarios": "",
+              "precioCuota": "$1786.85",
+              "cantidadCuotas": "1",
+              "imagenDescuento": "/content/images/cdigi/ofertas/pagando-con-todas-tarjetas.png"
+            }
+          ],
+          "currentSnapshot": {
+            "store": "coto",
+            "ean": "7730105821745",
+            "productName": "Leche Larga Vida Descremada CONAPROLE 1l",
+            "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00083564-00083564-200",
+            "imageUrl": "https://static.cotodigital3.com.ar/sitios/fotos/large/00083500/00083564.jpg",
+            "price": 2749,
+            "listPrice": 2749,
+            "available": true,
+            "promotions": [],
+            "checkedAt": "2026-09-03T17:37:31.265Z"
+          }
+        },
+        "dia": {
+          "store": "dia",
+          "ean": "7730105821745",
+          "found": false,
+          "teasers": [],
+          "extractedPromotions": []
+        },
+        "jumbo": {
+          "store": "jumbo",
+          "ean": "7730105821745",
+          "found": false,
+          "teasers": [],
+          "extractedPromotions": []
+        },
+        "disco": {
+          "store": "disco",
+          "ean": "7730105821745",
+          "found": false,
+          "teasers": [],
+          "extractedPromotions": []
+        },
+        "vea": {
+          "store": "vea",
+          "ean": "7730105821745",
+          "found": false,
+          "teasers": [],
+          "extractedPromotions": []
+        }
+      }
+    },
+    {
+      "ean": "7790787002535",
+      "notes": "Coto: Llevando 4 + 4x3.",
+      "stores": {
+        "carrefour": {
+          "store": "carrefour",
+          "ean": "7790787002535",
+          "found": true,
+          "productName": "Leche descremada larga vida Ilolay 1 l.",
+          "url": "https://www.carrefour.com.ar/leche-descremada-larga-vida-ilolay-1-l/p",
+          "price": 2529,
+          "listPrice": 2529,
+          "priceWithoutDiscount": 2529,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "coto": {
+          "store": "coto",
+          "ean": "7790787002535",
+          "found": true,
+          "productName": "Leche Parcialmente Descremada Larga Vida Ilolay Ttb 1 Ltr",
+          "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00527742-00527742-200",
+          "price": 2549,
+          "listPrice": 2549,
+          "available": true,
+          "discounts": [
+            {
+              "id": "37457563",
+              "comments": "No acumulable con otras promos",
+              "takingText": "Llevando 4",
+              "discountText": "4x3",
+              "regularPrice": null,
+              "discountImage": null,
+              "discountPrice": "$1899.01",
+              "regularPriceText": "Precio Contado: $2549"
+            }
+          ],
+          "discountsPaymentMethods": [
+            {
+              "id": "80784602",
+              "comentarios": "",
+              "precioCuota": "$1899.01",
+              "cantidadCuotas": "1",
+              "imagenDescuento": "/content/images/cdigi/ofertas/pagando-con-todas-tarjetas.png"
+            }
+          ],
+          "currentSnapshot": {
+            "store": "coto",
+            "ean": "7790787002535",
+            "productName": "Leche Parcialmente Descremada Larga Vida Ilolay Ttb 1 Ltr",
+            "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00527742-00527742-200",
+            "imageUrl": "https://static.cotodigital3.com.ar/sitios/fotos/large/00527700/00527742.jpg",
+            "price": 2549,
+            "listPrice": 2549,
+            "available": true,
+            "promotions": [],
+            "checkedAt": "2026-09-03T17:37:32.179Z"
+          }
+        },
+        "dia": {
+          "store": "dia",
+          "ean": "7790787002535",
+          "found": false,
+          "teasers": [],
+          "extractedPromotions": []
+        },
+        "jumbo": {
+          "store": "jumbo",
+          "ean": "7790787002535",
+          "found": true,
+          "productName": "Leche Parcialmente Descremada 1 Lts Ilolay",
+          "url": "https://www.jumbo.com.ar/leche-ilolay-parcialmente-descremada-brik-x-1-l-2/p",
+          "price": 2700,
+          "listPrice": 223141,
+          "priceWithoutDiscount": 2700,
+          "priceValidUntil": "2027-09-03T17:29:41Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "disco": {
+          "store": "disco",
+          "ean": "7790787002535",
+          "found": true,
+          "productName": "Leche Parcialmente Descremada 1 Lts Ilolay",
+          "url": "https://www.disco.com.ar/leche-ilolay-parcialmente-descremada-brik-x-1-l-2/p",
+          "price": 2750,
+          "listPrice": 227273,
+          "priceWithoutDiscount": 2750,
+          "priceValidUntil": "2027-09-02T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "vea": {
+          "store": "vea",
+          "ean": "7790787002535",
+          "found": true,
+          "productName": "Leche Parcialmente Descremada 1 Lts Ilolay",
+          "url": "https://www.vea.com.ar/leche-ilolay-parcialmente-descremada-brik-x-1-l-2/p",
+          "price": 2590,
+          "listPrice": 214050,
+          "priceWithoutDiscount": 2590,
+          "priceValidUntil": "2027-09-03T17:29:19Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        }
+      }
+    },
+    {
+      "ean": "7790550022258",
+      "notes": "Coto: 25%Dto (descuento directo %).",
+      "stores": {
+        "carrefour": {
+          "store": "carrefour",
+          "ean": "7790550022258",
+          "found": true,
+          "productName": "Café tostado molido super Cabrales 500 grs",
+          "url": "https://www.carrefour.com.ar/cafe-tostado-molido-super-cabrales-500-grs-706852/p",
+          "price": 29329,
+          "listPrice": 29329,
+          "priceWithoutDiscount": 29329,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [
+            {
+              "name": "PROMO-2do al 50% Mi Crf Max 8 unidades Combinable CABRALES-Reg-2-50-Gigante1 al 8.9",
+              "minimumQuantity": 2,
+              "conditions": {
+                "MinimumQuantity": 2,
+                "Parameters": []
+              },
+              "effects": {
+                "Parameters": []
+              },
+              "generalValues": {},
+              "source": "PromotionTeasers"
+            },
+            {
+              "name": "PROMO-2do al 50% Mi Crf Max 8 unidades Combinable CABRALES-Reg-2-50-Gigante1 al 8.9",
+              "minimumQuantity": 2,
+              "conditions": {
+                "<MinimumQuantity>k__BackingField": 2,
+                "<Parameters>k__BackingField": []
+              },
+              "source": "Teasers"
+            }
+          ],
+          "extractedPromotions": [
+            {
+              "name": "PROMO-2do al 50% Mi Crf Max 8 unidades Combinable CABRALES-Reg-2-50-Gigante1 al 8.9",
+              "minimumQuantity": 2,
+              "pricing": {
+                "summary": "2do al 50%",
+                "unitsToBuy": 2,
+                "totalToPay": 43994,
+                "unitEffectivePrice": 21997,
+                "validUntilLabel": "hasta el 08/09"
+              }
+            }
+          ],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "coto": {
+          "store": "coto",
+          "ean": "7790550022258",
+          "found": true,
+          "productName": "Cafe Tostado Molido Super Cabrales 500 Grm",
+          "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00542979-00542979-200",
+          "price": 29671,
+          "listPrice": 29671,
+          "available": true,
+          "discounts": [
+            {
+              "id": "37452222",
+              "comments": "No acumulable con otras promos",
+              "takingText": null,
+              "discountText": "25%Dto",
+              "regularPrice": null,
+              "discountImage": null,
+              "discountPrice": "$22253.25",
+              "regularPriceText": "Precio Contado: $29671"
+            }
+          ],
+          "discountsPaymentMethods": [
+            {
+              "id": "80772008",
+              "comentarios": "",
+              "precioCuota": "$22253.25",
+              "cantidadCuotas": "1",
+              "imagenDescuento": "/content/images/cdigi/ofertas/pagando-con-todas-tarjetas.png"
+            }
+          ],
+          "currentSnapshot": {
+            "store": "coto",
+            "ean": "7790550022258",
+            "productName": "Cafe Tostado Molido Super Cabrales 500 Grm",
+            "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00542979-00542979-200",
+            "imageUrl": "https://static.cotodigital3.com.ar/sitios/fotos/large/00542900/00542979.jpg",
+            "price": 29671,
+            "listPrice": 29671,
+            "available": true,
+            "promotions": [],
+            "checkedAt": "2026-09-03T17:37:33.091Z"
+          }
+        },
+        "dia": {
+          "store": "dia",
+          "ean": "7790550022258",
+          "found": false,
+          "teasers": [],
+          "extractedPromotions": []
+        },
+        "jumbo": {
+          "store": "jumbo",
+          "ean": "7790550022258",
+          "found": true,
+          "productName": "Café Tostado Molido 500 Grs Super Cabrales",
+          "url": "https://www.jumbo.com.ar/cafe-molido-cabrales-500-gr/p",
+          "price": 29329,
+          "listPrice": 2423884,
+          "priceWithoutDiscount": 29329,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "disco": {
+          "store": "disco",
+          "ean": "7790550022258",
+          "found": true,
+          "productName": "Café Tostado Molido 500 Grs Super Cabrales",
+          "url": "https://www.disco.com.ar/cafe-molido-cabrales-500-gr/p",
+          "price": 29321,
+          "listPrice": 2423223,
+          "priceWithoutDiscount": 29321,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 100,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "vea": {
+          "store": "vea",
+          "ean": "7790550022258",
+          "found": true,
+          "productName": "Café Tostado Molido 500 Grs Super Cabrales",
+          "url": "https://www.vea.com.ar/cafe-molido-cabrales-500-gr/p",
+          "price": 28300,
+          "listPrice": 2338843,
+          "priceWithoutDiscount": 28300,
+          "priceValidUntil": "2036-08-18T00:00:00Z",
+          "availableQuantity": 0,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        }
+      }
+    },
+    {
+      "ean": "7790742333605",
+      "notes": "Referencia sin promo fuerte (leche). products.json.",
+      "stores": {
+        "carrefour": {
+          "store": "carrefour",
+          "ean": "7790742333605",
+          "found": true,
+          "productName": "Leche UAT Zero lactosa La Serenisima 1L",
+          "url": "https://www.carrefour.com.ar/leche-uat-zero-lactosa-la-serenisima-1l-654827/p",
+          "price": 3119,
+          "listPrice": 3119,
+          "priceWithoutDiscount": 3119,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "coto": {
+          "store": "coto",
+          "ean": "7790742333605",
+          "found": true,
+          "productName": "Leche UAT Zero lactosa La Serenisima 1L",
+          "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00490643-00490643-200",
+          "price": 2999,
+          "listPrice": 2999,
+          "available": true,
+          "discounts": [],
+          "discountsPaymentMethods": [],
+          "currentSnapshot": {
+            "store": "coto",
+            "ean": "7790742333605",
+            "productName": "Leche UAT Zero lactosa La Serenisima 1L",
+            "url": "https://www.coto.com.ar/sitios/cdigi/productos/_/R-00490643-00490643-200",
+            "imageUrl": "https://static.cotodigital3.com.ar/sitios/fotos/large/00490600/00490643.jpg",
+            "price": 2999,
+            "listPrice": 2999,
+            "available": true,
+            "promotions": [],
+            "checkedAt": "2026-09-03T17:37:34.118Z"
+          }
+        },
+        "dia": {
+          "store": "dia",
+          "ean": "7790742333605",
+          "found": true,
+          "productName": "Leche UAT Zero lactosa La Serenisima 1 Lt.",
+          "url": "https://diaonline.supermercadosdia.com.ar/leche-uat-zero-lactosa-la-serenisima-1-lt-34226/p",
+          "price": 3119,
+          "listPrice": 3119,
+          "priceWithoutDiscount": 3119,
+          "priceValidUntil": "2027-09-03T17:32:57Z",
+          "availableQuantity": 489,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "jumbo": {
+          "store": "jumbo",
+          "ean": "7790742333605",
+          "found": true,
+          "productName": "Leche La Serenisima Zerolact Bot 1l",
+          "url": "https://www.jumbo.com.ar/leche-la-serenisima-zerolact-bot-1l/p",
+          "price": 3150,
+          "listPrice": 315000,
+          "priceWithoutDiscount": 3150,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "disco": {
+          "store": "disco",
+          "ean": "7790742333605",
+          "found": true,
+          "productName": "Leche La Serenisima Zerolact Bot 1l",
+          "url": "https://www.disco.com.ar/leche-la-serenisima-zerolact-bot-1l/p",
+          "price": 3150,
+          "listPrice": 315000,
+          "priceWithoutDiscount": 3150,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        },
+        "vea": {
+          "store": "vea",
+          "ean": "7790742333605",
+          "found": true,
+          "productName": "Leche La Serenisima Zerolact Bot 1l",
+          "url": "https://www.vea.com.ar/leche-la-serenisima-zerolact-bot-1l/p",
+          "price": 3190,
+          "listPrice": 319000,
+          "priceWithoutDiscount": 3190,
+          "priceValidUntil": "2027-09-03T00:00:00Z",
+          "availableQuantity": 99999,
+          "discountHighlight": [],
+          "teasers": [],
+          "extractedPromotions": [],
+          "commertialOfferKeys": [
+            "AvailableQuantity",
+            "BuyTogether",
+            "CacheVersionUsedToCallCheckout",
+            "DeliverySlaSamples",
+            "DeliverySlaSamplesPerRegion",
+            "DiscountHighLight",
+            "FullSellingPrice",
+            "GetInfoErrorMessage",
+            "GiftSkuIds",
+            "Installments",
+            "IsAvailable",
+            "ItemMetadataAttachment",
+            "ListPrice",
+            "PaymentOptions",
+            "Price",
+            "PriceToken",
+            "PriceValidUntil",
+            "PriceWithoutDiscount",
+            "PromotionTeasers",
+            "RewardValue",
+            "Tax",
+            "Teasers"
+          ]
+        }
+      }
+    }
+  ],
+  "teaserTextCatalog": [
+    "2do al 70%",
+    "2do al 80%",
+    "2x1",
+    "3x2",
+    "PROMO-2do al 50% Mi Crf Max 8 unidades Combinable CABRALES-Reg-2-50-Gigante1 al 8.9",
+    "PROMO-2do al 70% Max 24 unidades Combinable LA SERENISIMA-Reg-2-70-Gigante1 al 8.9",
+    "PROMO-2x1 Mi Crf Iguales-Reg-2-100-Gigante1 al 8.9",
+    "PROMO-4x2 Max 72 unidades Combinable CLIGHT-Reg-4-200-Gigante1 al 8.9"
+  ],
+  "cotoDiscountTextCatalog": [
+    "25%Dto | No acumulable con otras promos",
+    "Llevando 2 | 2x1 | No acumulable con otras promos",
+    "Llevando 2 | 70% 2da | No acumulable con otras promos",
+    "Llevando 4 | 4x3 | No acumulable con otras promos"
+  ]
+}
