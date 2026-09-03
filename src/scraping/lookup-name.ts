@@ -1,3 +1,4 @@
+import { resolveEnabledStores } from "../lib/stores";
 import {
   ALL_STORES,
   type OfferSnapshot,
@@ -38,9 +39,11 @@ async function snapshotFromStore(
 
 export async function fetchEanSnapshots(
   ean: string,
+  stores: readonly StoreId[] = ALL_STORES,
 ): Promise<{ store: StoreId; snapshot: OfferSnapshot | null }[]> {
+  const enabled = resolveEnabledStores([...stores]);
   return Promise.all(
-    ALL_STORES.map(async (store) => ({
+    enabled.map(async (store) => ({
       store,
       snapshot: await snapshotFromStore(store, ean),
     })),
@@ -61,8 +64,9 @@ function usablePrice(snapshot: OfferSnapshot | null): number | null {
 
 export async function lookupProductNameByEan(
   ean: string,
+  stores?: StoreId[],
 ): Promise<ProductNameLookupResult | null> {
-  const snapshots = await fetchEanSnapshots(ean);
+  const snapshots = await fetchEanSnapshots(ean, stores);
 
   const prices = snapshots
     .map((item) => usablePrice(item.snapshot))
@@ -88,15 +92,20 @@ export async function lookupProductNameByEan(
 
 export async function lookupStorePricesByEan(
   ean: string,
+  stores?: StoreId[],
 ): Promise<StorePricesLookupResult> {
-  const snapshots = await fetchEanSnapshots(ean);
+  const enabled = resolveEnabledStores(stores);
+  const snapshots = await fetchEanSnapshots(ean, enabled);
   const named = snapshots.find((item) => usableName(item.snapshot));
+  const priceByStore = new Map<StoreId, number | null>(
+    snapshots.map((item) => [item.store, usablePrice(item.snapshot)]),
+  );
 
   return {
     name: named ? usableName(named.snapshot) : null,
-    stores: snapshots.map((item) => ({
-      store: item.store,
-      price: usablePrice(item.snapshot),
+    stores: enabled.map((store) => ({
+      store,
+      price: priceByStore.get(store) ?? null,
     })),
   };
 }

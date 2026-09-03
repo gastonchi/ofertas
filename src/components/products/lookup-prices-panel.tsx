@@ -7,20 +7,16 @@ import type { ProductCreateDraft } from "@/components/products/product-create-dr
 import { Modal } from "@/components/ui/modal";
 import { StoreLogo } from "@/components/ui/store-logo";
 import { formatArs } from "@/lib/format";
-import { ALL_STORES, type StoreId, type StorePricesLookupResult } from "@/lib/types";
+import type { StoreId, StorePricesLookupResult } from "@/lib/types";
 import { lookupStorePricesAction } from "@/modules/products/actions";
 
 function draftFromLookup(
   ean: string,
   result: StorePricesLookupResult,
-  defaultStores?: StoreId[],
 ): ProductCreateDraft {
   const prices = result.stores
     .map((item) => item.price)
     .filter((price): price is number => price != null);
-  const foundStores = result.stores
-    .filter((item) => item.price != null)
-    .map((item) => item.store);
   const average =
     prices.length > 0
       ? prices.reduce((sum, price) => sum + price, 0) / prices.length
@@ -36,15 +32,14 @@ function draftFromLookup(
       average != null && suggested != null
         ? `Objetivo sugerido: precio promedio - 10% (${formatArs(average)} → ${formatArs(suggested)}).`
         : undefined,
-    stores: foundStores.length > 0 ? foundStores : defaultStores,
   };
 }
 
 export function LookupPricesPanel({
-  defaultStores,
+  trackedStores,
   onAddProduct,
 }: {
-  defaultStores?: StoreId[];
+  trackedStores: StoreId[];
   onAddProduct: (draft: ProductCreateDraft) => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -122,7 +117,7 @@ export function LookupPricesPanel({
                 <p className="muted">No se encontró el nombre del producto.</p>
               )}
               <div className="card-grid">
-                {ALL_STORES.map((store) => {
+                {trackedStores.map((store) => {
                   const quote = result.stores.find((item) => item.store === store);
                   const price = quote?.price ?? null;
                   const isBest =
@@ -157,7 +152,7 @@ export function LookupPricesPanel({
                 type="button"
                 className="btn-primary"
                 onClick={() => {
-                  onAddProduct(draftFromLookup(ean, result, defaultStores));
+                  onAddProduct(draftFromLookup(ean, result));
                   close();
                 }}
               >

@@ -54,8 +54,7 @@ export function SettingsForm({
       <fieldset className="stores-fieldset">
         <legend>Tiendas a consultar</legend>
         <p className="muted" style={{ margin: "0 0 0.65rem", fontSize: "0.85rem" }}>
-          El job solo consulta estas cadenas. Cada producto puede restringir
-          todavía más.
+          El job, las consultas manuales y el histórico usan solo estas cadenas.
         </p>
         <div className="stores-grid">
           {ALL_STORES.map((store) => (

@@ -8,7 +8,6 @@ export type TrackedProduct = {
   name: string;
   ean: string;
   target_price: number;
-  stores?: StoreId[];
   alertsEnabled?: boolean;
 };
 
@@ -22,6 +21,7 @@ export type ProductNameLookupResult = {
 export type StorePriceQuote = {
   store: StoreId;
   price: number | null;
+  checked_at?: string | null;
 };
 
 export type StorePricesLookupResult = {
@@ -34,7 +34,7 @@ export type TrackedProductRow = {
   name: string;
   ean: string;
   target_price: number;
-  stores: StoreId[];
+  stores?: StoreId[];
   active: boolean;
   alerts_enabled: boolean;
   created_at: string;
@@ -117,7 +117,7 @@ export type ProductPriceStats = {
   latest: PriceStat;
   best7d: PriceStat;
   best30d: PriceStat;
-  latestByStore: NonNullable<PriceStat>[];
+  latestByStore: StorePriceQuote[];
 };
 
 export type AppSettings = {

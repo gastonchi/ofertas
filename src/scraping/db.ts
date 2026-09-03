@@ -81,7 +81,7 @@ export async function loadTrackedProducts(
 ): Promise<TrackedProduct[]> {
   const withAlerts = await db
     .from("tracked_products")
-    .select("name, ean, target_price, stores, active, alerts_enabled")
+    .select("name, ean, target_price, active, alerts_enabled")
     .eq("active", true)
     .order("created_at", { ascending: true });
 
@@ -91,7 +91,7 @@ export async function loadTrackedProducts(
       withAlerts.error.message.includes("alerts_enabled"))
       ? await db
           .from("tracked_products")
-          .select("name, ean, target_price, stores, active")
+          .select("name, ean, target_price, active")
           .eq("active", true)
           .order("created_at", { ascending: true })
       : withAlerts;
@@ -105,18 +105,13 @@ export async function loadTrackedProducts(
       name: unknown;
       ean: unknown;
       target_price: unknown;
-      stores: unknown;
       alerts_enabled?: boolean;
     };
-    const stores = Array.isArray(data.stores)
-      ? data.stores.map(String).filter(isStoreId)
-      : [];
 
     return {
       name: String(data.name),
       ean: String(data.ean),
       target_price: Number(data.target_price),
-      stores: stores.length > 0 ? stores : undefined,
       alertsEnabled: data.alerts_enabled !== false,
     };
   });
