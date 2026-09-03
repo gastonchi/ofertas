@@ -1,20 +1,10 @@
 import type { OfferSnapshot } from "../../lib/types";
 import { fetchCotoByEan } from "../stores/coto";
+import type { CotoDiscount } from "./coto-promotions";
 
 const COTO_BASE = "https://www.coto.com.ar";
 const CONSTRUCTOR_KEY = "key_r6xzz4IAoTWcipni";
 const CONSTRUCTOR_CLIENT = "cio-fe-web-coto-4.2.0";
-
-type CotoDiscount = {
-  id?: string;
-  comments?: string;
-  takingText?: string | null;
-  discountText?: string;
-  regularPrice?: string | null;
-  discountImage?: string | null;
-  discountPrice?: string;
-  regularPriceText?: string;
-};
 
 type CotoPaymentDiscount = {
   id?: string;
@@ -53,7 +43,7 @@ export type CotoRawOffer = {
   available?: boolean;
   discounts: CotoDiscount[];
   discountsPaymentMethods: CotoPaymentDiscount[];
-  /** Snapshot actual del scraper (promos aún vacías) */
+  /** Snapshot del scraper productivo (incluye promos parseadas). */
   currentSnapshot?: OfferSnapshot | null;
 };
 
