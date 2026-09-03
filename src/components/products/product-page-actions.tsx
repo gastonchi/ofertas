@@ -69,7 +69,7 @@ export function ProductNewTitleAction() {
   return (
     <button
       type="button"
-      className="btn-primary btn-icon mobile-only"
+      className="btn-primary btn-icon product-new-header-btn"
       onClick={() => openCreate()}
       aria-label="Nuevo producto"
       title="Nuevo producto"
@@ -86,7 +86,7 @@ export function ProductPageToolbar() {
     <div className="panel-actions">
       <button
         type="button"
-        className="btn-primary desktop-only"
+        className="btn-primary product-new-panel-btn"
         onClick={() => openCreate()}
       >
         <Plus size={18} aria-hidden />

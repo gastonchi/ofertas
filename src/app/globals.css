@@ -557,6 +557,14 @@ code,
   display: block;
 }
 
+.product-new-header-btn {
+  display: none;
+}
+
+.product-new-panel-btn {
+  display: inline-flex;
+}
+
 .mobile-only {
   display: none;
 }
@@ -1225,9 +1233,14 @@ a.btn-secondary {
     font-size: 1.7rem;
   }
 
-  .app-header .btn-icon.mobile-only {
+  .product-new-header-btn {
+    display: inline-flex;
     flex-shrink: 0;
     margin-left: auto;
+  }
+
+  .product-new-panel-btn {
+    display: none;
   }
 
   .app-content {
