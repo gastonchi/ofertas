@@ -944,9 +944,9 @@ code,
 }
 
 .product-thumb-card {
-  flex: 0 0 25%;
-  width: 25%;
-  max-width: 25%;
+  flex: 0 0 48%;
+  width: 48%;
+  max-width: 48%;
   aspect-ratio: 1;
   height: auto;
   align-self: center;
@@ -985,7 +985,8 @@ code,
 }
 
 .product-card-head .product-name {
-  flex: 1 1 75%;
+  flex: 1 1 50%;
+  max-width: 50%;
   min-width: 0;
   margin: 0;
 }
