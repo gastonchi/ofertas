@@ -8,11 +8,10 @@ import { resolveEnabledStores } from "@/lib/stores";
 import { hasSupabaseConfig } from "@/lib/env";
 import {
   ensureProductImage,
+  ensureProductPricesToday,
   getProduct,
   getProductPriceStats,
-  productHasPriceToday,
 } from "@/modules/products/queries";
-import { RefreshProductPriceButton } from "@/components/products/refresh-product-price-button";
 import { getSettings } from "@/modules/settings/actions";
 
 export const dynamic = "force-dynamic";
@@ -30,9 +29,13 @@ export default async function ProductStatsPage({
 
   const settings = configured ? await getSettings() : null;
   const trackedStores = resolveEnabledStores(settings?.default_stores);
-  const product = await ensureProductImage(rawProduct, trackedStores);
+
+  await ensureProductPricesToday(rawProduct);
+  const refreshedProduct = configured ? await getProduct(id) : rawProduct;
+  if (!refreshedProduct) notFound();
+
+  const product = await ensureProductImage(refreshedProduct, trackedStores);
   const stats = await getProductPriceStats(product, trackedStores);
-  const canRefreshPrice = !(await productHasPriceToday(product));
 
   return (
     <AppShell
@@ -40,9 +43,6 @@ export default async function ProductStatsPage({
       pathname="/productos"
       titleAction={
         <div className="app-header-actions">
-          {canRefreshPrice ? (
-            <RefreshProductPriceButton productId={product.id} />
-          ) : null}
           <ProductBackLink />
         </div>
       }
@@ -61,14 +61,7 @@ export default async function ProductStatsPage({
           </p>
         </div>
       </div>
-      <ProductStats
-        stats={stats}
-        emptyAction={
-          canRefreshPrice ? (
-            <RefreshProductPriceButton productId={product.id} />
-          ) : null
-        }
-      />
+      <ProductStats stats={stats} />
     </AppShell>
   );
 }

@@ -1,9 +1,6 @@
-import type { ReactNode } from "react";
 import { formatArs, formatWeekdayDate } from "@/lib/format";
 import { StoreLogo } from "@/components/ui/store-logo";
-import {
-  StorePriceCard,
-} from "@/components/products/store-price-card";
+import { StorePriceCard } from "@/components/products/store-price-card";
 import type { PriceStat, ProductPriceStats } from "@/lib/types";
 
 function StatCard({
@@ -42,13 +39,7 @@ function StatCard({
   );
 }
 
-export function ProductStats({
-  stats,
-  emptyAction,
-}: {
-  stats: ProductPriceStats;
-  emptyAction?: ReactNode;
-}) {
+export function ProductStats({ stats }: { stats: ProductPriceStats }) {
   const hasHistory = stats.latest !== null;
   const bestEffectivePrice = stats.latest?.price ?? null;
 
@@ -69,10 +60,9 @@ export function ProductStats({
             );
           })}
         </div>
-        {!hasHistory && emptyAction ? (
-          <p className="empty-state empty-state-with-action">
+        {!hasHistory ? (
+          <p className="empty-state">
             Todavía no hay historial de precios.
-            {emptyAction}
           </p>
         ) : null}
       </section>
