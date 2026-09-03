@@ -61,7 +61,7 @@ export function ProductTable({ products }: { products: TrackedProductRow[] }) {
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Nombre o EAN"
+            placeholder="Buscar en mis productos"
           />
         </label>
       </div>
