@@ -22,6 +22,7 @@ export type ProductNameLookupResult = {
 export type StorePriceQuote = {
   store: StoreId;
   price: number | null;
+  checked_at?: string | null;
 };
 
 export type StorePricesLookupResult = {
@@ -117,7 +118,7 @@ export type ProductPriceStats = {
   latest: PriceStat;
   best7d: PriceStat;
   best30d: PriceStat;
-  latestByStore: NonNullable<PriceStat>[];
+  latestByStore: StorePriceQuote[];
 };
 
 export type AppSettings = {

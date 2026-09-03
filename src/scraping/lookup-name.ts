@@ -91,12 +91,15 @@ export async function lookupStorePricesByEan(
 ): Promise<StorePricesLookupResult> {
   const snapshots = await fetchEanSnapshots(ean);
   const named = snapshots.find((item) => usableName(item.snapshot));
+  const priceByStore = new Map<StoreId, number | null>(
+    snapshots.map((item) => [item.store, usablePrice(item.snapshot)]),
+  );
 
   return {
     name: named ? usableName(named.snapshot) : null,
-    stores: snapshots.map((item) => ({
-      store: item.store,
-      price: usablePrice(item.snapshot),
+    stores: ALL_STORES.map((store) => ({
+      store,
+      price: priceByStore.get(store) ?? null,
     })),
   };
 }
