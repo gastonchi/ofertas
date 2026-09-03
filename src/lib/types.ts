@@ -29,6 +29,8 @@ export type StorePriceQuote = {
   effectivePrice?: number | null;
   bestPromotion?: PromotionInfo | null;
   hasPromo?: boolean;
+  /** Etiqueta de dto exclusivo online (Carrefour / VTEX). */
+  onlineExclusiveLabel?: string | null;
 };
 
 export type StorePricesLookupResult = {
@@ -59,6 +61,8 @@ export type PromotionInfo = {
     unitEffectivePrice: number;
     validUntilLabel?: string;
   };
+  /** Descuento exclusivo compra online (VTEX DiscountHighLight). */
+  onlineExclusive?: boolean;
 };
 
 export type OfferSnapshot = {
@@ -72,6 +76,7 @@ export type OfferSnapshot = {
   available: boolean;
   promotions: PromotionInfo[];
   checkedAt: string;
+  onlineExclusiveLabel?: string;
 };
 
 export type OfferTrigger =

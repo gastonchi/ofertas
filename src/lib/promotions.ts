@@ -1,4 +1,7 @@
 import type { PromotionInfo } from "./types";
+import {
+  isOnlineExclusiveText,
+} from "@/scraping/promotions/online-exclusive";
 
 export type PromoPricingInfo = NonNullable<PromotionInfo["pricing"]>;
 
@@ -28,6 +31,10 @@ export function parsePromotions(raw: unknown): PromotionInfo[] {
         ? record.minimumQuantity
         : undefined;
 
+    const onlineExclusive =
+      record.onlineExclusive === true ||
+      (typeof record.name === "string" && isOnlineExclusiveText(record.name));
+
     let pricing: PromotionInfo["pricing"];
     if (record.pricing && typeof record.pricing === "object") {
       const p = record.pricing as Record<string, unknown>;
@@ -54,7 +61,12 @@ export function parsePromotions(raw: unknown): PromotionInfo[] {
       }
     }
 
-    out.push({ name, minimumQuantity, pricing });
+    out.push({
+      name,
+      minimumQuantity,
+      pricing,
+      onlineExclusive: onlineExclusive || undefined,
+    });
   }
 
   return out;
@@ -66,9 +78,12 @@ export function bestPromo(
 ): PromotionInfo | undefined {
   if (!promotions?.length) return undefined;
 
-  const withUnitPrice = promotions.filter((p) => hasComputedUnitPrice(p.pricing));
+  const actionable = promotions.filter((promo) => !promo.onlineExclusive);
+  if (!actionable.length) return undefined;
+
+  const withUnitPrice = actionable.filter((p) => hasComputedUnitPrice(p.pricing));
   if (withUnitPrice.length === 0) {
-    return promotions.find((p) => p.pricing) ?? promotions[0];
+    return actionable.find((p) => p.pricing) ?? actionable[0];
   }
 
   return withUnitPrice.reduce((best, promo) => {
@@ -96,4 +111,33 @@ export function effectiveUnitPrice(
   }
 
   return { effective: shelfPrice, bestPromotion: promo, hasPromo: false };
+}
+
+export function splitOnlineExclusivePromotion(
+  promotions: PromotionInfo[] | undefined | null,
+): { promotions: PromotionInfo[]; onlineExclusiveLabel: string | null } {
+  if (!promotions?.length) {
+    return { promotions: [], onlineExclusiveLabel: null };
+  }
+
+  const online = promotions.find((promo) => promo.onlineExclusive);
+  if (!online) {
+    return { promotions: [...promotions], onlineExclusiveLabel: null };
+  }
+
+  return {
+    promotions: promotions.filter((promo) => promo !== online),
+    onlineExclusiveLabel: online.name,
+  };
+}
+
+export function promotionsForStorage(
+  promotions: PromotionInfo[],
+  onlineExclusiveLabel?: string | null,
+): PromotionInfo[] {
+  if (!onlineExclusiveLabel) return promotions;
+  return [
+    ...promotions,
+    { name: onlineExclusiveLabel, onlineExclusive: true },
+  ];
 }

@@ -1107,6 +1107,11 @@ a.btn-secondary {
   font-size: 0.78rem;
 }
 
+.chip-online-exclusive {
+  background: rgba(56, 176, 222, 0.16);
+  color: #0b5f7a;
+}
+
 .dimmed {
   opacity: 0.55;
 }

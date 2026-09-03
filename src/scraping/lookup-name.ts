@@ -92,6 +92,7 @@ function snapshotToQuote(
     effectivePrice: effective,
     bestPromotion: bestPromotion ?? null,
     hasPromo,
+    onlineExclusiveLabel: snapshot.onlineExclusiveLabel ?? null,
   };
 }
 

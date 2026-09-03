@@ -49,11 +49,17 @@ export function StorePriceCard({
           <strong>
             {displayPrice != null ? formatArs(displayPrice) : "—"}
           </strong>
-          {quote.hasPromo ? (
+          {quote.onlineExclusiveLabel ? (
+            <span className="store-price-unit-label muted">compra online</span>
+          ) : quote.hasPromo ? (
             <span className="store-price-unit-label muted">c/u con promo</span>
           ) : null}
         </div>
       </header>
+
+      {quote.onlineExclusiveLabel ? (
+        <span className="chip chip-online-exclusive">{quote.onlineExclusiveLabel}</span>
+      ) : null}
 
       {quote.price != null && (showList || showShelf) ? (
         <dl className="info-card-meta store-price-meta">
