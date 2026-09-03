@@ -209,7 +209,11 @@ export function BarcodeField({
         />
         <button
           type="button"
-          className="btn-ghost btn-icon"
+          className={
+            cameraOpen
+              ? "btn-secondary btn-icon ean-scan-btn"
+              : "btn-primary btn-icon ean-scan-btn"
+          }
           disabled={lookingUp}
           aria-label={
             lookingUp

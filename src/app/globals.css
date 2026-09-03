@@ -426,10 +426,8 @@ code,
   min-width: 0;
 }
 
-.ean-scan-row .btn-ghost {
+.ean-scan-row .ean-scan-btn {
   flex: 0 0 auto;
-  border: 1px solid var(--line);
-  background: white;
 }
 
 .barcode-preview {
