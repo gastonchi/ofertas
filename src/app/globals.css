@@ -960,8 +960,14 @@ code,
 }
 
 .product-row-main .product-name {
-  flex: 1 1 75%;
+  flex: 1 1 auto;
   min-width: 0;
+}
+
+.product-row-main .product-thumb-card {
+  flex: 0 0 80px;
+  width: 80px;
+  max-width: 80px;
 }
 
 .product-card-head {
