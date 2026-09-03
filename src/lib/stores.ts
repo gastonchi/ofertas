@@ -7,6 +7,7 @@ export const STORE_LABELS: Record<StoreId, string> = {
   jumbo: "Jumbo",
   disco: "Disco",
   vea: "Vea",
+  masonline: "MasOnline",
 };
 
 export const STORE_LOGOS: Record<StoreId, string> = {
@@ -16,6 +17,7 @@ export const STORE_LOGOS: Record<StoreId, string> = {
   jumbo: "/logos/jumbo.png",
   disco: "/logos/Disco-Supermarket-Logo.svg",
   vea: "/logos/logo vea.webp",
+  masonline: "/logos/masonline.png",
 };
 
 export function isStoreId(value: string): value is StoreId {

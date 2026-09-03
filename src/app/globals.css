@@ -1027,7 +1027,8 @@ a.btn-secondary {
 
 .store-logo-jumbo img,
 .store-logo-disco img,
-.store-logo-vea img {
+.store-logo-vea img,
+.store-logo-masonline img {
   transform: scale(1.55);
 }
 
