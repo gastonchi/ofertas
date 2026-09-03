@@ -45,6 +45,26 @@ export async function ensureProductImage(
   return { ...product, image_url: imageUrl };
 }
 
+export async function enrichProductsImages(
+  products: TrackedProductRow[],
+  stores: StoreId[],
+): Promise<TrackedProductRow[]> {
+  const db = createDb();
+  return Promise.all(
+    products.map(async (product) => {
+      if (product.image_url?.trim()) return product;
+      try {
+        const imageUrl = await fetchProductImageByEan(product.ean, stores);
+        if (!imageUrl) return product;
+        await updateTrackedProductImage(db, product.ean, imageUrl);
+        return { ...product, image_url: imageUrl };
+      } catch {
+        return product;
+      }
+    }),
+  );
+}
+
 function toStat(row: PriceHistoryRow | null | undefined): PriceStat {
   if (!row) return null;
   const price = Number(row.price);

@@ -8,15 +8,19 @@ import { ProductTable } from "@/components/products/product-table";
 import { resolveEnabledStores } from "@/lib/stores";
 import { hasSupabaseConfig } from "@/lib/env";
 import { listProducts } from "@/modules/products/actions";
+import { enrichProductsImages } from "@/modules/products/queries";
 import { getSettings } from "@/modules/settings/actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProductsPage() {
   const configured = hasSupabaseConfig();
-  const products = configured ? await listProducts() : [];
   const settings = configured ? await getSettings() : null;
   const trackedStores = resolveEnabledStores(settings?.default_stores);
+  const rawProducts = configured ? await listProducts() : [];
+  const products = configured
+    ? await enrichProductsImages(rawProducts, trackedStores)
+    : [];
 
   return (
     <ProductPageActionsProvider trackedStores={trackedStores}>
