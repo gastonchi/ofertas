@@ -1074,6 +1074,10 @@ a.btn-secondary {
   transform: scale(1.55);
 }
 
+.store-logo-masonline img {
+  transform: scale(0.82);
+}
+
 .store-logo-sm {
   height: 1.4rem;
   width: 3.6rem;

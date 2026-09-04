@@ -34,7 +34,7 @@ create table if not exists public.tracked_products (
   name text not null,
   ean text not null,
   target_price numeric not null check (target_price > 0),
-  stores text[] not null default array['carrefour', 'coto', 'dia', 'jumbo', 'disco', 'vea'],
+  stores text[] not null default array['carrefour', 'coto', 'dia', 'jumbo', 'disco', 'vea', 'masonline'],
   active boolean not null default true,
   alerts_enabled boolean not null default true,
   created_at timestamptz not null default now(),
@@ -55,7 +55,7 @@ alter table public.tracked_products
 create table if not exists public.app_settings (
   id uuid primary key default gen_random_uuid(),
   alert_email text,
-  default_stores text[] not null default array['carrefour', 'coto', 'dia', 'jumbo', 'disco', 'vea'],
+  default_stores text[] not null default array['carrefour', 'coto', 'dia', 'jumbo', 'disco', 'vea', 'masonline'],
   alert_days text[] not null default array['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
   alert_hours text[] not null default array['08:00', '20:00'],
   updated_at timestamptz not null default now()
