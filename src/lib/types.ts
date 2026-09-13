@@ -105,7 +105,11 @@ export type AlertRow = {
     snapshot?: {
       productName?: string;
       price?: number;
+      listPrice?: number;
       url?: string;
+      imageUrl?: string;
+      promotions?: PromotionInfo[];
+      onlineExclusiveLabel?: string;
     };
   } | null;
   sent_at: string;

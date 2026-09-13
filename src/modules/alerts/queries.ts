@@ -9,17 +9,13 @@ export async function listRecentAlerts(limit = 40): Promise<AlertRow[]> {
   return fetchAlerts(db, limit);
 }
 
-export async function listAlertsInRange(
-  fromDay: string,
-  toDay: string,
-): Promise<AlertRow[]> {
+export async function listAlertsForDay(day: string): Promise<AlertRow[]> {
   await requireAuth();
   const db = createDb();
   const { data, error } = await db
     .from("alerts_sent")
     .select("*")
-    .gte("alert_day", fromDay)
-    .lte("alert_day", toDay)
+    .eq("alert_day", day)
     .order("sent_at", { ascending: false })
     .limit(1000);
 
