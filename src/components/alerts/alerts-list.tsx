@@ -84,39 +84,41 @@ export function AlertsList({
 
   return (
     <div className="alerts-list-shell">
-      <div className="alerts-list-toolbar">
-        <AlertsDayPicker day={day} max={max} />
-        <label className="data-table-search alerts-list-search">
-          <span className="sr-only">Filtrar por nombre o EAN</span>
-          <input
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Nombre o EAN"
-          />
-        </label>
-      </div>
+      <div className="alerts-list-controls">
+        <div className="alerts-list-toolbar">
+          <AlertsDayPicker day={day} max={max} />
+          <label className="data-table-search alerts-list-search">
+            <span className="sr-only">Filtrar por nombre o EAN</span>
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Nombre o EAN"
+            />
+          </label>
+        </div>
 
-      <div
-        className="store-filter alerts-store-filter"
-        role="group"
-        aria-label="Filtrar por supermercado"
-      >
-        {ALL_STORES.map((store) => {
-          const on = enabledStores.has(store);
-          return (
-            <button
-              key={store}
-              type="button"
-              className={`store-filter-btn${on ? "" : " is-off"}`}
-              aria-pressed={on}
-              aria-label={`${on ? "Ocultar" : "Mostrar"} ${STORE_LABELS[store]}`}
-              onClick={() => toggleStore(store)}
-            >
-              <StoreLogo store={store} size="sm" />
-            </button>
-          );
-        })}
+        <div
+          className="store-filter alerts-store-filter"
+          role="group"
+          aria-label="Filtrar por supermercado"
+        >
+          {ALL_STORES.map((store) => {
+            const on = enabledStores.has(store);
+            return (
+              <button
+                key={store}
+                type="button"
+                className={`store-filter-btn${on ? "" : " is-off"}`}
+                aria-pressed={on}
+                aria-label={`${on ? "Ocultar" : "Mostrar"} ${STORE_LABELS[store]}`}
+                onClick={() => toggleStore(store)}
+              >
+                <StoreLogo store={store} size="sm" />
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {emptyMessage ?? (

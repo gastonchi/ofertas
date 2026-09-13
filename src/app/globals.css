@@ -1508,6 +1508,12 @@ a.btn-secondary {
   min-width: 0;
 }
 
+.alerts-list-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 .alerts-list-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -1581,7 +1587,7 @@ a.btn-secondary {
 }
 
 .alerts-store-filter {
-  padding-bottom: 0.15rem;
+  padding-bottom: 0;
 }
 
 .alerts-store-sections {
@@ -1740,9 +1746,14 @@ a.btn-secondary {
 }
 
 @media (max-width: 767px) {
+  .alerts-list-controls {
+    gap: 0;
+  }
+
   .alerts-list-toolbar {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.55rem;
   }
 
   .alerts-list-search {

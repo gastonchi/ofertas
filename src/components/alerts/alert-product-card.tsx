@@ -1,6 +1,6 @@
 import { getAlertDisplay } from "@/components/alerts/alert-display";
 import { ProductThumb } from "@/components/products/product-thumb";
-import { formatArs, formatDateTime } from "@/lib/format";
+import { formatArs } from "@/lib/format";
 import { STORE_LABELS, isStoreId } from "@/lib/stores";
 import type { AlertRow } from "@/lib/types";
 
@@ -58,11 +58,8 @@ export function AlertProductCard({ alert }: { alert: AlertRow }) {
         </ul>
       </div>
 
-      <footer className="alert-product-foot">
-        <time className="muted" dateTime={alert.sent_at}>
-          {formatDateTime(alert.sent_at)}
-        </time>
-        {display.url ? (
+      {display.url ? (
+        <footer className="alert-product-foot">
           <a
             href={display.url}
             className="btn-secondary alert-product-cta"
@@ -71,8 +68,8 @@ export function AlertProductCard({ alert }: { alert: AlertRow }) {
           >
             Ver en {storeName}
           </a>
-        ) : null}
-      </footer>
+        </footer>
+      ) : null}
     </article>
   );
 }
