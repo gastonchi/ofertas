@@ -1,40 +1,30 @@
-import { AlertsDataTable } from "@/components/alerts/alerts-data-table";
+import { AlertsList } from "@/components/alerts/alerts-list";
 import { AppShell } from "@/components/layout/app-shell";
-import { formatDay } from "@/lib/format";
+import { formatWeekdayDate } from "@/lib/format";
 import { hasSupabaseConfig } from "@/lib/env";
 import {
-  defaultAlertDateRange,
-  resolveAlertDateRange,
+  defaultAlertDay,
+  resolveAlertDay,
 } from "@/modules/alerts/date-range";
-import { listAlertsInRange } from "@/modules/alerts/queries";
+import { listAlertsForDay } from "@/modules/alerts/queries";
 
 export const dynamic = "force-dynamic";
 
 export default async function AlertsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ from?: string; to?: string }>;
+  searchParams: Promise<{ day?: string; from?: string }>;
 }) {
   const params = await searchParams;
-  const range = resolveAlertDateRange(params.from, params.to);
-  const { to: today } = defaultAlertDateRange();
-  const alerts = hasSupabaseConfig()
-    ? await listAlertsInRange(range.from, range.to)
-    : [];
-  const titleNote =
-    range.from === range.to
-      ? `(${formatDay(range.from)})`
-      : `del ${formatDay(range.from)} al ${formatDay(range.to)}`;
+  const day = resolveAlertDay(params.day, params.from);
+  const today = defaultAlertDay();
+  const alerts = hasSupabaseConfig() ? await listAlertsForDay(day) : [];
+  const titleNote = `(${formatWeekdayDate(`${day}T12:00:00.000-03:00`)})`;
 
   return (
     <AppShell title="Alertas" titleNote={titleNote} pathname="/alertas">
       <div className="panel">
-        <AlertsDataTable
-          alerts={alerts}
-          from={range.from}
-          to={range.to}
-          max={today}
-        />
+        <AlertsList alerts={alerts} day={day} max={today} />
       </div>
     </AppShell>
   );

@@ -1500,3 +1500,267 @@ a.btn-secondary {
     opacity: 0.55;
   }
 }
+
+.alerts-list-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.alerts-list-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.alerts-list-search {
+  flex: 1 1 12rem;
+  max-width: 18rem;
+}
+
+.alerts-day-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.alerts-day-nav {
+  min-height: 44px;
+  min-width: 44px;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--bg-elevated);
+  color: var(--brand-ink);
+}
+
+.alerts-day-nav:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.alerts-day-input {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.alerts-day-input input[type="date"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.alerts-day-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: white;
+  color: var(--ink);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.alerts-day-input:focus-within .alerts-day-label {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.alerts-store-filter {
+  padding-bottom: 0.15rem;
+}
+
+.alerts-store-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+.alerts-store-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.alerts-store-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.04),
+    rgba(31, 106, 69, 0.08)
+  );
+}
+
+.alerts-store-head-copy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.65rem;
+  min-width: 0;
+}
+
+.alerts-store-head h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.2;
+}
+
+.alerts-product-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+}
+
+@media (min-width: 768px) {
+  .alerts-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.alert-product-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 0.95rem 1rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow);
+}
+
+.alert-product-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.alert-product-head .product-thumb-lg {
+  width: 4.25rem;
+  height: 4.25rem;
+}
+
+.alert-product-head-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.alert-product-head .product-name {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.alert-product-meta strong {
+  font-weight: 700;
+}
+
+.alert-product-offer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.alert-product-prices {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.55rem;
+}
+
+.alert-product-list-price {
+  font-size: 0.92rem;
+  text-decoration: line-through;
+}
+
+.alert-product-unit {
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.alert-product-promo {
+  margin: 0;
+  color: var(--brand-ink);
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.alert-product-triggers {
+  margin: 0;
+  padding-left: 1rem;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.alert-product-triggers li + li {
+  margin-top: 0.2rem;
+}
+
+.alert-product-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.55rem 0.75rem;
+  margin-top: auto;
+  padding-top: 0.35rem;
+}
+
+.alert-product-cta {
+  min-height: 44px;
+  padding-inline: 0.85rem;
+  font-size: 0.88rem;
+}
+
+@media (max-width: 767px) {
+  .alerts-list-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .alerts-list-search {
+    max-width: none;
+    width: 100%;
+  }
+
+  .alerts-day-picker {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .alert-product-foot {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .alert-product-cta {
+    width: 100%;
+  }
+}
