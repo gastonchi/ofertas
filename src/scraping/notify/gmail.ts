@@ -1,16 +1,7 @@
 import nodemailer from "nodemailer";
 import { effectiveUnitPrice } from "../../lib/promotions";
-import { STORE_LABELS } from "../../lib/stores";
+import { STORE_COLORS, STORE_LABELS } from "../../lib/stores";
 import type { OfferMatch, StoreId } from "../../lib/types";
-
-const STORE_EMAIL_COLORS: Record<StoreId, string> = {
-  dia: "#ef4444",
-  coto: "#dc2626",
-  carrefour: "#0284c7",
-  jumbo: "#ea580c",
-  disco: "#7c3aed",
-  vea: "#059669",
-};
 
 function formatMoney(n: number): string {
   return new Intl.NumberFormat("es-AR", {
@@ -127,7 +118,7 @@ function renderProductThumbnail(match: OfferMatch): string {
 
 function renderStoreOption(match: OfferMatch, isBest: boolean, isLast: boolean): string {
   const store = match.snapshot.store;
-  const storeColor = STORE_EMAIL_COLORS[store];
+  const storeColor = STORE_COLORS[store];
   const storeLabel = escapeHtml(storeBadgeLabel(store));
   const effective = getEffectivePrice(match);
   const { hasPromo } = effectiveUnitPrice(match.snapshot.price, match.snapshot.promotions);

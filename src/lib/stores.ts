@@ -18,6 +18,15 @@ export const STORE_LOGOS: Record<StoreId, string> = {
   vea: "/logos/logo vea.webp",
 };
 
+export const STORE_COLORS: Record<StoreId, string> = {
+  carrefour: "#0284c7",
+  dia: "#ef4444",
+  coto: "#dc2626",
+  jumbo: "#ea580c",
+  disco: "#7c3aed",
+  vea: "#059669",
+};
+
 export function isStoreId(value: string): value is StoreId {
   return (ALL_STORES as readonly string[]).includes(value);
 }

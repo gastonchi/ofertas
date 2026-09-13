@@ -5,7 +5,7 @@ import { AlertProductCard } from "@/components/alerts/alert-product-card";
 import { AlertsDayPicker } from "@/components/alerts/alerts-day-picker";
 import { getAlertDisplay } from "@/components/alerts/alert-display";
 import { StoreLogo } from "@/components/ui/store-logo";
-import { isStoreId, STORE_LABELS } from "@/lib/stores";
+import { isStoreId, STORE_COLORS, STORE_LABELS } from "@/lib/stores";
 import { ALL_STORES, type AlertRow, type StoreId } from "@/lib/types";
 
 function normalizeStore(store: string) {
@@ -40,6 +40,16 @@ export function AlertsList({
       return next;
     });
   }
+
+  const alertCountByStore = useMemo(() => {
+    const counts = new Map<StoreId, number>();
+    for (const alert of alerts) {
+      const store = normalizeStore(alert.store);
+      if (!isStoreId(store)) continue;
+      counts.set(store, (counts.get(store) ?? 0) + 1);
+    }
+    return counts;
+  }, [alerts]);
 
   const storeSections = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -105,16 +115,25 @@ export function AlertsList({
         >
           {ALL_STORES.map((store) => {
             const on = enabledStores.has(store);
+            const count = alertCountByStore.get(store) ?? 0;
             return (
               <button
                 key={store}
                 type="button"
-                className={`store-filter-btn${on ? "" : " is-off"}`}
+                className={`store-filter-btn alerts-store-filter-btn${on ? "" : " is-off"}`}
                 aria-pressed={on}
-                aria-label={`${on ? "Ocultar" : "Mostrar"} ${STORE_LABELS[store]}`}
+                aria-label={`${on ? "Ocultar" : "Mostrar"} ${STORE_LABELS[store]}${count > 0 ? `, ${count} alertas` : ""}`}
                 onClick={() => toggleStore(store)}
               >
                 <StoreLogo store={store} size="sm" />
+                {count > 0 ? (
+                  <span
+                    className="alerts-store-filter-badge"
+                    style={{ backgroundColor: STORE_COLORS[store] }}
+                  >
+                    {count}
+                  </span>
+                ) : null}
               </button>
             );
           })}
@@ -125,11 +144,17 @@ export function AlertsList({
         <div className="alerts-store-sections">
           {storeSections.map(({ store, alerts: storeAlerts }) => (
             <section key={store} className="alerts-store-section">
-              <header className="alerts-store-head">
+              <header
+                className="alerts-store-head"
+                style={{
+                  backgroundColor: STORE_COLORS[store],
+                  color: "#ffffff",
+                }}
+              >
                 <StoreLogo store={store} size="lg" />
                 <div className="alerts-store-head-copy">
                   <h2>{STORE_LABELS[store]}</h2>
-                  <span className="chip">
+                  <span className="chip alerts-store-count">
                     {storeAlerts.length === 1
                       ? "1 alerta"
                       : `${storeAlerts.length} alertas`}
