@@ -4,6 +4,7 @@ import { fetchCotoByEan } from "./stores/coto";
 import { fetchDiaByEan } from "./stores/dia";
 import { fetchDiscoByEan } from "./stores/disco";
 import { fetchJumboByEan } from "./stores/jumbo";
+import { fetchMasonlineByEan } from "./stores/masonline";
 import { fetchVeaByEan } from "./stores/vea";
 
 export const STORE_FETCHERS: Record<
@@ -16,6 +17,7 @@ export const STORE_FETCHERS: Record<
   jumbo: fetchJumboByEan,
   disco: fetchDiscoByEan,
   vea: fetchVeaByEan,
+  masonline: fetchMasonlineByEan,
 };
 
 export async function sleep(ms: number) {
