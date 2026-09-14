@@ -23,7 +23,7 @@ import { fetchProductStore, sleep } from "./fetch-store";
 export async function runOfferCheck(argv = process.argv): Promise<void> {
   const dryRun = isDryRun(argv);
   const forceAlert = isForceAlert(argv);
-  const ignoreSchedule = isIgnoreSchedule(argv) || dryRun || forceAlert;
+  const forceEmail = isIgnoreSchedule(argv) || forceAlert;
   const config = getCheckConfig(dryRun);
 
   const canUseDb = Boolean(config.supabaseUrl && config.supabaseKey);
@@ -40,14 +40,18 @@ export async function runOfferCheck(argv = process.argv): Promise<void> {
     ? await loadJobSettings(db, config.alertTo)
     : { ...FALLBACK_JOB_SETTINGS, alertEmail: config.alertTo };
 
-  if (!ignoreSchedule && !isInAlertWindow(jobSettings.alertDays, jobSettings.alertHours)) {
+  const shouldSendEmail =
+    forceEmail ||
+    isInAlertWindow(jobSettings.alertDays, jobSettings.alertHours);
+
+  if (!shouldSendEmail) {
     const nowDay = argentinaWeekday();
     const nowHour = argentinaHourLabel();
     console.log(
-      `Fuera de ventana (AR ${nowDay} ${nowHour}). ` +
-        `Config: ${jobSettings.alertDays.join(",")} @ ${jobSettings.alertHours.join(",")}. Salteo.`,
+      `Fuera de ventana de email (AR ${nowDay} ${nowHour}). ` +
+        `Config: ${jobSettings.alertDays.join(",")} @ ${jobSettings.alertHours.join(",")}. ` +
+        `Se consultan precios igual.`,
     );
-    return;
   }
 
   let products: TrackedProduct[];
@@ -70,13 +74,14 @@ export async function runOfferCheck(argv = process.argv): Promise<void> {
   console.log(
     `Ofertas · productos=${products.length} · source=${source}` +
       ` · tiendas=${jobSettings.stores.join(",")}` +
-      ` · días=${jobSettings.alertDays.join(",")}` +
-      ` · horas=${jobSettings.alertHours.join(",")}` +
+      ` · email=${shouldSendEmail ? "sí" : "no"}` +
+      ` · ventana=${jobSettings.alertDays.join(",")} @ ${jobSettings.alertHours.join(",")}` +
       ` · dryRun=${dryRun} · force=${forceAlert}`,
   );
 
   const freshMatches: OfferMatch[] = [];
   let errors = 0;
+  let offersOutsideWindow = 0;
 
   for (const product of products) {
     const stores = resolveEnabledStores(jobSettings.stores);
@@ -125,12 +130,25 @@ export async function runOfferCheck(argv = process.argv): Promise<void> {
         console.log("  (alertas desactivadas para este producto)");
         continue;
       }
+
+      if (!shouldSendEmail) {
+        offersOutsideWindow += 1;
+        console.log("  (fuera de ventana de email; se reevaluará en el próximo envío)");
+        continue;
+      }
+
       freshMatches.push(match);
     }
   }
 
+  if (offersOutsideWindow > 0) {
+    console.log(
+      `\n${offersOutsideWindow} oferta(s) detectada(s) fuera de la ventana de email.`,
+    );
+  }
+
   if (freshMatches.length === 0) {
-    console.log("\nSin ofertas nuevas para notificar.");
+    console.log("\nSin ofertas nuevas para notificar por email.");
     if (errors > 0) process.exitCode = 1;
     return;
   }

@@ -2,8 +2,8 @@ name: Check offers
 
 on:
   schedule:
-    # Cada hora; el job decide si corresponde según Configuración (hora Argentina).
-    - cron: "0 * * * *"
+    # 4 chequeos diarios (hora Argentina, UTC-3): 08:00, 12:00, 17:00 y 20:00.
+    - cron: "0 11,15,20,23 * * *"
   workflow_dispatch:
 
 jobs:
