@@ -207,7 +207,7 @@ export async function savePriceHistory(
   const nextPromotions = promotionsPayload(snapshot);
   const { data: latest, error: selectError } = await db
     .from("price_history")
-    .select("price, list_price, promotions")
+    .select("price, list_price, promotions, checked_at")
     .eq("ean", snapshot.ean)
     .eq("store", snapshot.store)
     .order("checked_at", { ascending: false })
@@ -223,7 +223,12 @@ export async function savePriceHistory(
     const sameList =
       (latest.list_price == null && snapshot.listPrice == null) ||
       Number(latest.list_price) === snapshot.listPrice;
-    if (samePrice && sameList && samePromotions(latest.promotions, nextPromotions)) {
+    const sameOffer =
+      samePrice && sameList && samePromotions(latest.promotions, nextPromotions);
+    const checkedToday =
+      latest.checked_at != null &&
+      argentinaDay(new Date(latest.checked_at)) === argentinaDay();
+    if (sameOffer && checkedToday) {
       return "skipped";
     }
   }
