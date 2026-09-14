@@ -36,9 +36,9 @@ export async function refreshProductPrices(
       continue;
     }
 
-    await savePriceHistory(db, snapshot);
+    const saved = await savePriceHistory(db, snapshot);
     await updateTrackedProductImage(db, snapshot.ean, snapshot.imageUrl);
-    result.saved += 1;
+    if (saved === "inserted") result.saved += 1;
   }
 
   return result;
