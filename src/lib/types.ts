@@ -113,6 +113,7 @@ export type AlertRow = {
     };
   } | null;
   sent_at: string;
+  emailed_at?: string | null;
 };
 
 export type PriceHistoryRow = {

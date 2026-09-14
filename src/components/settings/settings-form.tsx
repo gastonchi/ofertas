@@ -89,8 +89,8 @@ export function SettingsForm({
       <fieldset className="stores-fieldset">
         <legend>Horarios (Argentina)</legend>
         <p className="muted" style={{ margin: "0 0 0.65rem", fontSize: "0.85rem" }}>
-          El chequeo corre en punto. Si no es uno de estos horarios, no consulta
-          ni manda mail.
+          Los precios se consultan varias veces al día. El email se envía en estos
+          días y horarios (Argentina, con minutos).
         </p>
         <div className="field-row">
           {selectedHours.map((hour, index) => (
@@ -100,7 +100,7 @@ export function SettingsForm({
                 id={`alert_hours_${index}`}
                 name="alert_hours"
                 type="time"
-                step={3600}
+                step={60}
                 defaultValue={hour}
               />
             </div>

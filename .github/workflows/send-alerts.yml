@@ -1,15 +1,15 @@
-name: Check offers
+name: Send alert emails
 
 on:
   schedule:
-    # 4 chequeos diarios (hora Argentina, UTC-3): 08:00, 12:00, 17:00 y 20:00.
-    - cron: "0 11,15,20,23 * * *"
+    # Cada 15 min; respeta horarios con minutos configurados por el usuario.
+    - cron: "*/15 * * * *"
   workflow_dispatch:
 
 jobs:
-  check:
+  send:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
 
@@ -21,9 +21,12 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Run price check
+      - name: Send pending alert emails
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           ALERT_TO_EMAIL: ${{ secrets.ALERT_TO_EMAIL }}
-        run: npm run check
+          IGNORE_SCHEDULE: ${{ github.event_name == 'workflow_dispatch' && 'true' || '' }}
+        run: npm run send-alerts
