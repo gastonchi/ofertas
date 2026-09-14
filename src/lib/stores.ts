@@ -27,6 +27,7 @@ export const STORE_COLORS: Record<StoreId, string> = {
   jumbo: "#ea580c",
   disco: "#7c3aed",
   vea: "#059669",
+  masonline: "#ca8a04",
 };
 
 export function isStoreId(value: string): value is StoreId {
