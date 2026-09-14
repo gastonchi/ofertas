@@ -7,7 +7,14 @@ import {
   normalizeHourLabel,
   type Weekday,
 } from "../lib/schedule";
-import { ALL_STORES, type OfferMatch, type OfferSnapshot, type StoreId, type TrackedProduct } from "../lib/types";
+import {
+  ALL_STORES,
+  type AlertRow,
+  type OfferMatch,
+  type OfferSnapshot,
+  type StoreId,
+  type TrackedProduct,
+} from "../lib/types";
 import { promotionsForStorage } from "../lib/promotions";
 
 export type JobSettings = {
@@ -182,26 +189,60 @@ export function argentinaDay(date = new Date()): string {
   }).format(date);
 }
 
+function promotionsPayload(snapshot: OfferSnapshot) {
+  return promotionsForStorage(
+    snapshot.promotions,
+    snapshot.onlineExclusiveLabel,
+  );
+}
+
+function samePromotions(left: unknown, right: unknown): boolean {
+  return JSON.stringify(left ?? []) === JSON.stringify(right ?? []);
+}
+
 export async function savePriceHistory(
   db: SupabaseClient,
   snapshot: OfferSnapshot,
-): Promise<void> {
+): Promise<"inserted" | "skipped"> {
+  const nextPromotions = promotionsPayload(snapshot);
+  const { data: latest, error: selectError } = await db
+    .from("price_history")
+    .select("price, list_price, promotions")
+    .eq("ean", snapshot.ean)
+    .eq("store", snapshot.store)
+    .order("checked_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (selectError) {
+    throw new Error(`Supabase price_history select: ${selectError.message}`);
+  }
+
+  if (latest) {
+    const samePrice = Number(latest.price) === snapshot.price;
+    const sameList =
+      (latest.list_price == null && snapshot.listPrice == null) ||
+      Number(latest.list_price) === snapshot.listPrice;
+    if (samePrice && sameList && samePromotions(latest.promotions, nextPromotions)) {
+      return "skipped";
+    }
+  }
+
   const { error } = await db.from("price_history").insert({
     ean: snapshot.ean,
     store: snapshot.store,
     product_name: snapshot.productName,
     price: snapshot.price,
     list_price: snapshot.listPrice,
-    promotions: promotionsForStorage(
-      snapshot.promotions,
-      snapshot.onlineExclusiveLabel,
-    ),
+    promotions: nextPromotions,
     checked_at: snapshot.checkedAt,
   });
 
   if (error) {
     throw new Error(`Supabase price_history: ${error.message}`);
   }
+
+  return "inserted";
 }
 
 export async function updateTrackedProductImage(
@@ -247,26 +288,119 @@ export async function wasAlertSentToday(
   return (data?.length ?? 0) > 0;
 }
 
-export async function recordAlertSent(
+function isMissingEmailedAtColumn(error: {
+  code?: string;
+  message: string;
+}): boolean {
+  return error.code === "PGRST204" || error.message.includes("emailed_at");
+}
+
+export async function recordOfferDetected(
   db: SupabaseClient,
   match: OfferMatch,
   day = argentinaDay(),
 ): Promise<void> {
-  const { error } = await db.from("alerts_sent").insert({
+  const payload = {
     ean: match.snapshot.ean,
     store: match.snapshot.store,
     fingerprint: match.fingerprint,
     alert_day: day,
+    emailed_at: null,
     payload: {
       trackedName: match.trackedName,
       targetPrice: match.targetPrice,
       triggers: match.triggers,
       snapshot: match.snapshot,
     },
-  });
+  };
+
+  const { error } = await db.from("alerts_sent").insert(payload);
 
   if (error) {
     if (error.code === "23505") return;
+    if (isMissingEmailedAtColumn(error)) {
+      const { error: legacyError } = await db.from("alerts_sent").insert({
+        ean: match.snapshot.ean,
+        store: match.snapshot.store,
+        fingerprint: match.fingerprint,
+        alert_day: day,
+        payload: payload.payload,
+      });
+      if (legacyError?.code === "23505") return;
+      if (legacyError) {
+        throw new Error(`Supabase alerts_sent insert: ${legacyError.message}`);
+      }
+      return;
+    }
     throw new Error(`Supabase alerts_sent insert: ${error.message}`);
+  }
+}
+
+export async function listPendingAlertsForDay(
+  db: SupabaseClient,
+  day = argentinaDay(),
+): Promise<AlertRow[]> {
+  const withEmailFilter = await db
+    .from("alerts_sent")
+    .select("*")
+    .eq("alert_day", day)
+    .is("emailed_at", null)
+    .order("sent_at", { ascending: true });
+
+  if (!withEmailFilter.error) {
+    return (withEmailFilter.data ?? []) as AlertRow[];
+  }
+
+  if (!isMissingEmailedAtColumn(withEmailFilter.error)) {
+    throw new Error(`Supabase alerts_sent select: ${withEmailFilter.error.message}`);
+  }
+
+  console.warn(
+    "Columna alerts_sent.emailed_at ausente; ejecutá la migración en Supabase antes de enviar emails.",
+  );
+  return [];
+}
+
+export async function markAlertsEmailed(
+  db: SupabaseClient,
+  alertIds: string[],
+  emailedAt = new Date().toISOString(),
+): Promise<void> {
+  if (alertIds.length === 0) return;
+
+  const { error } = await db
+    .from("alerts_sent")
+    .update({ emailed_at: emailedAt })
+    .in("id", alertIds)
+    .is("emailed_at", null);
+
+  if (error) {
+    if (isMissingEmailedAtColumn(error)) return;
+    throw new Error(`Supabase alerts_sent update: ${error.message}`);
+  }
+}
+
+export async function recordAlertSent(
+  db: SupabaseClient,
+  match: OfferMatch,
+  day = argentinaDay(),
+): Promise<void> {
+  await recordOfferDetected(db, match, day);
+  const { data, error } = await db
+    .from("alerts_sent")
+    .select("id")
+    .eq("ean", match.snapshot.ean)
+    .eq("store", match.snapshot.store)
+    .eq("fingerprint", match.fingerprint)
+    .eq("alert_day", day)
+    .limit(1);
+
+  if (error) {
+    throw new Error(`Supabase alerts_sent select: ${error.message}`);
+  }
+
+  const id = data?.[0]?.id;
+  if (id) {
+    await markAlertsEmailed(db, [String(id)]);
   }
 }

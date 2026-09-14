@@ -22,6 +22,7 @@ create table if not exists public.alerts_sent (
   alert_day date not null,
   payload jsonb,
   sent_at timestamptz not null default now(),
+  emailed_at timestamptz,
   constraint alerts_sent_dedup unique (ean, store, fingerprint, alert_day)
 );
 
