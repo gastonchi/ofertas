@@ -5,7 +5,7 @@ import {
   isAlertSendTime,
 } from "../lib/schedule";
 import { offerMatchFromAlertRow } from "./alerts/from-row";
-import { getCheckConfig, isDryRun, isForceAlert, isIgnoreSchedule } from "./config";
+import { getSendAlertsConfig, isDryRun, isForceAlert, isIgnoreSchedule } from "./config";
 import {
   FALLBACK_JOB_SETTINGS,
   argentinaDay,
@@ -18,7 +18,7 @@ import { sendAlertEmail } from "./notify/gmail";
 export async function runSendAlerts(argv = process.argv): Promise<void> {
   const dryRun = isDryRun(argv);
   const forceSend = isForceAlert(argv) || isIgnoreSchedule(argv);
-  const config = getCheckConfig(dryRun);
+  const config = getSendAlertsConfig(dryRun);
 
   const canUseDb = Boolean(config.supabaseUrl && config.supabaseKey);
   const db = canUseDb

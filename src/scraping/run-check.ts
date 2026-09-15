@@ -1,7 +1,7 @@
 import { createDbFromConfig } from "../lib/db/client";
 import { resolveEnabledStores } from "../lib/stores";
 import { type TrackedProduct } from "../lib/types";
-import { getCheckConfig, isDryRun, isForceAlert, loadProductsFile } from "./config";
+import { getPriceCheckConfig, isDryRun, isForceAlert, loadProductsFile } from "./config";
 import {
   FALLBACK_JOB_SETTINGS,
   loadJobSettings,
@@ -17,7 +17,7 @@ import { fetchProductStore, sleep } from "./fetch-store";
 export async function runOfferCheck(argv = process.argv): Promise<void> {
   const dryRun = isDryRun(argv);
   const forceAlert = isForceAlert(argv);
-  const config = getCheckConfig(dryRun);
+  const config = getPriceCheckConfig(dryRun);
 
   const canUseDb = Boolean(config.supabaseUrl && config.supabaseKey);
   const db = canUseDb
