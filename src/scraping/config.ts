@@ -36,7 +36,25 @@ export function isIgnoreSchedule(argv = process.argv): boolean {
   return argv.includes("--ignore-schedule") || process.env.IGNORE_SCHEDULE === "true";
 }
 
-export function getCheckConfig(dryRun: boolean) {
+export function getPriceCheckConfig(dryRun: boolean) {
+  if (dryRun) {
+    return {
+      dryRun: true as const,
+      supabaseUrl: process.env.SUPABASE_URL,
+      supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+      alertTo: process.env.ALERT_TO_EMAIL,
+    };
+  }
+
+  return {
+    dryRun: false as const,
+    supabaseUrl: env("SUPABASE_URL"),
+    supabaseKey: env("SUPABASE_SERVICE_ROLE_KEY"),
+    alertTo: process.env.ALERT_TO_EMAIL,
+  };
+}
+
+export function getSendAlertsConfig(dryRun: boolean) {
   if (dryRun) {
     return {
       dryRun: true as const,
@@ -58,4 +76,5 @@ export function getCheckConfig(dryRun: boolean) {
   };
 }
 
-export type CheckConfig = ReturnType<typeof getCheckConfig>;
+export type PriceCheckConfig = ReturnType<typeof getPriceCheckConfig>;
+export type SendAlertsConfig = ReturnType<typeof getSendAlertsConfig>;
