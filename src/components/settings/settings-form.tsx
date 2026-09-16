@@ -89,8 +89,9 @@ export function SettingsForm({
       <fieldset className="stores-fieldset">
         <legend>Horarios (Argentina)</legend>
         <p className="muted" style={{ margin: "0 0 0.65rem", fontSize: "0.85rem" }}>
-          Los precios se consultan varias veces al día. El email se envía en estos
-          días y horarios (Argentina, con minutos).
+          Los precios se consultan 3 veces al día. El email se envía en estos días y
+          horarios (Argentina); si configurás las 09:00, cualquier envío entre las
+          09:00 y las 09:59 dispara el mail.
         </p>
         <div className="field-row">
           {selectedHours.map((hour, index) => (

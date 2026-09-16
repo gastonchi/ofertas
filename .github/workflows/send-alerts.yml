@@ -2,7 +2,7 @@ name: Send alert emails
 
 on:
   schedule:
-    # Cada 15 min; respeta horarios con minutos configurados por el usuario.
+    # Cada 15 min; si la hora actual (AR) coincide con la configurada, envía pendientes.
     - cron: "*/15 * * * *"
   workflow_dispatch:
 

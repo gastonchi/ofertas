@@ -1,5 +1,6 @@
 import { createDbFromConfig } from "../lib/db/client";
 import {
+  argentinaHour,
   argentinaTimeLabel,
   argentinaWeekday,
   isAlertSendTime,
@@ -40,7 +41,7 @@ export async function runSendAlerts(argv = process.argv): Promise<void> {
 
   if (!shouldSend) {
     console.log(
-      `Fuera de horario de email (AR ${argentinaWeekday()} ${argentinaTimeLabel()}). ` +
+      `Fuera de horario de email (AR ${argentinaWeekday()} ${argentinaTimeLabel()}, hora ${argentinaHour()}). ` +
         `Config: ${jobSettings.alertDays.join(",")} @ ${jobSettings.alertHours.join(",")}.`,
     );
     return;

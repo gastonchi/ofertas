@@ -23,9 +23,6 @@ export const WEEKDAY_LABELS: Record<Weekday, string> = {
 export const DEFAULT_ALERT_DAYS: Weekday[] = [...WEEKDAYS];
 export const DEFAULT_ALERT_HOURS = ["08:00", "20:00"];
 
-/** Tolerancia del cron de email (cada 15 min) respecto al horario configurado. */
-export const ALERT_SEND_TOLERANCE_MINUTES = 14;
-
 const TZ = "America/Argentina/Buenos_Aires";
 
 export function isWeekday(value: string): value is Weekday {
@@ -103,18 +100,24 @@ export function argentinaHourLabel(date = new Date()): string {
   return argentinaTimeLabel(date);
 }
 
-export function timeLabelToMinutes(label: string): number | null {
+export function hourFromTimeLabel(label: string): string | null {
   const normalized = normalizeHourLabel(label);
   if (!normalized) return null;
-  const [hour, minute] = normalized.split(":").map(Number);
-  return hour * 60 + minute;
+  return normalized.slice(0, 2);
 }
 
+export function argentinaHour(date = new Date()): string {
+  return hourFromTimeLabel(argentinaTimeLabel(date)) ?? "00";
+}
+
+/**
+ * El cron de email corre cada ~15 min (con demoras de GitHub). Coincide si la hora
+ * actual en Argentina es la misma que la hora configurada (ej. 09:00 → toda la hora 09).
+ */
 export function isAlertSendTime(
   days: readonly string[],
   times: readonly string[],
   date = new Date(),
-  toleranceMinutes = ALERT_SEND_TOLERANCE_MINUTES,
 ): boolean {
   const enabledDays = days.filter(isWeekday);
   const enabledTimes = times
@@ -128,25 +131,23 @@ export function isAlertSendTime(
     return false;
   }
 
-  const nowMinutes = timeLabelToMinutes(argentinaTimeLabel(date));
-  if (nowMinutes === null) return false;
+  const currentHour = argentinaHour(date);
+  const configuredHours = [
+    ...new Set(
+      checkTimes
+        .map(hourFromTimeLabel)
+        .filter((hour): hour is string => Boolean(hour)),
+    ),
+  ];
 
-  return checkTimes.some((time) => {
-    const slotMinutes = timeLabelToMinutes(time);
-    if (slotMinutes === null) return false;
-    return Math.abs(nowMinutes - slotMinutes) <= toleranceMinutes;
-  });
+  return configuredHours.includes(currentHour);
 }
 
-/** Compat: ventana por hora en punto (sin minutos). */
+/** @deprecated Usar isAlertSendTime */
 export function isInAlertWindow(
   days: readonly string[],
   hours: readonly string[],
   date = new Date(),
 ): boolean {
-  const enabledHours = hours
-    .map(normalizeHourLabel)
-    .filter((value): value is string => Boolean(value));
-  const hourOnly = enabledHours.map((time) => time.slice(0, 2) + ":00");
-  return isAlertSendTime(days, hourOnly, date, 0);
+  return isAlertSendTime(days, hours, date);
 }
