@@ -2,8 +2,8 @@ name: Send alert emails
 
 on:
   schedule:
-    # Cada 15 min; si la hora actual (AR) coincide con la configurada, envía pendientes.
-    - cron: "*/15 * * * *"
+    # Cada hora (GitHub no garantiza */15). Si la hora AR coincide con la config, envía pendientes.
+    - cron: "0 * * * *"
   workflow_dispatch:
 
 jobs:

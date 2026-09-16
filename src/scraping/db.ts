@@ -341,14 +341,11 @@ export async function recordOfferDetected(
   }
 }
 
-export async function listPendingAlertsForDay(
-  db: SupabaseClient,
-  day = argentinaDay(),
-): Promise<AlertRow[]> {
+/** Todas las ofertas detectadas y aún no enviadas por email (cualquier día). */
+export async function listPendingAlerts(db: SupabaseClient): Promise<AlertRow[]> {
   const withEmailFilter = await db
     .from("alerts_sent")
     .select("*")
-    .eq("alert_day", day)
     .is("emailed_at", null)
     .order("sent_at", { ascending: true });
 
@@ -364,6 +361,14 @@ export async function listPendingAlertsForDay(
     "Columna alerts_sent.emailed_at ausente; ejecutá la migración en Supabase antes de enviar emails.",
   );
   return [];
+}
+
+export async function listPendingAlertsForDay(
+  db: SupabaseClient,
+  day = argentinaDay(),
+): Promise<AlertRow[]> {
+  const pending = await listPendingAlerts(db);
+  return pending.filter((alert) => alert.alert_day === day);
 }
 
 export async function markAlertsEmailed(

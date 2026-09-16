@@ -9,9 +9,8 @@ import { offerMatchFromAlertRow } from "./alerts/from-row";
 import { getSendAlertsConfig, isDryRun, isForceAlert, isIgnoreSchedule } from "./config";
 import {
   FALLBACK_JOB_SETTINGS,
-  argentinaDay,
   loadJobSettings,
-  listPendingAlertsForDay,
+  listPendingAlerts,
   markAlertsEmailed,
 } from "./db";
 import { sendAlertEmail } from "./notify/gmail";
@@ -52,20 +51,21 @@ export async function runSendAlerts(argv = process.argv): Promise<void> {
     return;
   }
 
-  const day = argentinaDay();
-  const pending = await listPendingAlertsForDay(db, day);
+  const pending = await listPendingAlerts(db);
   const matches = pending
     .map(offerMatchFromAlertRow)
     .filter((match): match is NonNullable<typeof match> => match !== null);
 
   if (matches.length === 0) {
-    console.log(`Sin alertas pendientes de email para ${day}.`);
+    console.log("Sin alertas pendientes de email.");
     return;
   }
 
+  const pendingDays = [...new Set(pending.map((alert) => alert.alert_day))].sort();
   console.log(
-    `Envío de alertas · día=${day} · pendientes=${matches.length}` +
-      ` · horario=${jobSettings.alertHours.join(",")}` +
+    `Envío de alertas · pendientes=${matches.length}` +
+      ` · días=${pendingDays.join(",")}` +
+      ` · horario config=${jobSettings.alertHours.join(",")}` +
       ` · dryRun=${dryRun}`,
   );
 
