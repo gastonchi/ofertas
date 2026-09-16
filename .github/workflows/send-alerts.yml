@@ -1,9 +1,8 @@
 name: Send alert emails
 
 on:
-  schedule:
-    # Cada 15 min; si la hora actual (AR) coincide con la configurada, envía pendientes.
-    - cron: "*/15 * * * *"
+  # El envío programado corre en Vercel cada 15 min (ver vercel.json).
+  # Este workflow queda solo para pruebas manuales.
   workflow_dispatch:
 
 jobs:

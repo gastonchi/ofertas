@@ -2,8 +2,8 @@ name: Check offers
 
 on:
   schedule:
-    # 3 chequeos diarios (hora Argentina, UTC-3): 08:00, 14:00 y 20:00.
-    - cron: "0 11,17,23 * * *"
+    # 3 chequeos diarios (hora Argentina, UTC-3): 08:00, 13:00 y 19:00 (antes de los envíos típicos).
+    - cron: "0 11,16,22 * * *"
   workflow_dispatch:
 
 jobs:
