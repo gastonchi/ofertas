@@ -5,9 +5,10 @@ import { requireAuth } from "@/lib/auth";
 import { createDb } from "@/lib/db/client";
 import {
   DEFAULT_ALERT_DAYS,
-  DEFAULT_ALERT_HOURS,
+  DEFAULT_ALERT_SHIFTS,
   isWeekday,
-  parseAlertHours,
+  normalizeAlertShifts,
+  parseAlertShifts,
   parseWeekdays,
 } from "@/lib/schedule";
 import { isStoreId, parseStores } from "@/lib/stores";
@@ -27,16 +28,13 @@ function normalizeSettings(row: Record<string, unknown> | null): AppSettings | n
   const days = Array.isArray(row.alert_days)
     ? row.alert_days.map(String).filter(isWeekday)
     : [];
-  const hours = Array.isArray(row.alert_hours)
-    ? row.alert_hours.map(String)
-    : [];
 
   return {
     id: String(row.id),
     alert_email: typeof row.alert_email === "string" ? row.alert_email : null,
     default_stores: stores.length > 0 ? stores : [...ALL_STORES],
     alert_days: days.length > 0 ? days : [...DEFAULT_ALERT_DAYS],
-    alert_hours: hours.length > 0 ? hours : [...DEFAULT_ALERT_HOURS],
+    alert_hours: normalizeAlertShifts(row.alert_hours),
     updated_at: String(row.updated_at ?? ""),
   };
 }
@@ -70,7 +68,7 @@ export async function updateSettingsAction(
   const alert_email = String(formData.get("alert_email") ?? "").trim();
   const default_stores = parseStores(formData.getAll("default_stores"));
   const alert_days = parseWeekdays(formData.getAll("alert_days"));
-  const alert_hours = parseAlertHours(formData.getAll("alert_hours"));
+  const alert_hours = parseAlertShifts(formData.getAll("alert_hours"));
 
   if (alert_email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(alert_email)) {
     return { error: "El email no es válido." };

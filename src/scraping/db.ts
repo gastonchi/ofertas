@@ -2,9 +2,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { isStoreId } from "../lib/stores";
 import {
   DEFAULT_ALERT_DAYS,
-  DEFAULT_ALERT_HOURS,
+  DEFAULT_ALERT_SHIFTS,
   isWeekday,
-  normalizeHourLabel,
+  normalizeAlertShifts,
+  type AlertShift,
   type Weekday,
 } from "../lib/schedule";
 import {
@@ -21,13 +22,14 @@ export type JobSettings = {
   alertEmail?: string;
   stores: StoreId[];
   alertDays: Weekday[];
-  alertHours: string[];
+  /** Valores en DB (`alert_hours`): morning | afternoon | evening (o HH:MM legado). */
+  alertHours: AlertShift[];
 };
 
 export const FALLBACK_JOB_SETTINGS: JobSettings = {
   stores: [...ALL_STORES],
   alertDays: [...DEFAULT_ALERT_DAYS],
-  alertHours: [...DEFAULT_ALERT_HOURS],
+  alertHours: [...DEFAULT_ALERT_SHIFTS],
 };
 
 function parseStoreList(value: unknown): StoreId[] {
@@ -42,17 +44,8 @@ function parseDayList(value: unknown): Weekday[] {
   return days.length > 0 ? days : [...DEFAULT_ALERT_DAYS];
 }
 
-function parseHourList(value: unknown): string[] {
-  if (!Array.isArray(value)) return [...DEFAULT_ALERT_HOURS];
-  const hours = [
-    ...new Set(
-      value
-        .map(String)
-        .map(normalizeHourLabel)
-        .filter((hour): hour is string => Boolean(hour)),
-    ),
-  ].sort();
-  return hours.length > 0 ? hours : [...DEFAULT_ALERT_HOURS];
+function parseHourList(value: unknown): AlertShift[] {
+  return normalizeAlertShifts(value);
 }
 
 function settingsFromRow(

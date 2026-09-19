@@ -58,7 +58,7 @@ create table if not exists public.app_settings (
   alert_email text,
   default_stores text[] not null default array['carrefour', 'coto', 'dia', 'jumbo', 'disco', 'vea', 'masonline'],
   alert_days text[] not null default array['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
-  alert_hours text[] not null default array['08:00', '20:00'],
+  alert_hours text[] not null default array['morning', 'evening'],
   updated_at timestamptz not null default now()
 );
 
@@ -66,7 +66,7 @@ alter table public.app_settings
   add column if not exists alert_days text[] not null default array['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
 alter table public.app_settings
-  add column if not exists alert_hours text[] not null default array['08:00', '20:00'];
+  add column if not exists alert_hours text[] not null default array['morning', 'evening'];
 
 create or replace function public.set_updated_at()
 returns trigger

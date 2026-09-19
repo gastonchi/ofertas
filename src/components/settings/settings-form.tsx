@@ -4,10 +4,15 @@ import { useActionState } from "react";
 import { ALL_STORES, type AppSettings } from "@/lib/types";
 import { StoreLogo } from "@/components/ui/store-logo";
 import {
+  ALERT_SHIFTS,
+  ALERT_SHIFT_LABELS,
+  ALERT_SHIFT_RANGES,
   DEFAULT_ALERT_DAYS,
-  DEFAULT_ALERT_HOURS,
+  DEFAULT_ALERT_SHIFTS,
+  normalizeAlertShifts,
   WEEKDAYS,
   WEEKDAY_LABELS,
+  type AlertShift,
 } from "@/lib/schedule";
 import {
   updateSettingsAction,
@@ -30,11 +35,9 @@ export function SettingsForm({
   const selectedDays = settings?.alert_days?.length
     ? settings.alert_days
     : [...DEFAULT_ALERT_DAYS];
-  const selectedHours = padHours(
-    settings?.alert_hours?.length
-      ? settings.alert_hours
-      : [...DEFAULT_ALERT_HOURS],
-  );
+  const selectedShifts: AlertShift[] = settings?.alert_hours?.length
+    ? normalizeAlertShifts(settings.alert_hours)
+    : [...DEFAULT_ALERT_SHIFTS];
 
   return (
     <form action={action} className="product-form">
@@ -87,24 +90,27 @@ export function SettingsForm({
         </div>
       </fieldset>
       <fieldset className="stores-fieldset">
-        <legend>Horarios (Argentina)</legend>
+        <legend>Turnos de email (Argentina)</legend>
         <p className="muted" style={{ margin: "0 0 0.65rem", fontSize: "0.85rem" }}>
-          Los precios se consultan 3 veces al día. El email se envía en estos días y
-          horarios (Argentina); si configurás las 09:00, cualquier envío entre las
-          09:00 y las 09:59 dispara el mail.
+          Los precios se consultan 3 veces al día. El email se manda en el próximo
+          turno elegido con las ofertas pendientes de ese día (una sola vez por
+          turno). No hace falta un horario exacto: GitHub dispara el job cuando
+          puede.
         </p>
-        <div className="field-row">
-          {selectedHours.map((hour, index) => (
-            <div className="field" key={`${hour}-${index}`}>
-              <label htmlFor={`alert_hours_${index}`}>Horario {index + 1}</label>
+        <div className="days-grid">
+          {ALERT_SHIFTS.map((shift) => (
+            <label key={shift} className="check-label">
               <input
-                id={`alert_hours_${index}`}
+                type="checkbox"
                 name="alert_hours"
-                type="time"
-                step={60}
-                defaultValue={hour}
+                value={shift}
+                defaultChecked={selectedShifts.includes(shift)}
               />
-            </div>
+              {ALERT_SHIFT_LABELS[shift]}
+              <span className="muted" style={{ fontSize: "0.8rem" }}>
+                {ALERT_SHIFT_RANGES[shift].hint}
+              </span>
+            </label>
           ))}
         </div>
       </fieldset>
@@ -115,10 +121,4 @@ export function SettingsForm({
       </button>
     </form>
   );
-}
-
-function padHours(hours: string[]): string[] {
-  const next = hours.slice(0, 2);
-  while (next.length < 2) next.push("");
-  return next;
 }
