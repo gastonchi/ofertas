@@ -1,9 +1,8 @@
 name: Send alert emails
 
 on:
-  schedule:
-    # Cada 15 min; si la hora actual (AR) coincide con la configurada, envía pendientes.
-    - cron: "*/15 * * * *"
+  # El envío programado no va por GitHub (no respeta cada 15 min).
+  # Se dispara desde cron-job.org → /api/cron/send-alerts en Vercel.
   workflow_dispatch:
 
 jobs:
