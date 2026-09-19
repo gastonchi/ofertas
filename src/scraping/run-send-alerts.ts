@@ -1,6 +1,7 @@
 import { createDbFromConfig } from "../lib/db/client";
 import {
-  argentinaHour,
+  ALERT_SHIFT_LABELS,
+  argentinaShift,
   argentinaTimeLabel,
   argentinaWeekday,
   isAlertSendTime,
@@ -35,13 +36,15 @@ export async function runSendAlerts(argv = process.argv): Promise<void> {
     ? await loadJobSettings(db, config.alertTo)
     : { ...FALLBACK_JOB_SETTINGS, alertEmail: config.alertTo };
 
+  const shift = argentinaShift();
   const shouldSend =
     forceSend ||
     isAlertSendTime(jobSettings.alertDays, jobSettings.alertHours);
 
   if (!shouldSend) {
+    const shiftLabel = shift ? ALERT_SHIFT_LABELS[shift] : "fuera de turno";
     console.log(
-      `Fuera de horario de email (AR ${argentinaWeekday()} ${argentinaTimeLabel()}, hora ${argentinaHour()}). ` +
+      `Fuera de turno de email (AR ${argentinaWeekday()} ${argentinaTimeLabel()}, ${shiftLabel}). ` +
         `Config: ${jobSettings.alertDays.join(",")} @ ${jobSettings.alertHours.join(",")}.`,
     );
     return;
@@ -59,13 +62,19 @@ export async function runSendAlerts(argv = process.argv): Promise<void> {
     .filter((match): match is NonNullable<typeof match> => match !== null);
 
   if (matches.length === 0) {
-    console.log(`Sin alertas pendientes de email para ${day}.`);
+    console.log(
+      `Sin alertas pendientes de email para ${day}` +
+        (shift ? ` (turno ${ALERT_SHIFT_LABELS[shift]})` : "") +
+        ".",
+    );
     return;
   }
 
   console.log(
-    `Envío de alertas · día=${day} · pendientes=${matches.length}` +
-      ` · horario=${jobSettings.alertHours.join(",")}` +
+    `Envío de alertas · día=${day}` +
+      (shift ? ` · turno=${ALERT_SHIFT_LABELS[shift]}` : "") +
+      ` · pendientes=${matches.length}` +
+      ` · turnos config=${jobSettings.alertHours.join(",")}` +
       ` · dryRun=${dryRun}`,
   );
 
