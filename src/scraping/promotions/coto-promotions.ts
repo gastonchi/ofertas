@@ -63,10 +63,7 @@ export function extractCotoPromotions(
     const minimumQuantity = parseTakingQuantity(discount.takingText);
     const parseName = discount.discountText?.trim() || name;
 
-    if (
-      isPaymentOnlyPromo(parseName) &&
-      !looksLikePromoText(parseName, minimumQuantity)
-    ) {
+    if (isPaymentOnlyPromo(parseName)) {
       continue;
     }
     if (!looksLikePromoText(parseName, minimumQuantity)) continue;

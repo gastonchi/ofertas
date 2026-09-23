@@ -61,7 +61,7 @@ export function extractPromotions(
     if (!name) continue;
 
     const minQty = teaserMinQty(t);
-    if (isPaymentOnlyPromo(name) && !looksLikePromoText(name, minQty)) {
+    if (isPaymentOnlyPromo(name)) {
       continue;
     }
     if (!looksLikePromoText(name, minQty)) continue;
