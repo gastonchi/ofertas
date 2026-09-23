@@ -39,6 +39,8 @@ export type StorePriceQuote = {
   hasPromo?: boolean;
   /** Etiqueta de dto exclusivo online (Carrefour / VTEX). */
   onlineExclusiveLabel?: string | null;
+  /** Dto condicionado a tarjeta/banco (informativo; no baja el precio mostrado). */
+  paymentPromoLabel?: string | null;
 };
 
 export type StorePricesLookupResult = {
@@ -71,6 +73,8 @@ export type PromotionInfo = {
   };
   /** Descuento exclusivo compra online (VTEX DiscountHighLight). */
   onlineExclusive?: boolean;
+  /** Medio de pago; informativo, no altera precio de góndola. */
+  paymentOnly?: boolean;
 };
 
 export type OfferSnapshot = {
@@ -85,6 +89,7 @@ export type OfferSnapshot = {
   promotions: PromotionInfo[];
   checkedAt: string;
   onlineExclusiveLabel?: string;
+  paymentPromoLabel?: string;
 };
 
 export type OfferTrigger =
@@ -118,6 +123,7 @@ export type AlertRow = {
       imageUrl?: string;
       promotions?: PromotionInfo[];
       onlineExclusiveLabel?: string;
+      paymentPromoLabel?: string;
     };
   } | null;
   sent_at: string;

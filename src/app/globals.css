@@ -1116,6 +1116,11 @@ a.btn-secondary {
   color: #0b5f7a;
 }
 
+.chip-payment-promo {
+  background: rgba(234, 179, 8, 0.18);
+  color: #854d0e;
+}
+
 .dimmed {
   opacity: 0.55;
 }
