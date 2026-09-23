@@ -34,6 +34,7 @@ export function parsePromotions(raw: unknown): PromotionInfo[] {
     const onlineExclusive =
       record.onlineExclusive === true ||
       (typeof record.name === "string" && isOnlineExclusiveText(record.name));
+    const paymentOnly = record.paymentOnly === true;
 
     let pricing: PromotionInfo["pricing"];
     if (record.pricing && typeof record.pricing === "object") {
@@ -66,6 +67,7 @@ export function parsePromotions(raw: unknown): PromotionInfo[] {
       minimumQuantity,
       pricing,
       onlineExclusive: onlineExclusive || undefined,
+      paymentOnly: paymentOnly || undefined,
     });
   }
 
@@ -78,7 +80,9 @@ export function bestPromo(
 ): PromotionInfo | undefined {
   if (!promotions?.length) return undefined;
 
-  const actionable = promotions.filter((promo) => !promo.onlineExclusive);
+  const actionable = promotions.filter(
+    (promo) => !promo.onlineExclusive && !promo.paymentOnly,
+  );
   if (!actionable.length) return undefined;
 
   const withUnitPrice = actionable.filter((p) => hasComputedUnitPrice(p.pricing));
@@ -131,13 +135,37 @@ export function splitOnlineExclusivePromotion(
   };
 }
 
+export function splitPaymentPromoPromotion(
+  promotions: PromotionInfo[] | undefined | null,
+): { promotions: PromotionInfo[]; paymentPromoLabel: string | null } {
+  if (!promotions?.length) {
+    return { promotions: [], paymentPromoLabel: null };
+  }
+
+  const payment = promotions.find((promo) => promo.paymentOnly);
+  if (!payment) {
+    return { promotions: [...promotions], paymentPromoLabel: null };
+  }
+
+  return {
+    promotions: promotions.filter((promo) => promo !== payment),
+    paymentPromoLabel: payment.name,
+  };
+}
+
 export function promotionsForStorage(
   promotions: PromotionInfo[],
-  onlineExclusiveLabel?: string | null,
+  labels?: {
+    onlineExclusiveLabel?: string | null;
+    paymentPromoLabel?: string | null;
+  },
 ): PromotionInfo[] {
-  if (!onlineExclusiveLabel) return promotions;
-  return [
-    ...promotions,
-    { name: onlineExclusiveLabel, onlineExclusive: true },
-  ];
+  const stored = [...promotions];
+  if (labels?.onlineExclusiveLabel) {
+    stored.push({ name: labels.onlineExclusiveLabel, onlineExclusive: true });
+  }
+  if (labels?.paymentPromoLabel) {
+    stored.push({ name: labels.paymentPromoLabel, paymentOnly: true });
+  }
+  return stored;
 }

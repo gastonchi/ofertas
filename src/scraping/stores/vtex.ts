@@ -2,6 +2,7 @@ import type { OfferSnapshot, PromotionInfo, StoreId } from "../../lib/types";
 import { normalizeVtexListPrice } from "../../lib/prices";
 import { computePromoPricing } from "../offers/pricing";
 import { onlineExclusiveLabelFromHighlights } from "../promotions/online-exclusive";
+import { paymentPromoLabelFromNames } from "../promotions/payment-promo";
 import { isPaymentOnlyPromo, looksLikePromoText } from "../promotions/text-patterns";
 
 type VtexTeaser = {
@@ -61,7 +62,7 @@ export function extractPromotions(
     if (!name) continue;
 
     const minQty = teaserMinQty(t);
-    if (isPaymentOnlyPromo(name) && !looksLikePromoText(name, minQty)) {
+    if (isPaymentOnlyPromo(name)) {
       continue;
     }
     if (!looksLikePromoText(name, minQty)) continue;
@@ -129,6 +130,8 @@ export async function fetchVtexByEan(opts: {
     onlineExclusiveLabelFromHighlights(
       offer.DiscountHighLight ?? offer.DiscountHighlights,
     ) ?? undefined;
+  const paymentPromoLabel =
+    paymentPromoLabelFromNames(teasers.map(teaserName)) ?? undefined;
 
   return {
     store: opts.store,
@@ -144,5 +147,6 @@ export async function fetchVtexByEan(opts: {
     promotions: extractPromotions(teasers, price),
     checkedAt: new Date().toISOString(),
     onlineExclusiveLabel,
+    paymentPromoLabel,
   };
 }

@@ -1,5 +1,6 @@
 import type { PromotionInfo } from "../../lib/types";
 import { computePromoPricing } from "../offers/pricing";
+import { paymentPromoLabelFromNames } from "./payment-promo";
 import { isPaymentOnlyPromo, looksLikePromoText } from "./text-patterns";
 
 export type CotoDiscount = {
@@ -47,6 +48,16 @@ function promoLabel(d: CotoDiscount): string {
   return discount || taking || "";
 }
 
+export function extractCotoPaymentPromoLabel(
+  discounts: CotoDiscount[] | undefined,
+): string | undefined {
+  if (!discounts?.length) return undefined;
+  const names = discounts
+    .map((d) => d.discountText?.trim() || promoLabel(d))
+    .filter(Boolean);
+  return paymentPromoLabelFromNames(names);
+}
+
 export function extractCotoPromotions(
   discounts: CotoDiscount[] | undefined,
   shelfPrice: number,
@@ -63,10 +74,7 @@ export function extractCotoPromotions(
     const minimumQuantity = parseTakingQuantity(discount.takingText);
     const parseName = discount.discountText?.trim() || name;
 
-    if (
-      isPaymentOnlyPromo(parseName) &&
-      !looksLikePromoText(parseName, minimumQuantity)
-    ) {
+    if (isPaymentOnlyPromo(parseName)) {
       continue;
     }
     if (!looksLikePromoText(parseName, minimumQuantity)) continue;

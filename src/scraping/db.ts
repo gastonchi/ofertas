@@ -183,10 +183,10 @@ export function argentinaDay(date = new Date()): string {
 }
 
 function promotionsPayload(snapshot: OfferSnapshot) {
-  return promotionsForStorage(
-    snapshot.promotions,
-    snapshot.onlineExclusiveLabel,
-  );
+  return promotionsForStorage(snapshot.promotions, {
+    onlineExclusiveLabel: snapshot.onlineExclusiveLabel,
+    paymentPromoLabel: snapshot.paymentPromoLabel,
+  });
 }
 
 function samePromotions(left: unknown, right: unknown): boolean {
