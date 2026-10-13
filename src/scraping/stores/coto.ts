@@ -1,6 +1,7 @@
 import type { OfferSnapshot } from "../../lib/types";
 import { appendStoreApiLog } from "../api-response-log";
 import {
+  extractCotoPaymentPromoLabel,
   extractCotoPromotions,
   type CotoDiscount,
 } from "../promotions/coto-promotions";
@@ -157,5 +158,6 @@ export async function fetchCotoByEan(ean: string): Promise<OfferSnapshot | null>
     available: (data.store_availability ?? []).includes(COTO_CATALOG_STORE),
     promotions: extractCotoPromotions(data.discounts, shelfPrice),
     checkedAt: new Date().toISOString(),
+    paymentPromoLabel: extractCotoPaymentPromoLabel(data.discounts),
   };
 }

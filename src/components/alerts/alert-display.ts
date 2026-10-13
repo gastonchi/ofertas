@@ -1,4 +1,9 @@
-import { effectiveUnitPrice, parsePromotions } from "@/lib/promotions";
+import {
+  effectiveUnitPrice,
+  parsePromotions,
+  splitOnlineExclusivePromotion,
+  splitPaymentPromoPromotion,
+} from "@/lib/promotions";
 import type { AlertRow } from "@/lib/types";
 
 export type AlertDisplay = {
@@ -17,7 +22,14 @@ export type AlertDisplay = {
 
 export function getAlertDisplay(alert: AlertRow): AlertDisplay {
   const snapshot = alert.payload?.snapshot;
-  const promotions = parsePromotions(snapshot?.promotions);
+  const promotionsRaw = parsePromotions(snapshot?.promotions);
+  const { promotions: withoutOnline, onlineExclusiveLabel } =
+    splitOnlineExclusivePromotion(promotionsRaw);
+  const { promotions: promoRows, paymentPromoLabel: storedPaymentLabel } =
+    splitPaymentPromoPromotion(withoutOnline);
+  const paymentPromoLabel =
+    snapshot?.paymentPromoLabel ?? storedPaymentLabel ?? null;
+
   const shelfPrice =
     typeof snapshot?.price === "number" && Number.isFinite(snapshot.price)
       ? snapshot.price
@@ -37,9 +49,9 @@ export function getAlertDisplay(alert: AlertRow): AlertDisplay {
   let promoDetail: string | null = null;
 
   if (shelfPrice != null) {
-    const priced = effectiveUnitPrice(shelfPrice, promotions);
-    effectivePrice = priced.effective;
+    const priced = effectiveUnitPrice(shelfPrice, promoRows);
     hasPromo = priced.hasPromo;
+    effectivePrice = hasPromo ? priced.effective : shelfPrice;
     const pricing = priced.bestPromotion?.pricing;
     if (pricing && pricing.summary !== "promo") {
       promoDetail =
@@ -49,8 +61,10 @@ export function getAlertDisplay(alert: AlertRow): AlertDisplay {
     }
   }
 
-  if (!promoDetail && snapshot?.onlineExclusiveLabel) {
-    promoDetail = snapshot.onlineExclusiveLabel;
+  if (!promoDetail && onlineExclusiveLabel) {
+    promoDetail = onlineExclusiveLabel;
+  } else if (!promoDetail && paymentPromoLabel) {
+    promoDetail = paymentPromoLabel;
   }
 
   const triggerMessages =

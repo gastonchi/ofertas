@@ -23,9 +23,13 @@ function storeBadgeLabel(store: StoreId): string {
   return STORE_LABELS[store].toUpperCase();
 }
 
-function getEffectivePrice(m: OfferMatch): number {
-  const { effective } = effectiveUnitPrice(m.snapshot.price, m.snapshot.promotions);
-  return effective;
+/** Precio de góndola salvo promo de producto (2x1, 2da unidad, etc.). */
+function getDisplayPrice(m: OfferMatch): number {
+  const { effective, hasPromo } = effectiveUnitPrice(
+    m.snapshot.price,
+    m.snapshot.promotions,
+  );
+  return hasPromo ? effective : m.snapshot.price;
 }
 
 function promoDetailLine(m: OfferMatch): string | null {
@@ -46,9 +50,13 @@ function promoDetailLine(m: OfferMatch): string | null {
     return `⚡ ${pricing.summary}`;
   }
 
+  if (m.snapshot.paymentPromoLabel) {
+    return `💳 ${m.snapshot.paymentPromoLabel}`;
+  }
+
   const listDiscount = m.triggers.find((t) => t.type === "list_discount");
   if (listDiscount?.type === "list_discount") {
-    return `🏷️ Descuento de lista ${listDiscount.discountPct}%`;
+    return `🏷️ Oferta del día · ${listDiscount.discountPct}% bajo lista`;
   }
 
   const promoTrigger = m.triggers.find((t) => t.type === "promotion");
@@ -78,16 +86,16 @@ function groupMatchesByProduct(matches: OfferMatch[]): OfferMatch[][] {
   }
 
   return [...groups.values()].map((group) =>
-    [...group].sort((a, b) => getEffectivePrice(a) - getEffectivePrice(b)),
+    [...group].sort((a, b) => getDisplayPrice(a) - getDisplayPrice(b)),
   );
 }
 
 function priceBlockText(m: OfferMatch): string[] {
-  const effective = getEffectivePrice(m);
+  const display = getDisplayPrice(m);
   const promo = effectiveUnitPrice(m.snapshot.price, m.snapshot.promotions);
-  const lines = [`Precio: ${formatMoney(effective)}`];
+  const lines = [`Góndola: ${formatMoney(display)}`];
 
-  if (m.snapshot.listPrice > effective) {
+  if (m.snapshot.listPrice > display) {
     lines.push(`Lista: ${formatMoney(m.snapshot.listPrice)}`);
   }
 
@@ -120,10 +128,10 @@ function renderStoreOption(match: OfferMatch, isBest: boolean, isLast: boolean):
   const store = match.snapshot.store;
   const storeColor = STORE_COLORS[store];
   const storeLabel = escapeHtml(storeBadgeLabel(store));
-  const effective = getEffectivePrice(match);
+  const display = getDisplayPrice(match);
   const { hasPromo } = effectiveUnitPrice(match.snapshot.price, match.snapshot.promotions);
   const listPrice = match.snapshot.listPrice;
-  const showListPrice = listPrice > effective;
+  const showListPrice = listPrice > display;
   const detail = promoDetailLine(match);
   const ctaLabel = `Ver en ${escapeHtml(STORE_LABELS[store])}${isBest ? " →" : ""}`;
   const ctaHref = match.snapshot.url ? escapeHtml(match.snapshot.url) : "#";
@@ -167,7 +175,7 @@ function renderStoreOption(match: OfferMatch, isBest: boolean, isLast: boolean):
               ${bestBadge}
               <span style="background-color:${storeColor};color:#ffffff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;text-transform:uppercase;${isBest ? "margin-left:4px;" : ""}">${storeLabel}</span>
               <div style="margin-top:6px;">
-                <span style="font-size:${priceSize};font-weight:700;color:${priceColor};">${formatMoney(effective)}${unitSuffix}</span>
+                <span style="font-size:${priceSize};font-weight:700;color:${priceColor};">${formatMoney(display)}${unitSuffix}</span>
                 ${listPriceHtml}
               </div>
               ${detailHtml}
@@ -293,12 +301,12 @@ export function buildAlertEmail(matches: OfferMatch[]): {
 } {
   const count = matches.length;
   const bestMatch = [...matches].sort(
-    (a, b) => getEffectivePrice(a) - getEffectivePrice(b),
+    (a, b) => getDisplayPrice(a) - getDisplayPrice(b),
   )[0];
 
   const subject =
     count === 1
-      ? `Oferta: ${bestMatch.trackedName} en ${STORE_LABELS[bestMatch.snapshot.store]} → ${formatMoney(getEffectivePrice(bestMatch))}`
+      ? `Oferta: ${bestMatch.trackedName} en ${STORE_LABELS[bestMatch.snapshot.store]} → ${formatMoney(getDisplayPrice(bestMatch))}`
       : `${count} ofertas nuevas · comparativa por producto`;
 
   return {
