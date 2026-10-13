@@ -57,6 +57,8 @@ npm run check:dry    # scraping sin email
 npm run check        # scraping + historial + mail
 ```
 
+En cada `npm run check` (y `check:dry`) se guardan las respuestas crudas de las APIs en `logs/api-responses/<YYYY-MM-DD>/<tienda>.jsonl` (fecha Argentina, un JSON por línea). Sirve para auditar promos y buscar patrones. Desactivar con `API_RESPONSE_LOG=false`.
+
 ## Vercel
 
 **Root Directory:** vacío (la raíz del repo, no `admin/`).

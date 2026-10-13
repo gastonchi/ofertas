@@ -1,5 +1,6 @@
 import type { OfferSnapshot, PromotionInfo, StoreId } from "../../lib/types";
 import { normalizeVtexListPrice } from "../../lib/prices";
+import { appendStoreApiLog } from "../api-response-log";
 import { computePromoPricing } from "../offers/pricing";
 import { onlineExclusiveLabelFromHighlights } from "../promotions/online-exclusive";
 import { isPaymentOnlyPromo, looksLikePromoText } from "../promotions/text-patterns";
@@ -95,18 +96,49 @@ export async function fetchVtexByEan(opts: {
   const base = opts.baseUrl.replace(/\/$/, "");
   const url = `${base}/api/catalog_system/pub/products/search?fq=alternateIds_Ean:${encodeURIComponent(opts.ean)}`;
 
-  const res = await fetch(url, {
-    headers: {
-      Accept: "application/json",
-      "User-Agent": "ofertas-mvp/0.1 (personal price watcher)",
-    },
+  const started = Date.now();
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "ofertas-mvp/0.1 (personal price watcher)",
+      },
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    appendStoreApiLog({
+      store: opts.store,
+      ean: opts.ean,
+      url,
+      error: message,
+      durationMs: Date.now() - started,
+    });
+    throw err;
+  }
+
+  const text = await res.text();
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text) as unknown;
+  } catch {
+    parsed = { _nonJson: true, raw: text };
+  }
+
+  appendStoreApiLog({
+    store: opts.store,
+    ean: opts.ean,
+    url,
+    httpStatus: res.status,
+    body: parsed,
+    durationMs: Date.now() - started,
   });
 
   if (!res.ok) {
     throw new Error(`${opts.store} HTTP ${res.status} para EAN ${opts.ean}`);
   }
 
-  const products = (await res.json()) as VtexProduct[];
+  const products = parsed as VtexProduct[];
   if (!Array.isArray(products) || products.length === 0) {
     return null;
   }
