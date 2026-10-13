@@ -7,6 +7,7 @@ coverage/
 .env
 .env*.local
 *.log
+logs/
 *.tsbuildinfo
 next-env.d.ts
 carrefour-sample.json

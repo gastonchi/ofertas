@@ -1,6 +1,7 @@
 import { createDbFromConfig } from "../lib/db/client";
 import { resolveEnabledStores } from "../lib/stores";
 import { type TrackedProduct } from "../lib/types";
+import { activateApiResponseLogging } from "./api-response-log";
 import { getPriceCheckConfig, isDryRun, isForceAlert, loadProductsFile } from "./config";
 import {
   FALLBACK_JOB_SETTINGS,
@@ -18,6 +19,7 @@ export async function runOfferCheck(argv = process.argv): Promise<void> {
   const dryRun = isDryRun(argv);
   const forceAlert = isForceAlert(argv);
   const config = getPriceCheckConfig(dryRun);
+  activateApiResponseLogging();
 
   const canUseDb = Boolean(config.supabaseUrl && config.supabaseKey);
   const db = canUseDb

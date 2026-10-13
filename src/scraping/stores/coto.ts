@@ -1,4 +1,5 @@
 import type { OfferSnapshot } from "../../lib/types";
+import { appendStoreApiLog } from "../api-response-log";
 import {
   extractCotoPromotions,
   type CotoDiscount,
@@ -82,18 +83,49 @@ export async function fetchCotoByEan(ean: string): Promise<OfferSnapshot | null>
     `&c=${encodeURIComponent(CONSTRUCTOR_CLIENT)}` +
     `&num_results_per_page=5`;
 
-  const res = await fetch(url, {
-    headers: {
-      Accept: "application/json",
-      "User-Agent": "ofertas-mvp/0.1 (personal price watcher)",
-    },
+  const started = Date.now();
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "ofertas-mvp/0.1 (personal price watcher)",
+      },
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    appendStoreApiLog({
+      store: "coto",
+      ean,
+      url,
+      error: message,
+      durationMs: Date.now() - started,
+    });
+    throw err;
+  }
+
+  const text = await res.text();
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text) as unknown;
+  } catch {
+    parsed = { _nonJson: true, raw: text };
+  }
+
+  appendStoreApiLog({
+    store: "coto",
+    ean,
+    url,
+    httpStatus: res.status,
+    body: parsed,
+    durationMs: Date.now() - started,
   });
 
   if (!res.ok) {
     throw new Error(`coto HTTP ${res.status} para EAN ${ean}`);
   }
 
-  const body = (await res.json()) as CotoSearchResponse;
+  const body = parsed as CotoSearchResponse;
   const results = body.response?.results ?? [];
   const match = results.find(
     (result) => normalizeEan(result.data?.product_main_ean) === ean,
