@@ -1,9 +1,17 @@
 "use client";
 
-import { useRef, useState, useTransition, type TouchEvent } from "react";
+import {
+  useRef,
+  useState,
+  useTransition,
+  type CSSProperties,
+  type TouchEvent,
+} from "react";
 import { ChevronLeft, ChevronRight, Delete } from "lucide-react";
 import Swal from "sweetalert2";
 import { CategoryIcon } from "@/components/expenses/category-icon";
+import { SubcategoryMark } from "@/components/expenses/subcategory-mark";
+import { resolveSubcategoryVisual } from "@/lib/expenses/subcategory-visual";
 import { formatArs } from "@/lib/format";
 import {
   MAX_EXPENSE_AMOUNT,
@@ -235,21 +243,34 @@ export function ExpenseWizard({
 
               {step === "subcategory" && category ? (
                 <div className="expense-option-grid">
-                  {category.subcategories.map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      className={
-                        item.id === subcategoryId
-                          ? "expense-option-btn is-selected"
-                          : "expense-option-btn"
-                      }
-                      aria-pressed={item.id === subcategoryId}
-                      onClick={() => pickSubcategory(item.id)}
-                    >
-                      {item.name}
-                    </button>
-                  ))}
+                  {category.subcategories.map((item) => {
+                    const visual = resolveSubcategoryVisual(item.name);
+                    const selected = item.id === subcategoryId;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        className={
+                          selected
+                            ? "expense-option-btn expense-option-btn-visual is-selected"
+                            : "expense-option-btn expense-option-btn-visual"
+                        }
+                        style={
+                          {
+                            "--sub-accent": visual.accent,
+                            "--sub-surface": visual.surface,
+                          } as CSSProperties
+                        }
+                        aria-pressed={selected}
+                        onClick={() => pickSubcategory(item.id)}
+                      >
+                        <span className="expense-option-mark">
+                          <SubcategoryMark mark={visual.mark} size={22} />
+                        </span>
+                        <span className="expense-option-label">{item.name}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               ) : null}
 

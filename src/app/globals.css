@@ -2042,6 +2042,49 @@ a.btn-secondary {
   overflow-wrap: anywhere;
 }
 
+.expense-option-btn-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 5.5rem;
+  padding: 0.65rem 0.5rem;
+  background: var(--sub-surface, white);
+  border-color: color-mix(in srgb, var(--sub-accent, var(--line)) 28%, var(--line));
+}
+
+.expense-option-btn-visual.is-selected {
+  border-color: var(--sub-accent, var(--brand));
+  background: color-mix(in srgb, var(--sub-accent, var(--brand)) 14%, var(--sub-surface, white));
+  box-shadow: 0 0 0 1px var(--sub-accent, var(--brand));
+}
+
+.expense-option-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.65rem;
+  height: 2.65rem;
+  border-radius: 999px;
+  color: var(--sub-accent, var(--brand));
+  background: color-mix(in srgb, var(--sub-accent, var(--brand)) 12%, white);
+}
+
+.expense-option-emoji {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.expense-option-label {
+  font-size: 0.85rem;
+  line-height: 1.15;
+  text-align: center;
+  hyphens: auto;
+  overflow-wrap: anywhere;
+}
+
 .expense-amount {
   display: flex;
   flex-direction: column;
@@ -2267,6 +2310,14 @@ a.btn-secondary {
   .expense-option-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.5rem;
+  }
+
+  .expense-option-btn-visual {
+    min-height: 5rem;
+  }
+
+  .expense-option-label {
+    font-size: 0.8rem;
   }
 
   .expense-item-end {
