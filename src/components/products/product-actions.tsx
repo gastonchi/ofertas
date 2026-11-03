@@ -2,12 +2,13 @@
 
 import { useTransition } from "react";
 import Link from "next/link";
-import { Bell, BellOff, DollarSign, Trash2 } from "lucide-react";
+import { Bell, BellOff, DollarSign, ShoppingCart, Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
 import {
   deleteProductAction,
   toggleProductAlertsAction,
 } from "@/modules/products/actions";
+import { addToShoppingListAction } from "@/modules/shopping-list/actions";
 import { EditProductPanel } from "@/components/products/product-form";
 import type { TrackedProductRow } from "@/lib/types";
 
@@ -45,6 +46,31 @@ async function deleteProductWithSwal(product: TrackedProductRow): Promise<void> 
       confirmButtonColor: "#1f6a45",
     });
   }
+}
+
+async function addToShoppingListWithSwal(
+  product: TrackedProductRow,
+): Promise<void> {
+  const result = await addToShoppingListAction(product.id);
+  if (result.error) {
+    await Swal.fire({
+      icon: "error",
+      title: result.error,
+      confirmButtonColor: "#1f6a45",
+    });
+    return;
+  }
+
+  await Swal.fire({
+    icon: "success",
+    title: product.name,
+    text: "Agregado a la lista de compras",
+    timer: 2200,
+    showConfirmButton: false,
+    customClass: {
+      title: "swal-product-name",
+    },
+  });
 }
 
 async function toggleAlertsWithSwal(
@@ -107,6 +133,21 @@ export function ProductActions({
         {isGrid ? <span>Ver precios</span> : null}
       </Link>
       <EditProductPanel product={product} labeled={isGrid} />
+      <button
+        type="button"
+        className={
+          isGrid ? "btn-secondary card-action-btn" : "btn-secondary btn-icon"
+        }
+        disabled={pending}
+        onClick={() =>
+          startTransition(() => addToShoppingListWithSwal(product))
+        }
+        aria-label={`Agregar ${product.name} a la lista de compras`}
+        title="Lista de compras"
+      >
+        <ShoppingCart size={18} aria-hidden />
+        {isGrid ? <span>Lista</span> : null}
+      </button>
       <button
         type="button"
         className={

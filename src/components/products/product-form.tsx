@@ -19,10 +19,13 @@ const initial: ProductActionState = {};
 export function ProductForm({
   product,
   draft,
+  addToShoppingList = false,
   onDone,
 }: {
   product?: TrackedProductRow;
   draft?: ProductCreateDraft;
+  /** Al crear, también agrega el producto a la lista de compras. */
+  addToShoppingList?: boolean;
   onDone?: () => void;
 }) {
   const action = product ? updateProductAction : createProductAction;
@@ -100,6 +103,9 @@ export function ProductForm({
   return (
     <form action={formAction} className="product-form">
       {product ? <input type="hidden" name="id" value={product.id} /> : null}
+      {isNew && addToShoppingList ? (
+        <input type="hidden" name="add_to_shopping_list" value="true" />
+      ) : null}
       <BarcodeField
         id="ean"
         name="ean"
@@ -187,10 +193,12 @@ export function ProductForm({
 export function NewProductPanel({
   open,
   draft,
+  addToShoppingList = false,
   onOpenChange,
 }: {
   open?: boolean;
   draft?: ProductCreateDraft | null;
+  addToShoppingList?: boolean;
   onOpenChange?: (open: boolean) => void;
 }) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
@@ -223,6 +231,7 @@ export function NewProductPanel({
           <ProductForm
             key={draft?.ean ?? "new"}
             draft={draft ?? undefined}
+            addToShoppingList={addToShoppingList}
             onDone={() => setOpen(false)}
           />
         ) : null}

@@ -164,3 +164,19 @@ export type AppSettings = {
   alert_hours: string[];
   updated_at: string;
 };
+
+export type ShoppingListItemRow = {
+  id: string;
+  product_id: string;
+  quantity: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ShoppingListEntry = {
+  item: ShoppingListItemRow;
+  product: TrackedProductRow;
+  /** Tienda con el mejor precio reciente (último chequeo por súper). */
+  bestPriceStore: string | null;
+  bestPrice: number | null;
+};
