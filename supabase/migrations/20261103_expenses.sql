@@ -75,7 +75,9 @@ with seed (name, icon, sort_order, subs) as (
     ('Suscripciones', 'tv', 9, array['Cursor', 'Apple', 'Netflix', 'Prime', 'Disney', 'MELI+', 'Otros']),
     ('Transporte', 'bus', 10, array[]::text[]),
     ('Salidas', 'coffee', 11, array['Café', 'Almuerzo', 'Juntada', 'Otros']),
-    ('Otros', 'shapes', 12, array['Actividades', 'Regalos'])
+    ('Otros', 'shapes', 12, array[]::text[]),
+    ('Regalos', 'gift', 13, array[]::text[]),
+    ('Actividades', 'dumbbell', 14, array[]::text[])
 ),
 inserted as (
   insert into public.expense_categories (name, icon, sort_order)
