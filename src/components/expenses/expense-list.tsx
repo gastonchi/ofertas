@@ -212,6 +212,11 @@ export function ExpenseList({
   const [from, setFrom] = useState(params.from);
   const [to, setTo] = useState(params.to);
   const [q, setQ] = useState(params.q);
+  const [rubro, setRubro] = useState(params.rubro);
+
+  const hasTextFilter = Boolean(params.q);
+  const hasRubroFilter = Boolean(params.rubro);
+  const hasExtraFilters = hasTextFilter || hasRubroFilter;
 
   function applyFilters(event: FormEvent) {
     event.preventDefault();
@@ -220,6 +225,7 @@ export function ExpenseList({
         from,
         to,
         q,
+        rubro,
         page: 1,
       })}`,
     );
@@ -227,10 +233,12 @@ export function ExpenseList({
 
   function clearFilters() {
     setQ("");
+    setRubro("");
     router.push(
       `/gastos/listado${expenseListQueryString({
         ...params,
         q: "",
+        rubro: "",
         page: 1,
       })}`,
     );
@@ -265,15 +273,31 @@ export function ExpenseList({
           name="q"
           value={q}
           onChange={(event) => setQ(event.target.value)}
-          placeholder="Rubro, monto, nota…"
+          placeholder="Monto, nota, usuario…"
         />
+      </label>
+      <label>
+        Rubro
+        <select
+          name="rubro"
+          value={rubro}
+          onChange={(event) => setRubro(event.target.value)}
+        >
+          <option value="">Todos</option>
+          {categories.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.name}
+              {!item.active ? " (archivado)" : ""}
+            </option>
+          ))}
+        </select>
       </label>
       <button type="submit" className="btn-primary">
         Filtrar
       </button>
-      {params.q ? (
+      {hasExtraFilters ? (
         <button type="button" className="btn-ghost" onClick={clearFilters}>
-          Limpiar búsqueda
+          Limpiar filtros
         </button>
       ) : null}
     </form>
@@ -281,7 +305,7 @@ export function ExpenseList({
 
   const empty = (
     <p className="empty-state">
-      {params.q
+      {hasExtraFilters
         ? "No hay gastos que coincidan con el filtro."
         : "No hay gastos en este período."}
     </p>

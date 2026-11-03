@@ -124,6 +124,10 @@ export async function listExpensesPaginated(
     .order("spent_on", { ascending: false })
     .order("created_at", { ascending: false });
 
+  if (params.rubro) {
+    query = query.eq("category_id", params.rubro);
+  }
+
   const q = params.q.trim();
   if (q) {
     const pattern = `%${escapeIlike(q)}%`;

@@ -664,7 +664,8 @@ code,
   color: var(--muted);
 }
 
-.date-range input {
+.date-range input,
+.date-range select {
   min-height: 44px;
   min-width: 10.5rem;
   border: 1px solid var(--line);
@@ -672,6 +673,14 @@ code,
   padding: 0.45rem 0.7rem;
   background: white;
   color: var(--ink);
+}
+
+.date-range select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  padding-right: 2.1rem;
 }
 
 .date-range[aria-busy="true"] {
@@ -1425,6 +1434,7 @@ a.btn-secondary {
   .date-range,
   .date-range label,
   .date-range input,
+  .date-range select,
   .date-range .btn-primary,
   .product-search-row,
   .product-search-row .data-table-search {
