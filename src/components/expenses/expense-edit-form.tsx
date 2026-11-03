@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { ExpenseCategory, ExpenseRow } from "@/lib/expenses/types";
-import { MAX_EXPENSE_NOTES } from "@/lib/expenses/types";
+import { MAX_EXPENSE_AMOUNT, MAX_EXPENSE_NOTES } from "@/lib/expenses/types";
 import { updateExpenseAction } from "@/modules/expenses/actions";
 
 export type ExpenseEditState = { error?: string; success?: string };
@@ -44,11 +44,6 @@ export function ExpenseEditForm({
   }, [category, expense.subcategory_id]);
 
   const needsSub = subcategories.length > 0;
-
-  function onAmountInput(raw: string) {
-    const digits = raw.replace(/\D/g, "").replace(/^0+/, "");
-    setAmount(digits);
-  }
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -114,11 +109,14 @@ export function ExpenseEditForm({
         <label htmlFor="edit-amount">Monto</label>
         <input
           id="edit-amount"
-          type="text"
+          type="number"
           inputMode="numeric"
+          step={1}
+          min={1}
+          max={MAX_EXPENSE_AMOUNT}
           required
-          value={amount ? Number(amount).toLocaleString("es-AR") : ""}
-          onChange={(event) => onAmountInput(event.target.value)}
+          value={amount}
+          onChange={(event) => setAmount(event.target.value)}
         />
       </div>
       <div className="field">
