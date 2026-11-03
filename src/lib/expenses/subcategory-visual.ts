@@ -179,11 +179,51 @@ const KEYWORD_RULES: { pattern: RegExp; visual: VisualPreset }[] = [
     },
   },
   {
-    pattern: /netflix|prime|disney|meli|apple|cursor|suscrip/,
+    pattern: /\bcursor\b/,
     visual: {
-      mark: { kind: "category-icon", icon: "tv" },
-      accent: "#7c3aed",
-      surface: "#ede9fe",
+      mark: { kind: "emoji", emoji: "⌘" },
+      accent: "#14120b",
+      surface: "#e3e2de",
+    },
+  },
+  {
+    pattern: /\bapple\b/,
+    visual: {
+      mark: { kind: "emoji", emoji: "🍎" },
+      accent: "#1d1d1f",
+      surface: "#f5f5f7",
+    },
+  },
+  {
+    pattern: /\bnetflix\b/,
+    visual: {
+      mark: { kind: "emoji", emoji: "🎬" },
+      accent: "#e50914",
+      surface: "#ffe5e5",
+    },
+  },
+  {
+    pattern: /\bprime\b/,
+    visual: {
+      mark: { kind: "emoji", emoji: "📦" },
+      accent: "#007eb9",
+      surface: "#d9f2fb",
+    },
+  },
+  {
+    pattern: /\bdisney\b/,
+    visual: {
+      mark: { kind: "emoji", emoji: "🏰" },
+      accent: "#0063e5",
+      surface: "#d9e8ff",
+    },
+  },
+  {
+    pattern: /meli/,
+    visual: {
+      mark: { kind: "emoji", emoji: "🛒" },
+      accent: "#2d3277",
+      surface: "#ffe600",
     },
   },
   {
