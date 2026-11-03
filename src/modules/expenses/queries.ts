@@ -2,13 +2,25 @@ import { requireAuth } from "@/lib/auth";
 import { displayName, isAppUser } from "@/lib/auth/users";
 import { createDb } from "@/lib/db/client";
 import { DEFAULT_EXPENSE_ICON, isExpenseIcon } from "@/lib/expenses/icons";
+import {
+  EXPENSE_PAGE_SIZE,
+  type ExpenseListParams,
+} from "@/lib/expenses/list-params";
 import type {
   ExpenseCategory,
+  ExpenseListResult,
   ExpenseRow,
   ExpenseSubcategory,
 } from "@/lib/expenses/types";
 
 type Row = Record<string, unknown>;
+
+const EXPENSE_SELECT =
+  "id, category_id, subcategory_id, amount, spent_on, notes, created_by, created_at, expense_categories (name, icon), expense_subcategories (name)";
+
+function escapeIlike(value: string): string {
+  return value.replace(/\\/g, "\\\\").replace(/%/g, "\\%").replace(/_/g, "\\_");
+}
 
 function toSubcategory(row: Row): ExpenseSubcategory {
   return {
@@ -25,6 +37,31 @@ function byOrderThenName(
   b: { sort_order: number; name: string },
 ) {
   return a.sort_order - b.sort_order || a.name.localeCompare(b.name, "es");
+}
+
+function mapExpenseRow(row: Row): ExpenseRow {
+  const category = (row.expense_categories ?? {}) as Row;
+  const subcategory = row.expense_subcategories as Row | null;
+  const icon = String(category.icon ?? "");
+  const createdBy = String(row.created_by ?? "");
+  return {
+    id: String(row.id),
+    category_id: String(row.category_id ?? ""),
+    subcategory_id:
+      row.subcategory_id != null ? String(row.subcategory_id) : null,
+    amount: Number(row.amount ?? 0),
+    spent_on: String(row.spent_on ?? ""),
+    notes: typeof row.notes === "string" && row.notes ? row.notes : null,
+    created_by: createdBy,
+    created_by_name: isAppUser(createdBy) ? displayName(createdBy) : createdBy,
+    created_at: String(row.created_at ?? ""),
+    category_name: String(category.name ?? ""),
+    category_icon: isExpenseIcon(icon) ? icon : DEFAULT_EXPENSE_ICON,
+    subcategory_name:
+      subcategory && typeof subcategory.name === "string"
+        ? subcategory.name
+        : null,
+  };
 }
 
 export function isMissingExpensesSchema(error: {
@@ -70,42 +107,81 @@ export async function listExpenseCategories({
     .sort(byOrderThenName);
 }
 
-export async function listRecentExpenses(limit = 10): Promise<ExpenseRow[]> {
+export async function listExpensesPaginated(
+  params: ExpenseListParams,
+): Promise<ExpenseListResult | null> {
   await requireAuth();
   const db = createDb();
-  const { data, error } = await db
+  const pageSize = EXPENSE_PAGE_SIZE;
+  const from = (params.page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  let query = db
     .from("expenses")
-    .select(
-      "id, amount, spent_on, notes, created_by, created_at, expense_categories (name, icon), expense_subcategories (name)",
-    )
+    .select(EXPENSE_SELECT, { count: "exact" })
+    .gte("spent_on", params.from)
+    .lte("spent_on", params.to)
     .order("spent_on", { ascending: false })
-    .order("created_at", { ascending: false })
-    .limit(limit);
+    .order("created_at", { ascending: false });
+
+  const q = params.q.trim();
+  if (q) {
+    const pattern = `%${escapeIlike(q)}%`;
+    const orParts = [`notes.ilike.${pattern}`];
+
+    const amount = Number(q.replace(/\./g, "").replace(/,/g, ""));
+    if (/^\d+$/.test(q.replace(/\./g, "").replace(/,/g, "")) && amount > 0) {
+      orParts.push(`amount.eq.${amount}`);
+    }
+
+    const qLower = q.toLowerCase();
+    if (qLower.includes("gast") || qLower.includes("gastón")) {
+      orParts.push("created_by.eq.gaston");
+    }
+    if (qLower.includes("mica")) {
+      orParts.push("created_by.eq.micaela");
+    }
+
+    const { data: catMatches } = await db
+      .from("expense_categories")
+      .select("id")
+      .ilike("name", pattern);
+    const catIds = (catMatches ?? []).map((row) => String(row.id));
+    if (catIds.length > 0) {
+      orParts.push(`category_id.in.(${catIds.join(",")})`);
+    }
+
+    const { data: subMatches } = await db
+      .from("expense_subcategories")
+      .select("id")
+      .ilike("name", pattern);
+    const subIds = (subMatches ?? []).map((row) => String(row.id));
+    if (subIds.length > 0) {
+      orParts.push(`subcategory_id.in.(${subIds.join(",")})`);
+    }
+
+    query = query.or(orParts.join(","));
+  }
+
+  const { data, error, count } = await query.range(from, to);
 
   if (error) {
-    if (isMissingExpensesSchema(error)) return [];
+    if (isMissingExpensesSchema(error)) return null;
     throw new Error(error.message);
   }
 
-  return ((data ?? []) as Row[]).map((row) => {
-    const category = (row.expense_categories ?? {}) as Row;
-    const subcategory = row.expense_subcategories as Row | null;
-    const icon = String(category.icon ?? "");
-    const createdBy = String(row.created_by ?? "");
-    return {
-      id: String(row.id),
-      amount: Number(row.amount ?? 0),
-      spent_on: String(row.spent_on ?? ""),
-      notes: typeof row.notes === "string" && row.notes ? row.notes : null,
-      created_by: createdBy,
-      created_by_name: isAppUser(createdBy) ? displayName(createdBy) : createdBy,
-      created_at: String(row.created_at ?? ""),
-      category_name: String(category.name ?? ""),
-      category_icon: isExpenseIcon(icon) ? icon : DEFAULT_EXPENSE_ICON,
-      subcategory_name:
-        subcategory && typeof subcategory.name === "string"
-          ? subcategory.name
-          : null,
-    };
-  });
+  const total = count ?? 0;
+  const maxPage = Math.max(1, Math.ceil(total / pageSize));
+  const page = Math.min(params.page, maxPage);
+
+  if (page !== params.page && total > 0) {
+    return listExpensesPaginated({ ...params, page });
+  }
+
+  return {
+    rows: ((data ?? []) as Row[]).map(mapExpenseRow),
+    total,
+    page,
+    pageSize,
+  };
 }

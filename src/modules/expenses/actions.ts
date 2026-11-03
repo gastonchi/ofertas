@@ -16,11 +16,15 @@ export type ExpenseActionResult = { ok: true } | { error: string };
 const MISSING_SCHEMA =
   "Faltan las tablas de gastos. Ejecutá supabase/migrations/20261103_expenses.sql en el SQL Editor.";
 
-export async function createExpenseAction(
-  input: ExpenseInput,
-): Promise<ExpenseActionResult> {
-  const user = await requireSessionUser();
+const EXPENSE_PATHS = ["/gastos", "/gastos/listado"] as const;
 
+function revalidateExpenseViews() {
+  for (const path of EXPENSE_PATHS) revalidatePath(path);
+}
+
+async function validateExpensePayload(
+  input: ExpenseInput,
+): Promise<{ error: string } | { payload: ExpenseInput }> {
   const amount = Number(input.amount);
   const notes = String(input.notes ?? "").trim();
   const spentOn = String(input.spentOn ?? "");
@@ -35,7 +39,9 @@ export async function createExpenseAction(
     return { error: "La fecha no es válida." };
   }
   if (notes.length > MAX_EXPENSE_NOTES) {
-    return { error: `Las observaciones admiten hasta ${MAX_EXPENSE_NOTES} caracteres.` };
+    return {
+      error: `Las observaciones admiten hasta ${MAX_EXPENSE_NOTES} caracteres.`,
+    };
   }
 
   const db = createDb();
@@ -49,28 +55,65 @@ export async function createExpenseAction(
     if (isMissingExpensesSchema(categoryError)) return { error: MISSING_SCHEMA };
     return { error: "No se encontró el rubro." };
   }
-  if (!category || category.active === false) {
-    return { error: "El rubro ya no está disponible." };
+  if (!category) {
+    return { error: "No se encontró el rubro." };
   }
 
-  const activeSubs = (
+  const subs = (
     (category.expense_subcategories ?? []) as { id: string; active: boolean }[]
   ).filter((sub) => sub.active);
   const subcategoryId = input.subcategoryId || null;
 
-  if (subcategoryId && !activeSubs.some((sub) => sub.id === subcategoryId)) {
-    return { error: "El subrubro no corresponde al rubro." };
+  if (subcategoryId && !subs.some((sub) => sub.id === subcategoryId)) {
+    const archivedOk = await db
+      .from("expense_subcategories")
+      .select("id")
+      .eq("id", subcategoryId)
+      .eq("category_id", input.categoryId)
+      .maybeSingle();
+    if (!archivedOk.data) {
+      return { error: "El subrubro no corresponde al rubro." };
+    }
   }
-  if (!subcategoryId && activeSubs.length > 0) {
+  if (!subcategoryId && subs.length > 0) {
     return { error: "Elegí un subrubro." };
   }
 
+  return {
+    payload: {
+      categoryId: input.categoryId,
+      subcategoryId,
+      amount,
+      spentOn,
+      notes,
+    },
+  };
+}
+
+export async function createExpenseAction(
+  input: ExpenseInput,
+): Promise<ExpenseActionResult> {
+  const user = await requireSessionUser();
+  const validated = await validateExpensePayload(input);
+  if ("error" in validated) return validated;
+  const { payload } = validated;
+
+  const db = createDb();
+  const { data: category } = await db
+    .from("expense_categories")
+    .select("active")
+    .eq("id", payload.categoryId)
+    .maybeSingle();
+  if (category?.active === false) {
+    return { error: "El rubro ya no está disponible." };
+  }
+
   const { error } = await db.from("expenses").insert({
-    category_id: input.categoryId,
-    subcategory_id: subcategoryId,
-    amount,
-    spent_on: spentOn,
-    notes: notes || null,
+    category_id: payload.categoryId,
+    subcategory_id: payload.subcategoryId,
+    amount: payload.amount,
+    spent_on: payload.spentOn,
+    notes: payload.notes || null,
     created_by: user,
   });
 
@@ -79,7 +122,37 @@ export async function createExpenseAction(
     return { error: error.message };
   }
 
-  revalidatePath("/gastos");
+  revalidateExpenseViews();
+  return { ok: true };
+}
+
+export async function updateExpenseAction(
+  id: string,
+  input: ExpenseInput,
+): Promise<ExpenseActionResult> {
+  await requireAuth();
+  const validated = await validateExpensePayload(input);
+  if ("error" in validated) return validated;
+  const { payload } = validated;
+
+  const db = createDb();
+  const { error } = await db
+    .from("expenses")
+    .update({
+      category_id: payload.categoryId,
+      subcategory_id: payload.subcategoryId,
+      amount: payload.amount,
+      spent_on: payload.spentOn,
+      notes: payload.notes || null,
+    })
+    .eq("id", id);
+
+  if (error) {
+    if (isMissingExpensesSchema(error)) return { error: MISSING_SCHEMA };
+    return { error: error.message };
+  }
+
+  revalidateExpenseViews();
   return { ok: true };
 }
 
@@ -90,6 +163,6 @@ export async function deleteExpenseAction(
   const db = createDb();
   const { error } = await db.from("expenses").delete().eq("id", id);
   if (error) return { error: error.message };
-  revalidatePath("/gastos");
+  revalidateExpenseViews();
   return { ok: true };
 }

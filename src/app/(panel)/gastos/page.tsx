@@ -1,15 +1,11 @@
 import Link from "next/link";
-import { Tags } from "lucide-react";
+import { ClipboardList, Tags } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import { ExpenseWizard } from "@/components/expenses/expense-wizard";
-import { RecentExpenses } from "@/components/expenses/recent-expenses";
 import { requireSessionUser } from "@/lib/auth";
 import { displayName } from "@/lib/auth/users";
 import { hasSupabaseConfig } from "@/lib/env";
-import {
-  listExpenseCategories,
-  listRecentExpenses,
-} from "@/modules/expenses/queries";
+import { listExpenseCategories } from "@/modules/expenses/queries";
 import { argentinaDay } from "@/scraping/db";
 
 export const dynamic = "force-dynamic";
@@ -18,17 +14,22 @@ export default async function ExpensesPage() {
   const configured = hasSupabaseConfig();
   const user = await requireSessionUser();
   const categories = configured ? await listExpenseCategories() : null;
-  const recent = categories ? await listRecentExpenses(10) : [];
 
   return (
     <AppShell
       title="Gastos"
       pathname="/gastos"
       titleAction={
-        <Link href="/gastos/rubros" className="btn-secondary">
-          <Tags size={18} aria-hidden />
-          Rubros
-        </Link>
+        <div className="app-header-actions">
+          <Link href="/gastos/listado" className="btn-secondary">
+            <ClipboardList size={18} aria-hidden />
+            Listado
+          </Link>
+          <Link href="/gastos/rubros" className="btn-secondary">
+            <Tags size={18} aria-hidden />
+            Rubros
+          </Link>
+        </div>
       }
     >
       {!configured ? (
@@ -59,15 +60,6 @@ export default async function ExpensesPage() {
           today={argentinaDay()}
           userName={displayName(user)}
         />
-      ) : null}
-
-      {categories ? (
-        <section className="panel">
-          <div className="panel-head">
-            <h2>Últimos gastos</h2>
-          </div>
-          <RecentExpenses expenses={recent} />
-        </section>
       ) : null}
     </AppShell>
   );

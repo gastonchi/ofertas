@@ -9,6 +9,7 @@ import {
   Menu,
   Package,
   Settings,
+  ClipboardList,
   Tags,
   Wallet,
   X,
@@ -20,7 +21,8 @@ const NAV: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/", label: "Inicio", icon: House },
   { href: "/productos", label: "Productos", icon: Package },
   { href: "/alertas", label: "Alertas", icon: Bell },
-  { href: "/gastos", label: "Gastos", icon: Wallet },
+  { href: "/gastos", label: "Cargar gasto", icon: Wallet },
+  { href: "/gastos/listado", label: "Listado", icon: ClipboardList },
   { href: "/gastos/rubros", label: "Rubros", icon: Tags },
   { href: "/configuracion", label: "Configuración", icon: Settings },
 ];

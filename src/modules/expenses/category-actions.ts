@@ -44,6 +44,7 @@ function parseName(raw: unknown): string | { error: string } {
 
 function revalidateExpenseViews() {
   revalidatePath("/gastos");
+  revalidatePath("/gastos/listado");
   revalidatePath("/gastos/rubros");
 }
 
