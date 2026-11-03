@@ -2393,3 +2393,86 @@ a.btn-secondary {
     justify-content: flex-end;
   }
 }
+
+.home-quick {
+  max-width: 42rem;
+}
+
+.home-quick-lead {
+  margin: 0 0 1.25rem;
+  font-size: 1.05rem;
+}
+
+.home-quick-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.home-quick-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  min-height: 4.75rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+button.home-quick-card {
+  font: inherit;
+  color: inherit;
+}
+
+.home-quick-card:hover,
+.home-quick-card:focus-visible {
+  border-color: var(--brand);
+  transform: translateY(-1px);
+  box-shadow: 0 20px 44px rgba(20, 32, 26, 0.12);
+  outline: none;
+}
+
+.home-quick-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 0.85rem;
+  background: rgba(31, 106, 69, 0.1);
+  color: var(--brand);
+}
+
+.home-quick-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.home-quick-text strong {
+  font-size: 1.1rem;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.home-quick-text .muted {
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+.home-quick-chevron {
+  flex-shrink: 0;
+  color: var(--muted);
+}

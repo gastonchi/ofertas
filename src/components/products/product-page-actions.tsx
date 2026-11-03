@@ -21,7 +21,7 @@ type ProductPageActionsContextValue = {
 const ProductPageActionsContext =
   createContext<ProductPageActionsContextValue | null>(null);
 
-function useProductPageActions() {
+export function useProductPageActions() {
   const ctx = useContext(ProductPageActionsContext);
   if (!ctx) {
     throw new Error(

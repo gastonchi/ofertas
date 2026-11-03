@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, type ReactNode } from "react";
 import { Plus, Search } from "lucide-react";
 import { BarcodeField } from "@/components/products/barcode-field";
 import type { ProductCreateDraft } from "@/components/products/product-create-draft";
@@ -41,9 +41,11 @@ function draftFromLookup(
 export function LookupPricesPanel({
   trackedStores,
   onAddProduct,
+  renderTrigger,
 }: {
   trackedStores: StoreId[];
   onAddProduct: (draft: ProductCreateDraft) => void;
+  renderTrigger?: (open: () => void) => ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const [ean, setEan] = useState("");
@@ -81,16 +83,18 @@ export function LookupPricesPanel({
 
   const bestPrice = result ? bestEffectivePriceFromQuotes(result.stores) : null;
 
+  const openModal = () => setOpen(true);
+
   return (
     <>
-      <button
-        type="button"
-        className="btn-secondary"
-        onClick={() => setOpen(true)}
-      >
-        <Search size={18} aria-hidden />
-        Consultar precio
-      </button>
+      {renderTrigger ? (
+        renderTrigger(openModal)
+      ) : (
+        <button type="button" className="btn-secondary" onClick={openModal}>
+          <Search size={18} aria-hidden />
+          Consultar precio
+        </button>
+      )}
       <Modal open={open} title="Consultar precio" onClose={close}>
         <div className="lookup-prices">
           <BarcodeField
