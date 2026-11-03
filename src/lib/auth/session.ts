@@ -1,33 +1,39 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { getAppPassword, hasAuthConfig } from "@/lib/env";
+import { hasAuthConfig } from "@/lib/env";
+import {
+  type AppUser,
+  isAppUser,
+  requirePasswordForUser,
+} from "@/lib/auth/users";
 
 export const SESSION_COOKIE = "ofertas_session";
 
 export { hasAuthConfig };
 
-function requirePassword(): string {
-  const password = getAppPassword();
-  if (!password) {
-    throw new Error("Falta ADMIN_PASSWORD (o APP_PASSWORD) en el entorno");
-  }
-  return password;
+function sign(user: AppUser, issuedAt: string): string {
+  const secret = requirePasswordForUser(user);
+  return createHmac("sha256", secret)
+    .update(`${user}.${issuedAt}`)
+    .digest("hex");
 }
 
-function sign(value: string): string {
-  return createHmac("sha256", requirePassword()).update(value).digest("hex");
-}
-
-export function createSessionToken(): string {
+export function createSessionToken(user: AppUser): string {
   const issuedAt = Date.now().toString();
-  return `${issuedAt}.${sign(issuedAt)}`;
+  return `${user}.${issuedAt}.${sign(user, issuedAt)}`;
 }
 
 export function isValidSessionToken(token: string | undefined | null): boolean {
-  if (!token || !token.includes(".")) return false;
+  if (!token) return false;
+  const parts = token.split(".");
+  if (parts.length !== 3) return false;
+
   try {
-    const [issuedAt, signature] = token.split(".");
-    if (!issuedAt || !signature) return false;
-    const expected = sign(issuedAt);
+    const [userRaw, issuedAt, signature] = parts;
+    if (!userRaw || !issuedAt || !signature || !isAppUser(userRaw)) {
+      return false;
+    }
+
+    const expected = sign(userRaw, issuedAt);
     const a = Buffer.from(signature);
     const b = Buffer.from(expected);
     if (a.length !== b.length) return false;
@@ -41,8 +47,16 @@ export function isValidSessionToken(token: string | undefined | null): boolean {
   }
 }
 
-export function verifyPassword(password: string): boolean {
-  const expected = requirePassword();
+export function sessionUserFromToken(
+  token: string | undefined | null,
+): AppUser | null {
+  if (!isValidSessionToken(token)) return null;
+  const userRaw = token!.split(".")[0]!;
+  return isAppUser(userRaw) ? userRaw : null;
+}
+
+export function verifyPassword(user: AppUser, password: string): boolean {
+  const expected = requirePasswordForUser(user);
   const a = Buffer.from(password);
   const b = Buffer.from(expected);
   if (a.length !== b.length) return false;

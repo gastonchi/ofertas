@@ -15,6 +15,10 @@ export function getAppPassword(): string | undefined {
   return process.env.ADMIN_PASSWORD || process.env.APP_PASSWORD || undefined;
 }
 
+export function getMicaelaPassword(): string | undefined {
+  return process.env.MICAELA_PASSWORD || undefined;
+}
+
 export function hasAuthConfig(): boolean {
   return Boolean(getAppPassword());
 }

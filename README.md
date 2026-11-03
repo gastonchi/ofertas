@@ -41,7 +41,8 @@ Variables:
 |---|---|
 | `SUPABASE_URL` | URL del proyecto |
 | `SUPABASE_SERVICE_ROLE_KEY` | service_role |
-| `ADMIN_PASSWORD` | contraseña del panel |
+| `ADMIN_PASSWORD` | contraseña de Gastón en el panel |
+| `MICAELA_PASSWORD` | contraseña de Micaela en el panel |
 | `GMAIL_USER` | Gmail SMTP |
 | `GMAIL_APP_PASSWORD` | App Password |
 | `ALERT_TO_EMAIL` | destino de alertas (fallback) |

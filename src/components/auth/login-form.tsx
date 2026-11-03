@@ -3,6 +3,11 @@
 import { useActionState } from "react";
 import { loginAction, type LoginState } from "@/modules/auth/actions";
 
+const USER_OPTIONS = [
+  { value: "gaston", label: "Gastón" },
+  { value: "micaela", label: "Micaela" },
+] as const;
+
 const initial: LoginState = {};
 
 export function LoginForm({ nextPath }: { nextPath: string }) {
@@ -11,6 +16,14 @@ export function LoginForm({ nextPath }: { nextPath: string }) {
   return (
     <form action={action} className="login-form">
       <input type="hidden" name="next" value={nextPath} />
+      <label htmlFor="user">Usuario</label>
+      <select id="user" name="user" required defaultValue="gaston">
+        {USER_OPTIONS.map((user) => (
+          <option key={user.value} value={user.value}>
+            {user.label}
+          </option>
+        ))}
+      </select>
       <label htmlFor="password">Contraseña</label>
       <input
         id="password"
