@@ -94,3 +94,64 @@ alter table public.price_history enable row level security;
 alter table public.alerts_sent enable row level security;
 alter table public.tracked_products enable row level security;
 alter table public.app_settings enable row level security;
+
+-- Gastos familiares (rubros iniciales: migrations/20261103_expenses.sql)
+create table if not exists public.expense_categories (
+  id uuid primary key default gen_random_uuid(),
+  name text not null check (length(trim(name)) > 0),
+  icon text not null default 'shapes',
+  sort_order integer not null default 0,
+  active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create unique index if not exists expense_categories_name_unique
+  on public.expense_categories (lower(name));
+
+create table if not exists public.expense_subcategories (
+  id uuid primary key default gen_random_uuid(),
+  category_id uuid not null references public.expense_categories (id) on delete cascade,
+  name text not null check (length(trim(name)) > 0),
+  sort_order integer not null default 0,
+  active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create unique index if not exists expense_subcategories_name_unique
+  on public.expense_subcategories (category_id, lower(name));
+
+-- restrict: un rubro/subrubro con gastos no se borra, se archiva (active = false).
+create table if not exists public.expenses (
+  id uuid primary key default gen_random_uuid(),
+  category_id uuid not null references public.expense_categories (id) on delete restrict,
+  subcategory_id uuid references public.expense_subcategories (id) on delete restrict,
+  amount integer not null check (amount > 0),
+  spent_on date not null,
+  notes text,
+  created_by text not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists expenses_spent_on_idx
+  on public.expenses (spent_on desc);
+
+create index if not exists expenses_category_spent_on_idx
+  on public.expenses (category_id, spent_on desc);
+
+drop trigger if exists expense_categories_set_updated_at on public.expense_categories;
+create trigger expense_categories_set_updated_at
+  before update on public.expense_categories
+  for each row
+  execute function public.set_updated_at();
+
+drop trigger if exists expense_subcategories_set_updated_at on public.expense_subcategories;
+create trigger expense_subcategories_set_updated_at
+  before update on public.expense_subcategories
+  for each row
+  execute function public.set_updated_at();
+
+alter table public.expense_categories enable row level security;
+alter table public.expense_subcategories enable row level security;
+alter table public.expenses enable row level security;

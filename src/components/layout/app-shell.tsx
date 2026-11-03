@@ -9,6 +9,8 @@ import {
   Menu,
   Package,
   Settings,
+  Tags,
+  Wallet,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -18,6 +20,8 @@ const NAV: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/", label: "Inicio", icon: House },
   { href: "/productos", label: "Productos", icon: Package },
   { href: "/alertas", label: "Alertas", icon: Bell },
+  { href: "/gastos", label: "Gastos", icon: Wallet },
+  { href: "/gastos/rubros", label: "Rubros", icon: Tags },
   { href: "/configuracion", label: "Configuración", icon: Settings },
 ];
 
