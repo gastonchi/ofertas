@@ -9,6 +9,7 @@ import { resolveEnabledStores } from "@/lib/stores";
 import { hasSupabaseConfig } from "@/lib/env";
 import { listProducts } from "@/modules/products/actions";
 import { enrichProductsImages } from "@/modules/products/queries";
+import { listShoppingListProductIds } from "@/modules/shopping-list/queries";
 import { getSettings } from "@/modules/settings/actions";
 
 export const dynamic = "force-dynamic";
@@ -20,6 +21,9 @@ export default async function ProductsPage() {
   const rawProducts = configured ? await listProducts() : [];
   const products = configured
     ? await enrichProductsImages(rawProducts, trackedStores)
+    : [];
+  const shoppingListProductIds = configured
+    ? await listShoppingListProductIds()
     : [];
 
   return (
@@ -42,7 +46,10 @@ export default async function ProductsPage() {
           <ProductPageToolbar />
         </div>
         <div className="panel">
-          <ProductTable products={products} />
+          <ProductTable
+            products={products}
+            shoppingListProductIds={shoppingListProductIds}
+          />
         </div>
       </AppShell>
     </ProductPageActionsProvider>

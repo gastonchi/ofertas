@@ -6,7 +6,13 @@ import { ProductThumb } from "@/components/products/product-thumb";
 import { formatArs } from "@/lib/format";
 import type { TrackedProductRow } from "@/lib/types";
 
-function ProductCard({ product }: { product: TrackedProductRow }) {
+function ProductCard({
+  product,
+  inShoppingList,
+}: {
+  product: TrackedProductRow;
+  inShoppingList: boolean;
+}) {
   return (
     <article className={`info-card ${product.active ? "" : "dimmed"}`.trim()}>
       <header className="info-card-head product-card-head">
@@ -29,13 +35,27 @@ function ProductCard({ product }: { product: TrackedProductRow }) {
           <dd>{formatArs(Number(product.target_price))}</dd>
         </div>
       </dl>
-      <ProductActions product={product} layout="grid" />
+      <ProductActions
+        product={product}
+        layout="grid"
+        inShoppingList={inShoppingList}
+      />
     </article>
   );
 }
 
-export function ProductTable({ products }: { products: TrackedProductRow[] }) {
+export function ProductTable({
+  products,
+  shoppingListProductIds = [],
+}: {
+  products: TrackedProductRow[];
+  shoppingListProductIds?: string[];
+}) {
   const [query, setQuery] = useState("");
+  const inList = useMemo(
+    () => new Set(shoppingListProductIds),
+    [shoppingListProductIds],
+  );
 
   const rows = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -107,7 +127,10 @@ export function ProductTable({ products }: { products: TrackedProductRow[] }) {
                     </td>
                     <td>{formatArs(Number(product.target_price))}</td>
                     <td>
-                      <ProductActions product={product} />
+                      <ProductActions
+                        product={product}
+                        inShoppingList={inList.has(product.id)}
+                      />
                     </td>
                   </tr>
                 ))}
@@ -116,7 +139,11 @@ export function ProductTable({ products }: { products: TrackedProductRow[] }) {
           </div>
           <div className="card-grid mobile-only">
             {rows.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                inShoppingList={inList.has(product.id)}
+              />
             ))}
           </div>
         </>
