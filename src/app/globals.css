@@ -2450,10 +2450,19 @@ a.btn-secondary {
     align-items: stretch;
   }
 
+  /* flex-basis en rem era altura en columna y abría un hueco enorme */
   .expense-list-query {
+    flex: 0 0 auto;
     flex-direction: column;
     flex-wrap: nowrap;
+    align-items: stretch;
     gap: 0;
+  }
+
+  .expense-list-search,
+  .expense-list-rubro {
+    flex: 0 0 auto;
+    width: 100%;
   }
 
   .expense-list-search input {
