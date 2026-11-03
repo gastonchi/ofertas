@@ -2355,6 +2355,16 @@ a.btn-secondary {
   width: 100%;
 }
 
+.expense-list-query {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.55rem 0.75rem;
+  flex: 1 1 16rem;
+  min-width: 0;
+  width: 100%;
+}
+
 .expense-list-search {
   flex: 1 1 12rem;
   min-width: 0;
@@ -2362,6 +2372,15 @@ a.btn-secondary {
 }
 
 .expense-list-search input {
+  width: 100%;
+}
+
+.expense-list-rubro {
+  flex: 1 1 10rem;
+  min-width: 0;
+}
+
+.expense-list-rubro select {
   width: 100%;
 }
 
@@ -2430,9 +2449,27 @@ a.btn-secondary {
     align-items: stretch;
   }
 
+  .expense-list-query {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 0;
+  }
+
+  .expense-list-search input {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .expense-list-rubro select {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    margin-top: -1px;
+  }
+
   .expense-list-filters label,
   .expense-list-filters .btn-primary,
-  .expense-list-filters .btn-ghost {
+  .expense-list-filters .btn-ghost,
+  .expense-list-query {
     width: 100%;
   }
 
