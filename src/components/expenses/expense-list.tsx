@@ -266,32 +266,34 @@ export function ExpenseList({
           required
         />
       </label>
-      <label className="data-table-search expense-list-search">
-        <span className="sr-only">Buscar</span>
-        <input
-          type="search"
-          name="q"
-          value={q}
-          onChange={(event) => setQ(event.target.value)}
-          placeholder="Monto, nota, usuario…"
-        />
-      </label>
-      <label>
-        Rubro
-        <select
-          name="rubro"
-          value={rubro}
-          onChange={(event) => setRubro(event.target.value)}
-        >
-          <option value="">Todos</option>
-          {categories.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.name}
-              {!item.active ? " (archivado)" : ""}
-            </option>
-          ))}
-        </select>
-      </label>
+      <div className="expense-list-query">
+        <label className="data-table-search expense-list-search">
+          <span className="sr-only">Buscar</span>
+          <input
+            type="search"
+            name="q"
+            value={q}
+            onChange={(event) => setQ(event.target.value)}
+            placeholder="Monto, nota, usuario…"
+          />
+        </label>
+        <label className="expense-list-rubro">
+          <span className="sr-only">Rubro</span>
+          <select
+            name="rubro"
+            value={rubro}
+            onChange={(event) => setRubro(event.target.value)}
+          >
+            <option value="">Todos los rubros</option>
+            {categories.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name}
+                {!item.active ? " (archivado)" : ""}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
       <button type="submit" className="btn-primary">
         Filtrar
       </button>
