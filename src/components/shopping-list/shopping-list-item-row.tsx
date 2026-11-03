@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { Minus, Plus, Trash2 } from "lucide-react";
+import { ShoppingListProductLink } from "@/components/shopping-list/shopping-list-product-link";
 import { ProductThumb } from "@/components/products/product-thumb";
 import { StoreLogo } from "@/components/ui/store-logo";
 import { formatArs } from "@/lib/format";
@@ -80,7 +81,9 @@ export function ShoppingListItemCard({ entry }: { entry: ShoppingListEntry }) {
           size="lg"
         />
         <div className="shopping-list-card-copy">
-          <h3 className="product-name">{product.name}</h3>
+          <h3 className="shopping-list-product-title">
+            <ShoppingListProductLink productId={product.id} name={product.name} />
+          </h3>
           <p className="shopping-list-target muted">
             Objetivo:{" "}
             <strong>{formatArs(Number(product.target_price))}</strong>
@@ -133,7 +136,7 @@ export function ShoppingListItemTableRow({ entry }: { entry: ShoppingListEntry }
             imageUrl={product.image_url}
             layout="card"
           />
-          <div className="product-name">{product.name}</div>
+          <ShoppingListProductLink productId={product.id} name={product.name} />
         </div>
       </td>
       <td>

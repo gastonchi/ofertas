@@ -2,7 +2,8 @@
 
 import { useTransition } from "react";
 import Link from "next/link";
-import { Bell, BellOff, DollarSign, ShoppingCart, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Bell, BellOff, Check, DollarSign, ShoppingCart, Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
 import {
   deleteProductAction,
@@ -103,13 +104,36 @@ async function toggleAlertsWithSwal(
   });
 }
 
+function ShoppingListAddedBadge({ layout }: { layout: "icons" | "grid" }) {
+  const isGrid = layout === "grid";
+  return (
+    <span
+      className={
+        isGrid
+          ? "card-action-btn shopping-list-added"
+          : "shopping-list-added shopping-list-added-compact"
+      }
+      title="Agregado a la lista de compras"
+    >
+      <Check size={18} aria-hidden />
+      {isGrid ? <span>Agregado</span> : null}
+      {!isGrid ? (
+        <span className="sr-only">Agregado a la lista de compras</span>
+      ) : null}
+    </span>
+  );
+}
+
 export function ProductActions({
   product,
   layout = "icons",
+  inShoppingList = false,
 }: {
   product: TrackedProductRow;
   layout?: "icons" | "grid";
+  inShoppingList?: boolean;
 }) {
+  const router = useRouter();
   const [pending, startTransition] = useTransition();
   const alertsOn = product.alerts_enabled;
   const BellIcon = alertsOn ? Bell : BellOff;
@@ -133,21 +157,28 @@ export function ProductActions({
         {isGrid ? <span>Ver precios</span> : null}
       </Link>
       <EditProductPanel product={product} labeled={isGrid} />
-      <button
-        type="button"
-        className={
-          isGrid ? "btn-secondary card-action-btn" : "btn-secondary btn-icon"
-        }
-        disabled={pending}
-        onClick={() =>
-          startTransition(() => addToShoppingListWithSwal(product))
-        }
-        aria-label={`Agregar ${product.name} a la lista de compras`}
-        title="Lista de compras"
-      >
-        <ShoppingCart size={18} aria-hidden />
-        {isGrid ? <span>Lista</span> : null}
-      </button>
+      {inShoppingList ? (
+        <ShoppingListAddedBadge layout={layout} />
+      ) : (
+        <button
+          type="button"
+          className={
+            isGrid ? "btn-secondary card-action-btn" : "btn-secondary btn-icon"
+          }
+          disabled={pending}
+          onClick={() =>
+            startTransition(async () => {
+              await addToShoppingListWithSwal(product);
+              router.refresh();
+            })
+          }
+          aria-label={`Agregar ${product.name} a la lista de compras`}
+          title="Lista de compras"
+        >
+          <ShoppingCart size={18} aria-hidden />
+          {isGrid ? <span>Lista</span> : null}
+        </button>
+      )}
       <button
         type="button"
         className={

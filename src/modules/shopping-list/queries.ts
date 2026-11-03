@@ -8,6 +8,23 @@ import {
 } from "@/modules/products/queries";
 import { getSettings } from "@/modules/settings/actions";
 
+export async function listShoppingListProductIds(): Promise<string[]> {
+  await requireAuth();
+  const db = createDb();
+  const { data, error } = await db
+    .from("shopping_list_items")
+    .select("product_id");
+
+  if (error) {
+    if (error.message.includes("shopping_list_items")) {
+      return [];
+    }
+    throw new Error(error.message);
+  }
+
+  return (data ?? []).map((row) => String(row.product_id));
+}
+
 export async function listShoppingListEntries(): Promise<ShoppingListEntry[]> {
   await requireAuth();
   const db = createDb();
