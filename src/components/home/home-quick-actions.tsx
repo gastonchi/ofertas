@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight, Package, Search, Wallet } from "lucide-react";
+import {
+  ChevronRight,
+  Package,
+  Search,
+  ShoppingCart,
+  Wallet,
+} from "lucide-react";
 import { LookupPricesPanel } from "@/components/products/lookup-prices-panel";
 import { useProductPageActions } from "@/components/products/product-page-actions";
 
@@ -21,6 +27,17 @@ export function HomeQuickActions() {
           <span className="home-quick-text">
             <strong>Productos</strong>
             <span className="muted">Ver seguimiento y precios</span>
+          </span>
+          <ChevronRight size={22} className="home-quick-chevron" aria-hidden />
+        </Link>
+
+        <Link href="/lista-compras" className="home-quick-card">
+          <span className="home-quick-icon" aria-hidden>
+            <ShoppingCart size={28} />
+          </span>
+          <span className="home-quick-text">
+            <strong>Lista de compras</strong>
+            <span className="muted">Qué comprar y en qué cantidad</span>
           </span>
           <ChevronRight size={22} className="home-quick-chevron" aria-hidden />
         </Link>

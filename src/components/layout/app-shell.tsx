@@ -10,6 +10,7 @@ import {
   Package,
   Settings,
   ClipboardList,
+  ShoppingCart,
   Tags,
   Wallet,
   X,
@@ -20,6 +21,7 @@ import { logoutAction } from "@/modules/auth/actions";
 const NAV: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/", label: "Inicio", icon: House },
   { href: "/productos", label: "Productos", icon: Package },
+  { href: "/lista-compras", label: "Lista de compras", icon: ShoppingCart },
   { href: "/alertas", label: "Alertas", icon: Bell },
   { href: "/gastos", label: "Cargar gasto", icon: Wallet },
   { href: "/gastos/listado", label: "Listado", icon: ClipboardList },

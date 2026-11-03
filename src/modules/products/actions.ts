@@ -17,6 +17,7 @@ import {
 import { loadJobSettings, isMissingImageUrlColumn } from "@/scraping/db";
 import { refreshProductPrices } from "@/scraping/refresh-product-prices";
 import { productHasPriceToday } from "@/modules/products/queries";
+import { addProductToShoppingListAfterCreate } from "@/modules/shopping-list/actions";
 import { getSettings } from "@/modules/settings/actions";
 
 export type ProductActionState = {
@@ -49,6 +50,7 @@ function parseProductForm(formData: FormData) {
 function revalidateProductViews() {
   revalidatePath("/");
   revalidatePath("/productos");
+  revalidatePath("/lista-compras");
 }
 
 export type ProductLookupState = {
@@ -135,13 +137,25 @@ export async function createProductAction(
     alerts_enabled: true,
   };
 
-  let { error } = await db.from("tracked_products").insert({
-    ...baseRow,
-    image_url: image_url ?? null,
-  });
+  const addToShoppingList =
+    formData.get("add_to_shopping_list") === "on" ||
+    formData.get("add_to_shopping_list") === "true";
+
+  let { data: inserted, error } = await db
+    .from("tracked_products")
+    .insert({
+      ...baseRow,
+      image_url: image_url ?? null,
+    })
+    .select("id")
+    .maybeSingle();
 
   if (error && isMissingImageUrlColumn(error)) {
-    ({ error } = await db.from("tracked_products").insert(baseRow));
+    ({ data: inserted, error } = await db
+      .from("tracked_products")
+      .insert(baseRow)
+      .select("id")
+      .maybeSingle());
   }
 
   if (error) {
@@ -151,8 +165,16 @@ export async function createProductAction(
     return { error: error.message };
   }
 
+  if (addToShoppingList && inserted?.id) {
+    await addProductToShoppingListAfterCreate(String(inserted.id));
+  }
+
   revalidateProductViews();
-  return { success: "Producto creado." };
+  return {
+    success: addToShoppingList
+      ? "Producto creado y agregado a la lista de compras."
+      : "Producto creado.",
+  };
 }
 
 export async function updateProductAction(
