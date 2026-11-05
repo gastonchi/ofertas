@@ -26,7 +26,9 @@ export function StorePriceCard({
   isBest: boolean;
 }) {
   const displayPrice =
-    quote.effectivePrice != null ? quote.effectivePrice : quote.price;
+    quote.hasPromo && quote.effectivePrice != null
+      ? quote.effectivePrice
+      : quote.price;
   const promoText = promoDetailText(quote);
   const showList = quote.listPrice != null;
   const showShelf =
@@ -53,12 +55,18 @@ export function StorePriceCard({
             <span className="store-price-unit-label muted">compra online</span>
           ) : quote.hasPromo ? (
             <span className="store-price-unit-label muted">c/u con promo</span>
+          ) : quote.listPrice != null && quote.price != null && quote.listPrice > quote.price ? (
+            <span className="store-price-unit-label muted">oferta del día</span>
           ) : null}
         </div>
       </header>
 
       {quote.onlineExclusiveLabel ? (
         <span className="chip chip-online-exclusive">{quote.onlineExclusiveLabel}</span>
+      ) : null}
+
+      {quote.paymentPromoLabel ? (
+        <span className="chip chip-payment-promo">{quote.paymentPromoLabel}</span>
       ) : null}
 
       {quote.price != null && (showList || showShelf) ? (

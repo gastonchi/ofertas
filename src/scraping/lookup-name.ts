@@ -93,6 +93,7 @@ function snapshotToQuote(
     bestPromotion: bestPromotion ?? null,
     hasPromo,
     onlineExclusiveLabel: snapshot.onlineExclusiveLabel ?? null,
+    paymentPromoLabel: snapshot.paymentPromoLabel ?? null,
   };
 }
 

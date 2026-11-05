@@ -4,6 +4,7 @@ import {
   effectiveUnitPrice,
   parsePromotions,
   splitOnlineExclusivePromotion,
+  splitPaymentPromoPromotion,
 } from "@/lib/promotions";
 import { normalizeStoreListPrice } from "@/lib/prices";
 import { resolveEnabledStores } from "@/lib/stores";
@@ -85,7 +86,9 @@ function toStat(row: PriceHistoryRow | null | undefined): PriceStat {
   if (!Number.isFinite(shelfPrice)) return null;
 
   const promotions = parsePromotions(row.promotions);
-  const { promotions: promoRows } = splitOnlineExclusivePromotion(promotions);
+  const promoRows = splitPaymentPromoPromotion(
+    splitOnlineExclusivePromotion(promotions).promotions,
+  ).promotions;
   const { effective, bestPromotion, hasPromo } = effectiveUnitPrice(
     shelfPrice,
     promoRows,
@@ -139,8 +142,10 @@ function buildStoreQuotes(
     if (!Number.isFinite(shelfPrice)) return { store, price: null };
 
     const promotions = parsePromotions(row.promotions);
-    const { promotions: promoRows, onlineExclusiveLabel } =
+    const { promotions: withoutOnline, onlineExclusiveLabel } =
       splitOnlineExclusivePromotion(promotions);
+    const { promotions: promoRows, paymentPromoLabel } =
+      splitPaymentPromoPromotion(withoutOnline);
     const { effective, bestPromotion, hasPromo } = effectiveUnitPrice(
       shelfPrice,
       promoRows,
@@ -161,6 +166,7 @@ function buildStoreQuotes(
       bestPromotion: bestPromotion ?? null,
       hasPromo,
       onlineExclusiveLabel,
+      paymentPromoLabel,
     };
   });
 }
