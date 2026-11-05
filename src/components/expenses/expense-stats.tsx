@@ -230,15 +230,9 @@ export function ExpenseStatsView({
           <span className="muted">Promedio mensual</span>
           <strong>{formatArs(stats.monthlyAverage)}</strong>
           <span className="muted expense-stats-sub">
-            {stats.monthsInRange}{" "}
-            {stats.monthsInRange === 1 ? "mes" : "meses"} en el rango
-          </span>
-        </article>
-        <article className="stat-card expense-stats-highlight">
-          <span className="muted">Ingresos mensuales estimados</span>
-          <strong>{formatArs(stats.monthlyAverage)}</strong>
-          <span className="muted expense-stats-sub">
-            Para cubrir el gasto promedio de este período
+            Total del período ÷ {stats.monthsInRange}{" "}
+            {stats.monthsInRange === 1 ? "mes" : "meses"} — referencia de
+            ingresos para cubrir el gasto
           </span>
         </article>
       </div>

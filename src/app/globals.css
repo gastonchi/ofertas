@@ -2769,11 +2769,6 @@ button.home-quick-card {
   gap: 0.35rem;
 }
 
-.expense-stats-highlight {
-  border-color: rgba(31, 106, 69, 0.35);
-  background: rgba(200, 240, 122, 0.12);
-}
-
 .expense-stats-sub {
   font-size: 0.88rem;
 }
