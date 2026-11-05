@@ -4,6 +4,13 @@ import { revalidatePath } from "next/cache";
 import { requireAuth, requireSessionUser } from "@/lib/auth";
 import { createDb } from "@/lib/db/client";
 import {
+  creditCardInstallmentSchedule,
+  formatInstallmentNote,
+  isValidInstallmentCount,
+  MAX_CREDIT_CARD_INSTALLMENTS,
+  MIN_CREDIT_CARD_INSTALLMENTS,
+} from "@/lib/expenses/installments";
+import {
   MAX_EXPENSE_AMOUNT,
   MAX_EXPENSE_NOTES,
   type ExpenseInput,
@@ -11,7 +18,9 @@ import {
 import { isYmd } from "@/modules/alerts/date-range";
 import { isMissingExpensesSchema } from "@/modules/expenses/queries";
 
-export type ExpenseActionResult = { ok: true } | { error: string };
+export type ExpenseActionResult =
+  | { ok: true; created?: number }
+  | { error: string };
 
 const MISSING_SCHEMA =
   "Faltan las tablas de gastos. Ejecutá supabase/migrations/20261103_expenses.sql en el SQL Editor.";
@@ -83,6 +92,22 @@ async function validateExpensePayload(
     return { error: "Elegí un subrubro." };
   }
 
+  let creditCardInstallments: number | null = null;
+  if (input.creditCardInstallments != null && input.creditCardInstallments !== 0) {
+    const count = Number(input.creditCardInstallments);
+    if (!isValidInstallmentCount(count)) {
+      return {
+        error: `Las cuotas tienen que ser entre ${MIN_CREDIT_CARD_INSTALLMENTS} y ${MAX_CREDIT_CARD_INSTALLMENTS}.`,
+      };
+    }
+    if (Math.floor(amount / count) < 1) {
+      return {
+        error: "El monto es muy chico para repartir en esa cantidad de cuotas.",
+      };
+    }
+    creditCardInstallments = count;
+  }
+
   return {
     payload: {
       categoryId: input.categoryId,
@@ -90,6 +115,7 @@ async function validateExpensePayload(
       amount,
       spentOn,
       notes,
+      creditCardInstallments,
     },
   };
 }
@@ -112,14 +138,38 @@ export async function createExpenseAction(
     return { error: "El rubro ya no está disponible." };
   }
 
-  const { error } = await db.from("expenses").insert({
-    category_id: payload.categoryId,
-    subcategory_id: payload.subcategoryId,
-    amount: payload.amount,
-    spent_on: payload.spentOn,
-    notes: payload.notes || null,
-    created_by: user,
-  });
+  const installments = payload.creditCardInstallments;
+  const rows =
+    installments != null
+      ? creditCardInstallmentSchedule(
+          payload.spentOn,
+          installments,
+          payload.amount,
+        ).map((item) => ({
+          category_id: payload.categoryId,
+          subcategory_id: payload.subcategoryId,
+          amount: item.amount,
+          spent_on: item.spentOn,
+          notes: formatInstallmentNote(
+            item.index,
+            installments,
+            payload.notes,
+            MAX_EXPENSE_NOTES,
+          ),
+          created_by: user,
+        }))
+      : [
+          {
+            category_id: payload.categoryId,
+            subcategory_id: payload.subcategoryId,
+            amount: payload.amount,
+            spent_on: payload.spentOn,
+            notes: payload.notes || null,
+            created_by: user,
+          },
+        ];
+
+  const { error } = await db.from("expenses").insert(rows);
 
   if (error) {
     if (isMissingExpensesSchema(error)) return { error: MISSING_SCHEMA };
@@ -127,7 +177,7 @@ export async function createExpenseAction(
   }
 
   revalidateExpenseViews();
-  return { ok: true };
+  return { ok: true, created: rows.length };
 }
 
 export async function updateExpenseAction(

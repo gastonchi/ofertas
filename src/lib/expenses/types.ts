@@ -23,6 +23,8 @@ export type ExpenseInput = {
   amount: number;
   spentOn: string;
   notes: string;
+  /** Si está definido, imputa en cuotas al resumen de TC (mes siguiente en adelante). */
+  creditCardInstallments?: number | null;
 };
 
 export type ExpenseRow = {

@@ -2155,6 +2155,42 @@ a.btn-secondary {
   margin: 0;
 }
 
+.expense-tc-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin: 0.75rem 0 0.35rem;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(247, 250, 247, 0.65);
+}
+
+.expense-tc-check {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+.expense-tc-check input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--brand);
+}
+
+.expense-tc-installments select {
+  min-height: 44px;
+}
+
+.expense-tc-hint {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
 .expense-list {
   display: flex;
   flex-direction: column;

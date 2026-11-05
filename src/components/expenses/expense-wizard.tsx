@@ -12,7 +12,11 @@ import Swal from "sweetalert2";
 import { CategoryIcon } from "@/components/expenses/category-icon";
 import { SubcategoryMark } from "@/components/expenses/subcategory-mark";
 import { resolveSubcategoryVisual } from "@/lib/expenses/subcategory-visual";
-import { formatArs } from "@/lib/format";
+import {
+  creditCardInstallmentSchedule,
+  MAX_CREDIT_CARD_INSTALLMENTS,
+} from "@/lib/expenses/installments";
+import { formatArs, formatDay } from "@/lib/format";
 import {
   MAX_EXPENSE_AMOUNT,
   MAX_EXPENSE_NOTES,
@@ -53,6 +57,8 @@ export function ExpenseWizard({
   const [amount, setAmount] = useState(0);
   const [spentOn, setSpentOn] = useState(today);
   const [notes, setNotes] = useState("");
+  const [creditCard, setCreditCard] = useState(false);
+  const [installments, setInstallments] = useState(1);
   const [pending, startTransition] = useTransition();
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const rootRef = useRef<HTMLElement>(null);
@@ -106,8 +112,15 @@ export function ExpenseWizard({
     setAmount(0);
     setSpentOn(today);
     setNotes("");
+    setCreditCard(false);
+    setInstallments(1);
     goTo(0);
   }
+
+  const installmentPreview =
+    creditCard && amount > 0 && spentOn
+      ? creditCardInstallmentSchedule(spentOn, installments, amount)
+      : null;
 
   function onTouchStart(event: TouchEvent) {
     const target = event.target as HTMLElement;
@@ -140,6 +153,7 @@ export function ExpenseWizard({
         amount,
         spentOn,
         notes,
+        creditCardInstallments: creditCard ? installments : null,
       });
 
       if ("error" in result) {
@@ -151,12 +165,18 @@ export function ExpenseWizard({
         return;
       }
 
+      const created = result.created ?? 1;
+      const firstCuota = installmentPreview?.[0];
       reset();
       await Swal.fire({
         icon: "success",
-        title: "Gasto guardado",
-        text: `${category.name}${subcategory ? ` › ${subcategory.name}` : ""} · ${formatArs(amount)}`,
-        timer: 1800,
+        title:
+          creditCard && created > 1 ? "Cuotas guardadas" : "Gasto guardado",
+        text:
+          creditCard && firstCuota
+            ? `${created === 1 ? "1 cuota" : `${created} cuotas`} · ${formatArs(firstCuota.amount)} c/u · 1.ª ${formatDay(firstCuota.spentOn)}`
+            : `${category.name}${subcategory ? ` › ${subcategory.name}` : ""} · ${formatArs(amount)}`,
+        timer: 2200,
         showConfirmButton: false,
       });
     });
@@ -339,7 +359,9 @@ export function ExpenseWizard({
                   }}
                 >
                   <div className="field">
-                    <label htmlFor="expense-date">Fecha</label>
+                    <label htmlFor="expense-date">
+                      {creditCard ? "Fecha de compra" : "Fecha"}
+                    </label>
                     <input
                       id="expense-date"
                       type="date"
@@ -362,12 +384,57 @@ export function ExpenseWizard({
                   <p className="muted expense-user">
                     Registra: <strong>{userName}</strong>
                   </p>
+                  <div className="expense-tc-block">
+                    <label className="expense-tc-check">
+                      <input
+                        type="checkbox"
+                        checked={creditCard}
+                        onChange={(event) => {
+                          setCreditCard(event.target.checked);
+                          if (!event.target.checked) setInstallments(1);
+                        }}
+                      />
+                      Compra con TC
+                    </label>
+                    {creditCard ? (
+                      <div className="field expense-tc-installments">
+                        <label htmlFor="expense-installments">Cuotas</label>
+                        <select
+                          id="expense-installments"
+                          value={installments}
+                          onChange={(event) =>
+                            setInstallments(Number(event.target.value))
+                          }
+                        >
+                          {Array.from(
+                            { length: MAX_CREDIT_CARD_INSTALLMENTS },
+                            (_, index) => index + 1,
+                          ).map((count) => (
+                            <option key={count} value={count}>
+                              {count}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ) : null}
+                    {installmentPreview ? (
+                      <p className="muted expense-tc-hint">
+                        {installments === 1
+                          ? `Impacta el ${formatDay(installmentPreview[0].spentOn)}: ${formatArs(installmentPreview[0].amount)}`
+                          : `${installments} cuotas desde el ${formatDay(installmentPreview[0].spentOn)} · ${formatArs(installmentPreview[0].amount)}${installments > 1 && installmentPreview.some((c) => c.amount !== installmentPreview[0].amount) ? " c/u (puede variar $1)" : ` c/u`}`}
+                      </p>
+                    ) : null}
+                  </div>
                   <button
                     type="submit"
                     className="btn-primary expense-save"
                     disabled={pending || !category || amount <= 0 || !spentOn}
                   >
-                    {pending ? "Guardando…" : `Guardar ${formatArs(amount)}`}
+                    {pending
+                      ? "Guardando…"
+                      : creditCard
+                        ? `Guardar ${formatArs(amount)} en ${installments} cuota${installments === 1 ? "" : "s"}`
+                        : `Guardar ${formatArs(amount)}`}
                   </button>
                 </form>
               ) : null}
