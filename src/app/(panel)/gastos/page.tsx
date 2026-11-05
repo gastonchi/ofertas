@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ClipboardList, Tags } from "lucide-react";
+import { BarChart3, ClipboardList, Tags } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import { ExpenseWizard } from "@/components/expenses/expense-wizard";
 import { requireSessionUser } from "@/lib/auth";
@@ -21,6 +21,10 @@ export default async function ExpensesPage() {
       pathname="/gastos"
       titleAction={
         <div className="app-header-actions">
+          <Link href="/gastos/estadisticas" className="btn-secondary">
+            <BarChart3 size={18} aria-hidden />
+            Estadísticas
+          </Link>
           <Link href="/gastos/listado" className="btn-secondary">
             <ClipboardList size={18} aria-hidden />
             Listado

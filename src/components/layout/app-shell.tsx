@@ -12,6 +12,7 @@ import {
   ClipboardList,
   ShoppingCart,
   Tags,
+  BarChart3,
   Wallet,
   X,
   type LucideIcon,
@@ -25,6 +26,7 @@ const NAV: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/alertas", label: "Alertas", icon: Bell },
   { href: "/gastos", label: "Cargar gasto", icon: Wallet },
   { href: "/gastos/listado", label: "Listado", icon: ClipboardList },
+  { href: "/gastos/estadisticas", label: "Estadísticas", icon: BarChart3 },
   { href: "/gastos/rubros", label: "Rubros", icon: Tags },
   { href: "/configuracion", label: "Configuración", icon: Settings },
 ];
