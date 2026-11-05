@@ -175,42 +175,48 @@ export function ExpenseStatsView({
             </button>
           ))}
         </div>
-        <div className="expense-list-filters expense-stats-range">
-          <label className="expense-list-query">
-            <span>Desde</span>
-            <input
-              type="date"
-              value={from}
-              onChange={(event) => setFrom(event.target.value)}
-            />
-          </label>
-          <label className="expense-list-query">
-            <span>Hasta</span>
-            <input
-              type="date"
-              value={to}
-              onChange={(event) => setTo(event.target.value)}
-            />
-          </label>
-          <label className="expense-list-rubro">
-            <span>Rubro</span>
-            <select
-              value={rubro}
-              onChange={(event) => setRubro(event.target.value)}
-            >
-              <option value="">Todos</option>
-              {categories
-                .filter((cat) => cat.active)
-                .map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-            </select>
-          </label>
-          <button type="submit" className="btn-primary">
-            Aplicar
-          </button>
+        <div className="expense-stats-custom-filters">
+          <div className="expense-stats-dates">
+            <label className="expense-stats-date-field">
+              <span className="expense-stats-date-label">Desde</span>
+              <input
+                type="date"
+                value={from}
+                onChange={(event) => setFrom(event.target.value)}
+                aria-label="Desde"
+              />
+            </label>
+            <label className="expense-stats-date-field">
+              <span className="expense-stats-date-label">Hasta</span>
+              <input
+                type="date"
+                value={to}
+                onChange={(event) => setTo(event.target.value)}
+                aria-label="Hasta"
+              />
+            </label>
+          </div>
+          <div className="expense-stats-filters-actions">
+            <label className="expense-stats-rubro-field">
+              <span className="expense-stats-rubro-label">Rubro</span>
+              <select
+                value={rubro}
+                onChange={(event) => setRubro(event.target.value)}
+              >
+                <option value="">Todos los rubros</option>
+                {categories
+                  .filter((cat) => cat.active)
+                  .map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+              </select>
+            </label>
+            <button type="submit" className="btn-primary expense-stats-apply">
+              Aplicar
+            </button>
+          </div>
         </div>
         <p className="muted expense-stats-period-note">
           Período: {formatDay(stats.from)} – {formatDay(stats.to)}
