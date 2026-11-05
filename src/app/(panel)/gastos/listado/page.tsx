@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { BarChart3, Plus } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import { ExpenseList } from "@/components/expenses/expense-list";
 import { hasSupabaseConfig } from "@/lib/env";
@@ -35,10 +35,16 @@ export default async function ExpenseListPage({
       title="Listado de gastos"
       pathname="/gastos/listado"
       titleAction={
-        <Link href="/gastos" className="btn-primary">
-          <Plus size={18} aria-hidden />
-          Cargar gasto
-        </Link>
+        <div className="app-header-actions">
+          <Link href="/gastos/estadisticas" className="btn-secondary">
+            <BarChart3 size={18} aria-hidden />
+            Estadísticas
+          </Link>
+          <Link href="/gastos" className="btn-primary">
+            <Plus size={18} aria-hidden />
+            Cargar gasto
+          </Link>
+        </div>
       }
     >
       {!configured ? (

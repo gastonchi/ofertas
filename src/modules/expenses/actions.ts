@@ -16,7 +16,11 @@ export type ExpenseActionResult = { ok: true } | { error: string };
 const MISSING_SCHEMA =
   "Faltan las tablas de gastos. Ejecutá supabase/migrations/20261103_expenses.sql en el SQL Editor.";
 
-const EXPENSE_PATHS = ["/gastos", "/gastos/listado"] as const;
+const EXPENSE_PATHS = [
+  "/gastos",
+  "/gastos/listado",
+  "/gastos/estadisticas",
+] as const;
 
 function revalidateExpenseViews() {
   for (const path of EXPENSE_PATHS) revalidatePath(path);
