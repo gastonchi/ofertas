@@ -89,19 +89,16 @@ function parseDirectPercent(text: string): number | undefined {
 }
 
 export function isPaymentOnlyPromo(text: string): boolean {
-  const hasProductPromo =
-    RE_NXM.test(text) ||
-    RE_SECOND_UNIT_PERCENT.test(text) ||
-    /\b\d+\s*%\s*(?:off|dto|descuento)/i.test(text);
+  if (!RE_PAYMENT_ONLY.test(text)) return false;
+
+  // NxM o 2da unidad siguen siendo promos de producto aunque mencionen tarjeta/banco.
+  const hasStructuralPromo =
+    RE_NXM.test(text) || RE_SECOND_UNIT_PERCENT.test(text);
 
   RE_NXM.lastIndex = 0;
   RE_SECOND_UNIT_PERCENT.lastIndex = 0;
 
-  if (hasProductPromo && !/^\d+\s*%\s*\+\s*\d+\s*csi/i.test(text)) {
-    return false;
-  }
-
-  return RE_PAYMENT_ONLY.test(text) && !hasProductPromo;
+  return !hasStructuralPromo;
 }
 
 export function isLoyaltyPromo(text: string): boolean {

@@ -25,6 +25,7 @@ export function offerMatchFromAlertRow(alert: AlertRow): OfferMatch | null {
     promotions: snapshot.promotions ?? [],
     checkedAt: alert.sent_at,
     onlineExclusiveLabel: snapshot.onlineExclusiveLabel,
+    paymentPromoLabel: snapshot.paymentPromoLabel,
   };
 
   const triggers = (alert.payload?.triggers ?? []).map((trigger) => ({
