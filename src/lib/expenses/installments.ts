@@ -1,6 +1,13 @@
 export const MIN_CREDIT_CARD_INSTALLMENTS = 1;
 export const MAX_CREDIT_CARD_INSTALLMENTS = 24;
 
+/** Prefijo de `notes` en cuotas generadas desde el wizard con TC. */
+export const CREDIT_CARD_NOTE_PREFIX = "TC cuota";
+
+export function isCreditCardInstallmentNote(notes: string | null): boolean {
+  return Boolean(notes?.startsWith(CREDIT_CARD_NOTE_PREFIX));
+}
+
 function parseYmd(ymd: string): { year: number; month: number; day: number } {
   const [year, month, day] = ymd.split("-").map(Number);
   return { year, month, day };
@@ -67,7 +74,7 @@ export function formatInstallmentNote(
   userNotes: string,
   maxLength = 500,
 ): string {
-  const prefix = `TC cuota ${index}/${total}`;
+  const prefix = `${CREDIT_CARD_NOTE_PREFIX} ${index}/${total}`;
   const trimmed = userNotes.trim();
   const combined = trimmed ? `${prefix} · ${trimmed}` : prefix;
   return combined.length <= maxLength

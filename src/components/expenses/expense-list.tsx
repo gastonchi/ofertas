@@ -213,10 +213,26 @@ export function ExpenseList({
   const [to, setTo] = useState(params.to);
   const [q, setQ] = useState(params.q);
   const [rubro, setRubro] = useState(params.rubro);
+  const [showTc, setShowTc] = useState(params.showTc);
 
   const hasTextFilter = Boolean(params.q);
   const hasRubroFilter = Boolean(params.rubro);
   const hasExtraFilters = hasTextFilter || hasRubroFilter;
+
+  function toggleShowTc(next: boolean) {
+    setShowTc(next);
+    router.push(
+      `/gastos/listado${expenseListQueryString({
+        ...params,
+        from,
+        to,
+        q,
+        rubro,
+        showTc: next,
+        page: 1,
+      })}`,
+    );
+  }
 
   function applyFilters(event: FormEvent) {
     event.preventDefault();
@@ -226,6 +242,7 @@ export function ExpenseList({
         to,
         q,
         rubro,
+        showTc,
         page: 1,
       })}`,
     );
@@ -294,6 +311,14 @@ export function ExpenseList({
           </select>
         </label>
       </div>
+      <label className="expense-list-tc-toggle">
+        <input
+          type="checkbox"
+          checked={showTc}
+          onChange={(event) => toggleShowTc(event.target.checked)}
+        />
+        Mostrar cuotas de TC
+      </label>
       <button type="submit" className="btn-primary">
         Filtrar
       </button>
@@ -309,7 +334,9 @@ export function ExpenseList({
     <p className="empty-state">
       {hasExtraFilters
         ? "No hay gastos que coincidan con el filtro."
-        : "No hay gastos en este período."}
+        : params.showTc
+          ? "No hay gastos en este período."
+          : "No hay gastos en este período (las cuotas de TC están ocultas)."}
     </p>
   );
 

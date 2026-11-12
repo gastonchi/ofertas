@@ -2421,6 +2421,28 @@ a.btn-secondary {
   width: 100%;
 }
 
+.expense-list-tc-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: #fff;
+  font-size: 0.88rem;
+  font-weight: 550;
+  color: var(--ink);
+  cursor: pointer;
+  flex: 1 1 auto;
+}
+
+.expense-list-tc-toggle input {
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--brand);
+}
+
 .expense-table-rubro {
   display: flex;
   align-items: flex-start;

@@ -10,6 +10,8 @@ export type ExpenseListParams = {
   /** UUID de rubro; vacío = todos */
   rubro: string;
   page: number;
+  /** Incluir cuotas imputadas por compras con TC (por defecto ocultas). */
+  showTc: boolean;
 };
 
 const UUID_RE =
@@ -49,7 +51,10 @@ export function parseExpenseListParams(
   const page =
     Number.isInteger(pageRaw) && pageRaw > 0 ? pageRaw : 1;
 
-  return { from, to, q, rubro, page };
+  const tcRaw = String(raw.tc ?? "").trim().toLowerCase();
+  const showTc = tcRaw === "1" || tcRaw === "true" || tcRaw === "on";
+
+  return { from, to, q, rubro, page, showTc };
 }
 
 export function expenseListQueryString(
@@ -62,6 +67,7 @@ export function expenseListQueryString(
   search.set("to", merged.to);
   if (merged.q) search.set("q", merged.q);
   if (merged.rubro) search.set("rubro", merged.rubro);
+  if (merged.showTc) search.set("tc", "1");
   if (merged.page > 1) search.set("page", String(merged.page));
   const qs = search.toString();
   return qs ? `?${qs}` : "";
