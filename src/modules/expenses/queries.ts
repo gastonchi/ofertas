@@ -2,6 +2,7 @@ import { requireAuth } from "@/lib/auth";
 import { displayName, isAppUser } from "@/lib/auth/users";
 import { createDb } from "@/lib/db/client";
 import { DEFAULT_EXPENSE_ICON, isExpenseIcon } from "@/lib/expenses/icons";
+import { CREDIT_CARD_NOTE_PREFIX } from "@/lib/expenses/installments";
 import {
   EXPENSE_PAGE_SIZE,
   type ExpenseListParams,
@@ -126,6 +127,12 @@ export async function listExpensesPaginated(
 
   if (params.rubro) {
     query = query.eq("category_id", params.rubro);
+  }
+
+  if (!params.showTc) {
+    query = query.or(
+      `notes.is.null,notes.not.ilike.${CREDIT_CARD_NOTE_PREFIX}%`,
+    );
   }
 
   const q = params.q.trim();
