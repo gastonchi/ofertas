@@ -4,7 +4,6 @@ import { useEffect, useId, useState, type ReactNode } from "react";
 import Link from "next/link";
 import {
   Bell,
-  House,
   LogOut,
   Menu,
   Package,
@@ -20,11 +19,10 @@ import {
 import { logoutAction } from "@/modules/auth/actions";
 
 const NAV: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/", label: "Inicio", icon: House },
+  { href: "/", label: "Cargar gasto", icon: Wallet },
   { href: "/productos", label: "Productos", icon: Package },
   { href: "/lista-compras", label: "Lista de compras", icon: ShoppingCart },
   { href: "/alertas", label: "Alertas", icon: Bell },
-  { href: "/gastos", label: "Cargar gasto", icon: Wallet },
   { href: "/gastos/listado", label: "Listado", icon: ClipboardList },
   { href: "/gastos/estadisticas", label: "Estadísticas", icon: BarChart3 },
   { href: "/gastos/rubros", label: "Rubros", icon: Tags },
