@@ -1,7 +1,9 @@
 import type { PromotionInfo } from "./types";
+import { computePromoPricing } from "@/scraping/offers/pricing";
 import {
   isOnlineExclusiveText,
 } from "@/scraping/promotions/online-exclusive";
+import { isPaymentOnlyPromo } from "@/scraping/promotions/text-patterns";
 
 export type PromoPricingInfo = NonNullable<PromotionInfo["pricing"]>;
 
@@ -66,6 +68,59 @@ export function parsePromotions(raw: unknown): PromotionInfo[] {
       minimumQuantity,
       pricing,
       onlineExclusive: onlineExclusive || undefined,
+    });
+  }
+
+  return out;
+}
+
+/**
+ * Reconstruye promos con la lógica actual a partir de lo guardado en DB
+ * (nombre + cantidad mínima), sin confiar en pricing persistido que pudo
+ * calcularse con reglas viejas.
+ */
+export function promotionsForPriceContext(
+  raw: unknown,
+  shelfPrice: number,
+  listPrice?: number | null,
+): PromotionInfo[] {
+  if (!Number.isFinite(shelfPrice) || shelfPrice <= 0) return [];
+  const list =
+    listPrice != null && Number.isFinite(listPrice) ? listPrice : undefined;
+
+  const parsed = parsePromotions(raw);
+  const out: PromotionInfo[] = [];
+
+  for (const promo of parsed) {
+    if (promo.onlineExclusive) {
+      out.push(promo);
+      continue;
+    }
+
+    if (isPaymentOnlyPromo(promo.name)) {
+      continue;
+    }
+
+    const pricing =
+      computePromoPricing(
+        promo.name,
+        shelfPrice,
+        promo.minimumQuantity,
+        list,
+      ) ?? undefined;
+
+    if (!pricing) continue;
+    if (
+      pricing.summary === "promo" &&
+      pricing.unitEffectivePrice >= shelfPrice
+    ) {
+      continue;
+    }
+
+    out.push({
+      name: promo.name,
+      minimumQuantity: promo.minimumQuantity,
+      pricing,
     });
   }
 

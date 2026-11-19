@@ -2,7 +2,7 @@ import { requireAuth } from "@/lib/auth";
 import { createDb } from "@/lib/db/client";
 import {
   effectiveUnitPrice,
-  parsePromotions,
+  promotionsForPriceContext,
   splitOnlineExclusivePromotion,
 } from "@/lib/promotions";
 import { normalizeStoreListPrice } from "@/lib/prices";
@@ -73,10 +73,7 @@ export async function enrichProductsImages(
 }
 
 function normalizePriceRow(row: PriceHistoryRow): PriceHistoryRow {
-  return {
-    ...row,
-    promotions: parsePromotions(row.promotions),
-  };
+  return row;
 }
 
 function toStat(row: PriceHistoryRow | null | undefined): PriceStat {
@@ -84,16 +81,20 @@ function toStat(row: PriceHistoryRow | null | undefined): PriceStat {
   const shelfPrice = Number(row.price);
   if (!Number.isFinite(shelfPrice)) return null;
 
-  const promotions = parsePromotions(row.promotions);
-  const { promotions: promoRows } = splitOnlineExclusivePromotion(promotions);
-  const { effective, bestPromotion, hasPromo } = effectiveUnitPrice(
-    shelfPrice,
-    promoRows,
-  );
   const listPriceValue = normalizeStoreListPrice(
     String(row.store),
     shelfPrice,
     Number(row.list_price),
+  );
+  const promotions = promotionsForPriceContext(
+    row.promotions,
+    shelfPrice,
+    listPriceValue,
+  );
+  const { promotions: promoRows } = splitOnlineExclusivePromotion(promotions);
+  const { effective, bestPromotion, hasPromo } = effectiveUnitPrice(
+    shelfPrice,
+    promoRows,
   );
 
   return {
@@ -138,17 +139,21 @@ function buildStoreQuotes(
     const shelfPrice = Number(row.price);
     if (!Number.isFinite(shelfPrice)) return { store, price: null };
 
-    const promotions = parsePromotions(row.promotions);
+    const listPriceValue = normalizeStoreListPrice(
+      store,
+      shelfPrice,
+      Number(row.list_price),
+    );
+    const promotions = promotionsForPriceContext(
+      row.promotions,
+      shelfPrice,
+      listPriceValue,
+    );
     const { promotions: promoRows, onlineExclusiveLabel } =
       splitOnlineExclusivePromotion(promotions);
     const { effective, bestPromotion, hasPromo } = effectiveUnitPrice(
       shelfPrice,
       promoRows,
-    );
-    const listPriceValue = normalizeStoreListPrice(
-      store,
-      shelfPrice,
-      Number(row.list_price),
     );
 
     return {
