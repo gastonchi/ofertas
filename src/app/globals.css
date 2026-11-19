@@ -2709,6 +2709,126 @@ button.home-quick-card {
   padding-inline: 0.5rem;
 }
 
+.shopping-list-toolbar {
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.shopping-list-stock-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.shopping-list-stock-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+.shopping-list-stock-filter-btn.is-active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.shopping-list-stock-filter-btn .stock-level-pill {
+  margin: 0;
+}
+
+.stock-level-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.stock-level-pill--none_left {
+  background: #fde8e8;
+  color: #9b1c1c;
+}
+
+.stock-level-pill--low {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.shopping-list-stock-fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.shopping-list-stock-legend {
+  font-weight: 650;
+  font-size: 0.95rem;
+  margin-bottom: 0.35rem;
+}
+
+.shopping-list-stock-hint {
+  margin: 0 0 0.65rem;
+  font-size: 0.88rem;
+}
+
+.shopping-list-stock-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.shopping-list-stock-option {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.shopping-list-stock-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.shopping-list-stock-option input:focus-visible + .stock-level-pill {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.shopping-list-stock-option input:checked + .stock-level-pill {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.shopping-list-stock-select {
+  min-height: 44px;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 550;
+  max-width: 100%;
+}
+
+.shopping-list-card-urgency {
+  margin: 0.25rem 0 0.35rem;
+}
+
 .shopping-list-target,
 .shopping-list-best {
   margin: 0;
@@ -2780,6 +2900,18 @@ button.home-quick-card {
 
   .shopping-list-store {
     margin-left: auto;
+  }
+
+  .shopping-list-toolbar .data-table-search {
+    width: 100%;
+  }
+
+  .shopping-list-stock-filter {
+    width: 100%;
+  }
+
+  .shopping-list-stock-filter-btn {
+    flex: 1 1 auto;
   }
 }
 

@@ -17,6 +17,7 @@ import {
 import { loadJobSettings, isMissingImageUrlColumn } from "@/scraping/db";
 import { refreshProductPrices } from "@/scraping/refresh-product-prices";
 import { productHasPriceToday } from "@/modules/products/queries";
+import { parseShoppingListStockLevel } from "@/lib/shopping-list/stock-level";
 import { addProductToShoppingListAfterCreate } from "@/modules/shopping-list/actions";
 import { getSettings } from "@/modules/settings/actions";
 
@@ -166,7 +167,11 @@ export async function createProductAction(
   }
 
   if (addToShoppingList && inserted?.id) {
-    await addProductToShoppingListAfterCreate(String(inserted.id));
+    const stockLevel =
+      parseShoppingListStockLevel(
+        formData.get("shopping_list_stock_level"),
+      ) ?? "low";
+    await addProductToShoppingListAfterCreate(String(inserted.id), stockLevel);
   }
 
   revalidateProductViews();

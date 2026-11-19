@@ -1,6 +1,10 @@
 import { requireAuth } from "@/lib/auth";
 import { createDb } from "@/lib/db/client";
 import { resolveEnabledStores } from "@/lib/stores";
+import {
+  isShoppingListStockLevel,
+  type ShoppingListStockLevel,
+} from "@/lib/shopping-list/stock-level";
 import type { ShoppingListEntry, TrackedProductRow } from "@/lib/types";
 import {
   enrichProductsImages,
@@ -49,6 +53,7 @@ export async function listShoppingListEntries(): Promise<ShoppingListEntry[]> {
     id: string;
     product_id: string;
     quantity: number;
+    stock_level?: string | null;
     created_at: string;
     updated_at: string;
     product: TrackedProductRow | null;
@@ -70,11 +75,18 @@ export async function listShoppingListEntries(): Promise<ShoppingListEntry[]> {
       const stats = await getProductPriceStats(product, stores);
       const latest = stats.latest;
 
+      const stockLevel: ShoppingListStockLevel = isShoppingListStockLevel(
+        row.stock_level,
+      )
+        ? row.stock_level
+        : "low";
+
       return {
         item: {
           id: row.id,
           product_id: row.product_id,
           quantity: row.quantity,
+          stock_level: stockLevel,
           created_at: row.created_at,
           updated_at: row.updated_at,
         },

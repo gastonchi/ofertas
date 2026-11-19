@@ -12,6 +12,7 @@ import { Modal } from "@/components/ui/modal";
 import { formatArs } from "@/lib/format";
 import type { StoreId, StorePricesLookupResult } from "@/lib/types";
 import { lookupStorePricesAction } from "@/modules/products/actions";
+import { promptShoppingListStockLevel } from "@/components/shopping-list/prompt-shopping-stock-level";
 import {
   addToShoppingListAction,
   getProductByEan,
@@ -80,7 +81,15 @@ export function ShoppingListAddPanel({
       try {
         const existing = await getProductByEan(scannedEan);
         if (existing) {
-          const added = await addToShoppingListAction(existing.id);
+          const stockLevel = await promptShoppingListStockLevel();
+          if (!stockLevel) {
+            return;
+          }
+          const added = await addToShoppingListAction(
+            existing.id,
+            1,
+            stockLevel,
+          );
           if (added.error) {
             setError(added.error);
             return;
