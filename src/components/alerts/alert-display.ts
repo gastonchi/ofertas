@@ -1,7 +1,4 @@
-import {
-  effectiveUnitPrice,
-  promotionsForPriceContext,
-} from "@/lib/promotions";
+import { effectiveUnitPrice, parsePromotions } from "@/lib/promotions";
 import type { AlertRow } from "@/lib/types";
 
 export type AlertDisplay = {
@@ -20,6 +17,7 @@ export type AlertDisplay = {
 
 export function getAlertDisplay(alert: AlertRow): AlertDisplay {
   const snapshot = alert.payload?.snapshot;
+  const promotions = parsePromotions(snapshot?.promotions);
   const shelfPrice =
     typeof snapshot?.price === "number" && Number.isFinite(snapshot.price)
       ? snapshot.price
@@ -39,11 +37,6 @@ export function getAlertDisplay(alert: AlertRow): AlertDisplay {
   let promoDetail: string | null = null;
 
   if (shelfPrice != null) {
-    const promotions = promotionsForPriceContext(
-      snapshot?.promotions,
-      shelfPrice,
-      listPrice,
-    );
     const priced = effectiveUnitPrice(shelfPrice, promotions);
     effectivePrice = priced.effective;
     hasPromo = priced.hasPromo;
