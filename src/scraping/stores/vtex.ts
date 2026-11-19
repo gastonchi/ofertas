@@ -51,6 +51,7 @@ function teaserMinQty(t: VtexTeaser): number | undefined {
 export function extractPromotions(
   teasers: VtexTeaser[] | undefined,
   shelfPrice: number,
+  listPrice?: number,
 ): PromotionInfo[] {
   if (!teasers?.length) return [];
 
@@ -62,14 +63,15 @@ export function extractPromotions(
     if (!name) continue;
 
     const minQty = teaserMinQty(t);
-    if (isPaymentOnlyPromo(name) && !looksLikePromoText(name, minQty)) {
+    if (isPaymentOnlyPromo(name)) {
       continue;
     }
     if (!looksLikePromoText(name, minQty)) continue;
     if (seen.has(name)) continue;
     seen.add(name);
 
-    const pricing = computePromoPricing(name, shelfPrice, minQty) ?? undefined;
+    const pricing =
+      computePromoPricing(name, shelfPrice, minQty, listPrice) ?? undefined;
     out.push({ name, minimumQuantity: minQty, pricing });
   }
 
@@ -173,7 +175,7 @@ export async function fetchVtexByEan(opts: {
     price,
     listPrice,
     available: (offer.AvailableQuantity ?? 0) > 0,
-    promotions: extractPromotions(teasers, price),
+    promotions: extractPromotions(teasers, price, listPrice),
     checkedAt: new Date().toISOString(),
     onlineExclusiveLabel,
   };

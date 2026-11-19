@@ -89,19 +89,30 @@ function parseDirectPercent(text: string): number | undefined {
 }
 
 export function isPaymentOnlyPromo(text: string): boolean {
+  const trimmed = text.trim();
   const hasProductPromo =
-    RE_NXM.test(text) ||
-    RE_SECOND_UNIT_PERCENT.test(text) ||
-    /\b\d+\s*%\s*(?:off|dto|descuento)/i.test(text);
+    RE_NXM.test(trimmed) ||
+    RE_SECOND_UNIT_PERCENT.test(trimmed) ||
+    /\b\d+\s*%\s*(?:off|dto|descuento)/i.test(trimmed);
 
   RE_NXM.lastIndex = 0;
   RE_SECOND_UNIT_PERCENT.lastIndex = 0;
 
-  if (hasProductPromo && !/^\d+\s*%\s*\+\s*\d+\s*csi/i.test(text)) {
+  // Ej. "25% + 6 CSI con tarjeta": el % sigue siendo regla de precio.
+  if (/^\d+\s*%\s*\+\s*\d+\s*csi/i.test(trimmed)) {
+    return RE_PAYMENT_ONLY.test(trimmed) && !hasProductPromo;
+  }
+
+  // "% off" atado a tarjeta / banco / CencoPay no se multiplica sobre el precio VTEX.
+  if (RE_PAYMENT_ONLY.test(trimmed) && hasProductPromo) {
+    return true;
+  }
+
+  if (hasProductPromo) {
     return false;
   }
 
-  return RE_PAYMENT_ONLY.test(text) && !hasProductPromo;
+  return RE_PAYMENT_ONLY.test(trimmed);
 }
 
 export function isLoyaltyPromo(text: string): boolean {

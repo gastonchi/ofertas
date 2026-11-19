@@ -89,9 +89,13 @@ function pricingFromDirectPercent(
   minimumQuantity: number | undefined,
   validUntilLabel?: string,
   ambiguous = false,
+  listPrice?: number,
 ): PromoPricing {
   const unitsToBuy = minimumQuantity && minimumQuantity > 0 ? minimumQuantity : 1;
-  const unitEffectivePrice = roundMoney(shelfPrice * (1 - percent / 100));
+  const reference =
+    listPrice != null && listPrice > shelfPrice ? listPrice : shelfPrice;
+  const fromPercent = roundMoney(reference * (1 - percent / 100));
+  const unitEffectivePrice = roundMoney(Math.min(shelfPrice, fromPercent));
   return {
     summary: ambiguous ? `hasta ${percent}% dto` : `${percent}% dto`,
     unitsToBuy,
@@ -110,6 +114,7 @@ export function computePromoPricing(
   name: string,
   shelfPrice: number,
   minimumQuantity?: number,
+  listPrice?: number,
 ): PromoPricing | null {
   if (shelfPrice <= 0) return null;
 
@@ -158,6 +163,7 @@ export function computePromoPricing(
       minimumQuantity,
       validUntilLabel,
       classified.kind === "ambiguous",
+      listPrice,
     );
   }
 

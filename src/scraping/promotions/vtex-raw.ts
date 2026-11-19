@@ -1,3 +1,4 @@
+import { normalizeVtexListPrice } from "../../lib/prices";
 import type { StoreId } from "../../lib/types";
 import { extractPromotions } from "../stores/vtex";
 import {
@@ -168,6 +169,10 @@ export async function fetchVtexRawByEan(
   const teasers = mapTeasers(offer.Teasers, "Teasers");
   const allTeasers = [...promotionTeasers, ...teasers];
   const price = Number(offer.Price ?? 0);
+  const rawListPrice = Number(
+    offer.ListPrice ?? offer.PriceWithoutDiscount ?? offer.Price ?? 0,
+  );
+  const normalizedListPrice = normalizeVtexListPrice(store, price, rawListPrice);
   const productClusters = product.productClusters;
   const clusterPromoLabels = filterProductClusterLabels(
     CENCOSUD_CLUSTER_STORES.has(store) ? productClusters : undefined,
@@ -197,6 +202,7 @@ export async function fetchVtexRawByEan(
     extractedPromotions: extractPromotions(
       [...(offer.PromotionTeasers ?? []), ...(offer.Teasers ?? [])],
       price,
+      normalizedListPrice,
     ),
     commertialOfferKeys: Object.keys(offer).sort(),
   };
