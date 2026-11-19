@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useRef,
   useState,
   useTransition,
@@ -62,6 +63,7 @@ export function ExpenseWizard({
   const [pending, startTransition] = useTransition();
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const rootRef = useRef<HTMLElement>(null);
+  const amountInputRef = useRef<HTMLInputElement>(null);
 
   const category = categories.find((item) => item.id === categoryId) ?? null;
   const subcategory =
@@ -72,6 +74,14 @@ export function ExpenseWizard({
       ? ["category", "subcategory", "amount", "details"]
       : ["category", "amount", "details"];
   const currentStep = steps[stepIndex] ?? "category";
+
+  useEffect(() => {
+    if (currentStep !== "amount") return;
+    const frame = requestAnimationFrame(() => {
+      amountInputRef.current?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [currentStep, stepIndex]);
 
   function goTo(index: number) {
     setStepIndex(Math.max(0, Math.min(index, steps.length - 1)));
@@ -308,6 +318,7 @@ export function ExpenseWizard({
                   <div className="expense-amount-field">
                     <span aria-hidden>$</span>
                     <input
+                      ref={amountInputRef}
                       id="expense-amount"
                       type="text"
                       inputMode="numeric"
