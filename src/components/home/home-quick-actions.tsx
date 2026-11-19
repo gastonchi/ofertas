@@ -42,7 +42,7 @@ export function HomeQuickActions() {
           <ChevronRight size={22} className="home-quick-chevron" aria-hidden />
         </Link>
 
-        <Link href="/" className="home-quick-card">
+        <Link href="/gastos" className="home-quick-card">
           <span className="home-quick-icon" aria-hidden>
             <Wallet size={28} />
           </span>

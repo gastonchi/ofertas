@@ -43,7 +43,6 @@ function parseName(raw: unknown): string | { error: string } {
 }
 
 function revalidateExpenseViews() {
-  revalidatePath("/");
   revalidatePath("/gastos");
   revalidatePath("/gastos/listado");
   revalidatePath("/gastos/estadisticas");

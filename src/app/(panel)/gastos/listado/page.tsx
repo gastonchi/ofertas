@@ -40,7 +40,7 @@ export default async function ExpenseListPage({
             <BarChart3 size={18} aria-hidden />
             Estadísticas
           </Link>
-          <Link href="/" className="btn-primary">
+          <Link href="/gastos" className="btn-primary">
             <Plus size={18} aria-hidden />
             Cargar gasto
           </Link>
