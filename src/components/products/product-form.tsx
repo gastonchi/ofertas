@@ -7,6 +7,7 @@ import { Modal } from "@/components/ui/modal";
 import { formatArs } from "@/lib/format";
 import type { TrackedProductRow } from "@/lib/types";
 import type { ProductCreateDraft } from "@/components/products/product-create-draft";
+import { ShoppingListStockLevelField } from "@/components/shopping-list/shopping-list-stock-level-field";
 import {
   createProductAction,
   lookupProductNameAction,
@@ -155,6 +156,9 @@ export function ProductForm({
           </p>
         ) : null}
       </div>
+      {isNew && addToShoppingList ? (
+        <ShoppingListStockLevelField defaultValue="low" />
+      ) : null}
       {product ? (
         <>
           <label className="check-label">

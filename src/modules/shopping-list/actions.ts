@@ -3,6 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/auth";
 import { createDb } from "@/lib/db/client";
+import {
+  parseShoppingListStockLevel,
+  type ShoppingListStockLevel,
+} from "@/lib/shopping-list/stock-level";
 import type { TrackedProductRow } from "@/lib/types";
 
 function revalidateShoppingListViews() {
@@ -37,6 +41,7 @@ export async function getProductByEan(
 export async function addToShoppingListAction(
   productId: string,
   quantityDelta = 1,
+  stockLevel?: ShoppingListStockLevel,
 ): Promise<{ error?: string; added?: boolean }> {
   await requireAuth();
   const id = String(productId ?? "").trim();
@@ -63,17 +68,24 @@ export async function addToShoppingListAction(
     return { error: readError.message };
   }
 
+  const level = stockLevel ?? "low";
+
   if (existing) {
     const nextQty = Math.min(999, Number(existing.quantity) + delta);
+    const patch: { quantity: number; stock_level?: ShoppingListStockLevel } = {
+      quantity: nextQty,
+    };
+    if (stockLevel) patch.stock_level = stockLevel;
     const { error } = await db
       .from("shopping_list_items")
-      .update({ quantity: nextQty })
+      .update(patch)
       .eq("id", existing.id);
     if (error) return { error: error.message };
   } else {
     const { error } = await db.from("shopping_list_items").insert({
       product_id: id,
       quantity: delta,
+      stock_level: level,
     });
     if (error) {
       if (isMissingShoppingListTable(error.message)) {
@@ -122,6 +134,37 @@ export async function setShoppingListQuantityAction(
   return {};
 }
 
+export async function setShoppingListStockLevelAction(
+  itemId: string,
+  stockLevel: ShoppingListStockLevel,
+): Promise<{ error?: string }> {
+  await requireAuth();
+  const id = String(itemId ?? "").trim();
+  if (!id) return { error: "Falta el ítem." };
+  if (!parseShoppingListStockLevel(stockLevel)) {
+    return { error: "Urgencia inválida." };
+  }
+
+  const db = createDb();
+  const { error } = await db
+    .from("shopping_list_items")
+    .update({ stock_level: stockLevel })
+    .eq("id", id);
+
+  if (error) {
+    if (isMissingShoppingListTable(error.message)) {
+      return {
+        error:
+          "Falta la tabla shopping_list_items. Ejecutá supabase/migrations/20261105_shopping_list.sql.",
+      };
+    }
+    return { error: error.message };
+  }
+
+  revalidateShoppingListViews();
+  return {};
+}
+
 export async function removeShoppingListItemAction(
   itemId: string,
 ): Promise<{ error?: string }> {
@@ -148,6 +191,7 @@ export async function removeShoppingListItemAction(
 
 export async function addProductToShoppingListAfterCreate(
   productId: string,
+  stockLevel: ShoppingListStockLevel = "low",
 ): Promise<void> {
   await requireAuth();
   const id = String(productId ?? "").trim();
@@ -160,15 +204,21 @@ export async function addProductToShoppingListAfterCreate(
     .eq("product_id", id)
     .maybeSingle();
 
+  const level = parseShoppingListStockLevel(stockLevel) ?? "low";
+
   if (existing) {
     await db
       .from("shopping_list_items")
-      .update({ quantity: Math.min(999, Number(existing.quantity) + 1) })
+      .update({
+        quantity: Math.min(999, Number(existing.quantity) + 1),
+        stock_level: level,
+      })
       .eq("id", existing.id);
   } else {
     await db.from("shopping_list_items").insert({
       product_id: id,
       quantity: 1,
+      stock_level: level,
     });
   }
 

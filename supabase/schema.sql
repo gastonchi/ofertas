@@ -160,6 +160,7 @@ create table if not exists public.shopping_list_items (
   id uuid primary key default gen_random_uuid(),
   product_id uuid not null references public.tracked_products (id) on delete cascade,
   quantity integer not null default 1 check (quantity > 0 and quantity <= 999),
+  stock_level text not null default 'low' check (stock_level in ('none_left', 'low')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint shopping_list_items_product_unique unique (product_id)
@@ -167,6 +168,9 @@ create table if not exists public.shopping_list_items (
 
 create index if not exists shopping_list_items_updated_idx
   on public.shopping_list_items (updated_at desc);
+
+create index if not exists shopping_list_items_stock_level_idx
+  on public.shopping_list_items (stock_level);
 
 drop trigger if exists shopping_list_items_set_updated_at on public.shopping_list_items;
 create trigger shopping_list_items_set_updated_at

@@ -9,6 +9,7 @@ import {
   deleteProductAction,
   toggleProductAlertsAction,
 } from "@/modules/products/actions";
+import { promptShoppingListStockLevel } from "@/components/shopping-list/prompt-shopping-stock-level";
 import { addToShoppingListAction } from "@/modules/shopping-list/actions";
 import { EditProductPanel } from "@/components/products/product-form";
 import type { TrackedProductRow } from "@/lib/types";
@@ -52,7 +53,10 @@ async function deleteProductWithSwal(product: TrackedProductRow): Promise<void> 
 async function addToShoppingListWithSwal(
   product: TrackedProductRow,
 ): Promise<void> {
-  const result = await addToShoppingListAction(product.id);
+  const stockLevel = await promptShoppingListStockLevel();
+  if (!stockLevel) return;
+
+  const result = await addToShoppingListAction(product.id, 1, stockLevel);
   if (result.error) {
     await Swal.fire({
       icon: "error",

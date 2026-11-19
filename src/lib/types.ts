@@ -165,10 +165,15 @@ export type AppSettings = {
   updated_at: string;
 };
 
+import type { ShoppingListStockLevel } from "@/lib/shopping-list/stock-level";
+
+export type { ShoppingListStockLevel };
+
 export type ShoppingListItemRow = {
   id: string;
   product_id: string;
   quantity: number;
+  stock_level: ShoppingListStockLevel;
   created_at: string;
   updated_at: string;
 };

@@ -7,6 +7,7 @@ import { ProductThumb } from "@/components/products/product-thumb";
 import { StoreLogo } from "@/components/ui/store-logo";
 import { formatArs } from "@/lib/format";
 import type { ShoppingListEntry } from "@/lib/types";
+import { ShoppingListStockLevelControl } from "@/components/shopping-list/shopping-list-stock-level-control";
 import {
   removeShoppingListItemAction,
   setShoppingListQuantityAction,
@@ -84,6 +85,13 @@ export function ShoppingListItemCard({ entry }: { entry: ShoppingListEntry }) {
           <h3 className="shopping-list-product-title">
             <ShoppingListProductLink productId={product.id} name={product.name} />
           </h3>
+          <div className="shopping-list-card-urgency">
+            <ShoppingListStockLevelControl
+              itemId={entry.item.id}
+              value={entry.item.stock_level}
+              disabled={pending}
+            />
+          </div>
           <p className="shopping-list-target muted">
             Objetivo:{" "}
             <strong>{formatArs(Number(product.target_price))}</strong>
@@ -138,6 +146,13 @@ export function ShoppingListItemTableRow({ entry }: { entry: ShoppingListEntry }
           />
           <ShoppingListProductLink productId={product.id} name={product.name} />
         </div>
+      </td>
+      <td>
+        <ShoppingListStockLevelControl
+          itemId={entry.item.id}
+          value={entry.item.stock_level}
+          disabled={pending}
+        />
       </td>
       <td>
         <ShoppingListQtyStepper
