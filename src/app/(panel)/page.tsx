@@ -1,66 +1,29 @@
-import Link from "next/link";
-import { ClipboardList, Tags } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
-import { ExpenseWizard } from "@/components/expenses/expense-wizard";
-import { requireSessionUser } from "@/lib/auth";
-import { displayName } from "@/lib/auth/users";
+import { HomeQuickActions } from "@/components/home/home-quick-actions";
+import { ProductPageActionsProvider } from "@/components/products/product-page-actions";
+import { resolveEnabledStores } from "@/lib/stores";
 import { hasSupabaseConfig } from "@/lib/env";
-import { listExpenseCategories } from "@/modules/expenses/queries";
-import { argentinaDay } from "@/scraping/db";
+import { getSettings } from "@/modules/settings/actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const configured = hasSupabaseConfig();
-  const user = await requireSessionUser();
-  const categories = configured ? await listExpenseCategories() : null;
+  const settings = configured ? await getSettings() : null;
+  const trackedStores = resolveEnabledStores(settings?.default_stores);
 
   return (
-    <AppShell
-      title="Cargar gasto"
-      pathname="/"
-      titleAction={
-        <div className="app-header-actions">
-          <Link href="/gastos/listado" className="btn-secondary">
-            <ClipboardList size={18} aria-hidden />
-            Listado
-          </Link>
-          <Link href="/gastos/rubros" className="btn-secondary">
-            <Tags size={18} aria-hidden />
-            Rubros
-          </Link>
-        </div>
-      }
-    >
-      {!configured ? (
-        <p className="setup-banner">
-          Faltan <code>SUPABASE_URL</code> y{" "}
-          <code>SUPABASE_SERVICE_ROLE_KEY</code>.
-        </p>
-      ) : null}
-      {configured && !categories ? (
-        <p className="setup-banner">
-          Faltan las tablas de gastos. Ejecutá{" "}
-          <code>supabase/migrations/20261103_expenses.sql</code> en el SQL Editor.
-        </p>
-      ) : null}
+    <ProductPageActionsProvider trackedStores={trackedStores}>
+      <AppShell title="Inicio" pathname="/">
+        {!configured ? (
+          <p className="setup-banner">
+            Configurá <code>SUPABASE_URL</code> y{" "}
+            <code>SUPABASE_SERVICE_ROLE_KEY</code> en Vercel.
+          </p>
+        ) : null}
 
-      {categories && categories.length === 0 ? (
-        <p className="empty-state empty-state-with-action">
-          No hay rubros cargados.
-          <Link href="/gastos/rubros" className="btn-primary">
-            Crear rubros
-          </Link>
-        </p>
-      ) : null}
-
-      {categories && categories.length > 0 ? (
-        <ExpenseWizard
-          categories={categories}
-          today={argentinaDay()}
-          userName={displayName(user)}
-        />
-      ) : null}
-    </AppShell>
+        <HomeQuickActions />
+      </AppShell>
+    </ProductPageActionsProvider>
   );
 }

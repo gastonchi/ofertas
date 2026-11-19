@@ -26,7 +26,6 @@ const MISSING_SCHEMA =
   "Faltan las tablas de gastos. Ejecutá supabase/migrations/20261103_expenses.sql en el SQL Editor.";
 
 const EXPENSE_PATHS = [
-  "/",
   "/gastos",
   "/gastos/listado",
   "/gastos/estadisticas",
